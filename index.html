@@ -1,22 +1,24 @@
 <!doctype html>
-<html lang="en" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-  <meta name="theme-color" content="#0b1220" />
+  <meta name="theme-color" content="#070d18" />
   <title>HM GAME</title>
+
   <style>
     :root{
       --bg:#070d18;
-      --glass: rgba(255,255,255,.08);
-      --glass2: rgba(255,255,255,.06);
-      --line: rgba(255,255,255,.14);
       --txt: rgba(255,255,255,.92);
       --muted: rgba(255,255,255,.70);
 
-      --padBase: rgba(240,240,240,.88);
+      --glass: rgba(255,255,255,.08);
+      --glass2: rgba(255,255,255,.06);
+      --line: rgba(255,255,255,.14);
+
+      --padBase: rgba(240,240,240,.92);
+      --padDark: rgba(22,24,30,.92);
       --padShadow: rgba(0,0,0,.35);
-      --padDark: rgba(20,22,28,.92);
 
       --A:#e43b3b;
       --B:#f0c535;
@@ -28,33 +30,34 @@
     html,body{height:100%}
     body{
       margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
       background: radial-gradient(1200px 900px at 70% 15%, #1b2a55, var(--bg));
       color:var(--txt);
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
       overflow:hidden;
-      touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
     }
 
-    /* App layout: TOP screen + BOTTOM controller */
+    /* IMPORTANT: fixed 2-part layout, no scroll, no half/half */
     .app{
       height: 100dvh;
       display:grid;
       grid-template-rows: 1fr auto;
     }
 
+    /* Top: screen ALWAYS takes the remaining space */
     .screenWrap{
-      position:relative;
       padding: 10px;
       padding-top: calc(10px + env(safe-area-inset-top));
+      min-height: 0;
     }
 
-    /* Screen frame */
     .screenFrame{
       height: 100%;
+      min-height: 0;
       border-radius: 18px;
       border: 1px solid var(--line);
-      background: rgba(0,0,0,.25);
+      background: rgba(0,0,0,.22);
       box-shadow: 0 20px 70px rgba(0,0,0,.40);
       overflow:hidden;
       position:relative;
@@ -64,17 +67,19 @@
       width:100%;
       height:100%;
       display:block;
-      background: #050b14;
+      background:#050b14;
     }
 
-    /* Bottom controller area */
+    /* Bottom: controller fixed-ish height so screen stays big */
     .pad{
       padding: 12px;
       padding-bottom: calc(12px + env(safe-area-inset-bottom));
-      background: rgba(0,0,0,.18);
+      background: rgba(0,0,0,.14);
+      height: clamp(240px, 36dvh, 360px);
     }
 
     .padBody{
+      height: 100%;
       max-width: 900px;
       margin: 0 auto;
       border-radius: 26px;
@@ -84,16 +89,17 @@
       padding: 14px;
       position:relative;
       overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
     }
 
-    /* Slight transparent glossy band */
     .padBody:before{
       content:"";
       position:absolute; inset:-40% -20% auto -20%;
       height: 70%;
       transform: rotate(-10deg);
       background: rgba(255,255,255,.22);
-      filter: blur(0px);
       pointer-events:none;
     }
 
@@ -101,11 +107,9 @@
       display:flex;
       justify-content:space-between;
       gap:10px;
-      margin-bottom: 10px;
     }
-
     .shoulder{
-      flex: 1 1 0;
+      flex:1 1 0;
       border-radius: 16px;
       background: rgba(0,0,0,.08);
       border: 1px solid rgba(0,0,0,.12);
@@ -113,6 +117,7 @@
       font-weight: 1000;
       color: rgba(0,0,0,.70);
       user-select:none;
+      z-index:1;
     }
 
     .padMain{
@@ -120,26 +125,24 @@
       grid-template-columns: 1fr auto 1fr;
       align-items:center;
       gap: 14px;
+      z-index:1;
     }
 
-    /* D-Pad */
-    .dpad{
-      display:grid;
-      justify-items:center;
-      gap:8px;
-    }
-    .dpadMid{display:flex; gap:8px; align-items:center}
     .btn{
       border:none;
       cursor:pointer;
       user-select:none;
-      -webkit-user-select:none;
       touch-action: manipulation;
+      -webkit-user-select:none;
     }
     .btn:active{ transform: translateY(1px); }
 
+    /* D-Pad */
+    .dpad{ display:grid; justify-items:center; gap:8px; }
+    .dpadMid{ display:flex; gap:8px; align-items:center; }
+
     .padBtn{
-      width: 68px; height: 58px;
+      width: 66px; height: 56px;
       border-radius: 16px;
       background: var(--padDark);
       color: rgba(255,255,255,.92);
@@ -147,27 +150,14 @@
       font-size: 18px;
       box-shadow: inset 0 0 0 2px rgba(255,255,255,.06), 0 10px 18px rgba(0,0,0,.22);
     }
-
-    .padBtn.small{
-      width: 62px; height: 52px;
-      border-radius: 14px;
-      font-size: 16px;
-      opacity:.98;
-    }
-
     .padBtn.center{
-      background: rgba(0,0,0,.30);
+      background: rgba(0,0,0,.28);
       color: rgba(0,0,0,.55);
       box-shadow: inset 0 0 0 2px rgba(0,0,0,.12);
     }
 
-    /* Middle: Select / Start */
-    .midKeys{
-      display:grid;
-      justify-items:center;
-      gap: 10px;
-      padding: 6px 8px;
-    }
+    /* Select/Start */
+    .midKeys{ display:grid; justify-items:center; gap: 10px; }
     .midRow{ display:flex; gap: 12px; }
     .pillKey{
       width: 86px; height: 36px;
@@ -182,22 +172,19 @@
       color: rgba(0,0,0,.55);
       font-weight: 900;
       text-align:center;
-      margin-top: -2px;
+      margin-top: 2px;
     }
 
     /* ABXY */
-    .abxy{
-      display:grid;
-      justify-items:center;
-      gap:8px;
-    }
-    .abxyRow{display:flex; gap:10px}
+    .abxy{ display:grid; justify-items:center; gap:8px; }
+    .abxyRow{ display:flex; gap:10px; }
+
     .colorBtn{
-      width: 64px; height: 64px;
+      width: 62px; height: 62px;
       border-radius: 999px;
       font-weight: 1000;
       font-size: 20px;
-      color: rgba(0,0,0,.68);
+      color: rgba(0,0,0,.70);
       box-shadow: inset 0 0 0 3px rgba(255,255,255,.35), 0 12px 22px rgba(0,0,0,.22);
     }
     .A{ background: var(--A); color: rgba(255,255,255,.92); }
@@ -205,23 +192,27 @@
     .X{ background: var(--X); color: rgba(255,255,255,.92); }
     .Y{ background: var(--Y); }
 
-    /* Small footer hint (very small, optional) */
     .padHint{
-      margin-top: 10px;
+      z-index:1;
       text-align:center;
       font-size: 12px;
       color: rgba(0,0,0,.55);
-      font-weight: 800;
+      font-weight: 900;
+      white-space: nowrap;
+      overflow:hidden;
+      text-overflow: ellipsis;
+      padding: 0 6px;
     }
 
     @media (max-width: 420px){
-      .padBtn{ width: 64px; height: 56px; }
-      .colorBtn{ width: 60px; height: 60px; }
+      .pad{ height: clamp(230px, 38dvh, 360px); }
+      .padBtn{ width: 62px; height: 54px; }
+      .colorBtn{ width: 58px; height: 58px; }
       .pillKey{ width: 78px; }
-      .padBody{ padding: 12px; border-radius: 24px; }
     }
   </style>
 </head>
+
 <body>
   <div class="app">
     <div class="screenWrap">
@@ -238,18 +229,16 @@
         </div>
 
         <div class="padMain">
-          <!-- D-Pad -->
           <div class="dpad">
             <button class="btn padBtn" data-k="UP">▲</button>
             <div class="dpadMid">
               <button class="btn padBtn" data-k="LEFT">◀</button>
-              <button class="btn padBtn center small" data-k="HM">HM</button>
+              <button class="btn padBtn center" data-k="HM">HM</button>
               <button class="btn padBtn" data-k="RIGHT">▶</button>
             </div>
             <button class="btn padBtn" data-k="DOWN">▼</button>
           </div>
 
-          <!-- Select / Start -->
           <div class="midKeys">
             <div class="midRow">
               <div>
@@ -263,22 +252,19 @@
             </div>
           </div>
 
-          <!-- ABXY -->
           <div class="abxy">
-            <div class="abxyRow">
-              <button class="btn colorBtn X" data-k="X">X</button>
-            </div>
+            <div class="abxyRow"><button class="btn colorBtn X" data-k="X">X</button></div>
             <div class="abxyRow">
               <button class="btn colorBtn Y" data-k="Y">Y</button>
               <button class="btn colorBtn A" data-k="A">A</button>
             </div>
-            <div class="abxyRow">
-              <button class="btn colorBtn B" data-k="B">B</button>
-            </div>
+            <div class="abxyRow"><button class="btn colorBtn B" data-k="B">B</button></div>
           </div>
         </div>
 
-        <div class="padHint">HM GAME 🎮 — A: Select • START: Pause • SELECT: Arabic/English • L: Restart • R: Menu</div>
+        <div class="padHint">
+          HM GAME 🎮 — A: Select/Start • START: Pause • SELECT: Arabic/English • L: Restart • R: Menu
+        </div>
       </div>
     </div>
   </div>
@@ -289,462 +275,430 @@
   const cv = document.getElementById("cv");
   const ctx = cv.getContext("2d", { alpha:false });
 
-  // ---------- Helpers ----------
+  // ---------- helpers ----------
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
   const now=()=>performance.now();
-  const pad2=n=>String(n).padStart(2,"0");
   const DPR=()=>Math.max(1, Math.floor(window.devicePixelRatio||1));
+  const pad2=n=>String(n).padStart(2,"0");
+  const fmtTime=(ms)=>{
+    const s=Math.floor(ms/1000);
+    return `${pad2(Math.floor(s/60))}:${pad2(s%60)}`;
+  };
 
   function resize(){
     const r=cv.getBoundingClientRect();
     const d=DPR();
     const w=Math.floor(r.width*d), h=Math.floor(r.height*d);
-    if(cv.width!==w||cv.height!==h){ cv.width=w; cv.height=h; }
+    if(cv.width!==w || cv.height!==h){ cv.width=w; cv.height=h; }
   }
   window.addEventListener("resize", resize);
 
-  function fmtTime(ms){
-    const s=Math.floor(ms/1000);
-    const m=Math.floor(s/60);
-    return `${pad2(m)}:${pad2(s%60)}`;
-  }
-
-  // ---------- Language ----------
-  const LANG_KEY="HM_LANG";
-  let lang=localStorage.getItem(LANG_KEY)||"ar"; // default Arabic like your screenshots
+  // ---------- language ----------
+  const LANG_KEY="HM_LANG_V2";
+  let lang=localStorage.getItem(LANG_KEY) || "ar";
   const T={
     ar:{
-      title:"HM GAME",
-      menuQ:"❓ أي لعبة تريد؟",
-      menuHint:"استعمل ◀ ▶ لاختيار اللعبة ثم اضغط A للبدء",
+      choose:"اختر لعبة",
+      q:"❓ أي لعبة تريد؟",
+      hint:"استعمل ◀ ▶ لاختيار اللعبة ثم اضغط A للبدء",
       snake:"🐍 الثعبان",
       bounce:"🔴 باونس",
-      start:"اضغط A للبدء",
       paused:"⏸️ متوقف مؤقتاً",
       win:"🏆 لقد ربحت!",
       over:"😵 انتهت اللعبة",
-      again:"A: إعادة",
-      back:"R: القائمة",
+      score:"النتيجة",
+      best:"الأفضل",
+      time:"الوقت",
+      apples:"تفاح",
+      len:"الطول",
+      lives:"حياة",
+      hoops:"حلقات",
+      level:"المستوى",
+      restart:"A: إعادة",
+      menu:"R: القائمة",
       close:"B: إغلاق",
+      locked:"الباب مقفول! اجمع كل الحلقات 🟡",
     },
     en:{
-      title:"HM GAME",
-      menuQ:"❓ Which game do you want?",
-      menuHint:"Use ◀ ▶ to choose, then press A to start",
+      choose:"Choose Game",
+      q:"❓ Which game do you want?",
+      hint:"Use ◀ ▶ to choose, then press A to start",
       snake:"🐍 Snake",
       bounce:"🔴 Bounce",
-      start:"Press A to start",
       paused:"⏸️ Paused",
       win:"🏆 YOU WIN!",
       over:"😵 Game Over",
-      again:"A: Restart",
-      back:"R: Menu",
+      score:"Score",
+      best:"Best",
+      time:"Time",
+      apples:"Apples",
+      len:"Len",
+      lives:"Lives",
+      hoops:"Hoops",
+      level:"Level",
+      restart:"A: Restart",
+      menu:"R: Menu",
       close:"B: Close",
+      locked:"Gate locked! Collect all hoops 🟡",
     }
   };
-  function toggleLang(){
-    lang = (lang==="ar") ? "en" : "ar";
-    localStorage.setItem(LANG_KEY, lang);
+
+  function applyLang(){
     document.documentElement.lang = lang;
     document.documentElement.dir  = (lang==="ar") ? "rtl" : "ltr";
   }
-  toggleLang(); toggleLang(); // apply once without changing
+  function toggleLang(){
+    lang = (lang==="ar") ? "en" : "ar";
+    localStorage.setItem(LANG_KEY, lang);
+    applyLang();
+  }
+  applyLang();
 
-  // ---------- Best scores ----------
-  const BEST_KEY="HM_BEST";
+  // ---------- best scores ----------
+  const BEST_KEY="HM_BEST_V2";
   const bests=(()=>{try{return JSON.parse(localStorage.getItem(BEST_KEY)||"{}");}catch{return{};}})();
   const getBest=(k)=>bests[k]||0;
   const setBest=(k,v)=>{ if((bests[k]||0)<v){ bests[k]=v; localStorage.setItem(BEST_KEY,JSON.stringify(bests)); } };
 
-  // ---------- Global state ----------
+  // ---------- state ----------
   const S={
-    mode:"menu",     // menu | play | pause | result
-    game:"snake",    // snake | bounce
-    menuIdx:0,       // 0 snake, 1 bounce
-    startedAt:0,
-    time:0,
+    mode:"menu",   // menu | play | pause | result
+    game:"snake",  // snake | bounce
+    menuIdx:0,
+
     score:0,
-    best:0,
+    // fixed timer that pauses correctly:
+    playMs:0,
+    lastRunAt:0,
 
-    // Snake stats
-    apples:0,
-    length:3,
-    level:1,
+    // snake
+    apples:0, len:3, level:1,
 
-    // Bounce stats
-    lives:3,
-    hoopsLeft:0,
-    stage:1,
-    deaths:0,
+    // bounce
+    lives:3, hoopsLeft:0, stage:1, deaths:0,
 
-    resultType:"over", // over | win
-    resultLines:[]
+    resultType:"over",
+    resultLines:[],
+    toastText:"",
+    toastUntil:0
   };
 
-  // ---------- Input (from controller) ----------
-  const I={
-    left:false,right:false,up:false,down:false,
-    pressA:false,pressB:false,pressStart:false,pressSelect:false,pressL:false,pressR:false
-  };
-
-  function clearPresses(){
-    I.pressA=I.pressB=I.pressStart=I.pressSelect=I.pressL=I.pressR=false;
+  function startClock(){
+    S.lastRunAt = now();
+  }
+  function stopClock(){
+    const t=now();
+    if(S.lastRunAt) S.playMs += (t - S.lastRunAt);
+    S.lastRunAt = 0;
+  }
+  function timeMs(){
+    if(S.mode==="play" && S.lastRunAt){
+      return S.playMs + (now() - S.lastRunAt);
+    }
+    return S.playMs;
   }
 
-  // Buttons
+  function toast(msg){
+    S.toastText = msg;
+    S.toastUntil = now() + 1200;
+  }
+
+  // ---------- input with "just pressed" (no menu jitter) ----------
+  const hold={left:false,right:false,up:false,down:false};
+  const jp={A:false,B:false,START:false,SELECT:false,L:false,R:false,LEFT:false,RIGHT:false,UP:false,DOWN:false};
+
+  function setHold(key, val){
+    if(hold[key] === val) return;
+    hold[key] = val;
+    if(val) jp[key.toUpperCase()] = true; // edge trigger
+  }
+
+  function clearJustPressed(){
+    for(const k in jp) jp[k]=false;
+  }
+
+  // pointer handling (fix stuck keys using pointerleave)
   document.querySelectorAll("[data-k]").forEach(btn=>{
     const k=btn.dataset.k;
 
-    // Hold keys
-    const isDir = ["LEFT","RIGHT","UP","DOWN"].includes(k);
-
     btn.addEventListener("pointerdown",(e)=>{
       e.preventDefault();
-      if(k==="LEFT") I.left=true;
-      if(k==="RIGHT") I.right=true;
-      if(k==="UP") I.up=true;
-      if(k==="DOWN") I.down=true;
-      if(!isDir){
-        if(k==="A") I.pressA=true;
-        if(k==="B") I.pressB=true;
-        if(k==="START") I.pressStart=true;
-        if(k==="SELECT") I.pressSelect=true;
-        if(k==="L") I.pressL=true;
-        if(k==="R") I.pressR=true;
-      }
+      if(k==="LEFT") setHold("left", true);
+      if(k==="RIGHT") setHold("right", true);
+      if(k==="UP") setHold("up", true);
+      if(k==="DOWN") setHold("down", true);
+
+      if(k==="A") jp.A=true;
+      if(k==="B") jp.B=true;
+      if(k==="START") jp.START=true;
+      if(k==="SELECT") jp.SELECT=true;
+      if(k==="L") jp.L=true;
+      if(k==="R") jp.R=true;
     });
 
-    btn.addEventListener("pointerup",(e)=>{
-      e.preventDefault();
-      if(k==="LEFT") I.left=false;
-      if(k==="RIGHT") I.right=false;
-      if(k==="UP") I.up=false;
-      if(k==="DOWN") I.down=false;
-    });
+    const up=()=>{
+      if(k==="LEFT") setHold("left", false);
+      if(k==="RIGHT") setHold("right", false);
+      if(k==="UP") setHold("up", false);
+      if(k==="DOWN") setHold("down", false);
+    };
 
-    btn.addEventListener("pointercancel",(e)=>{
-      if(k==="LEFT") I.left=false;
-      if(k==="RIGHT") I.right=false;
-      if(k==="UP") I.up=false;
-      if(k==="DOWN") I.down=false;
-    });
+    btn.addEventListener("pointerup",(e)=>{ e.preventDefault(); up(); });
+    btn.addEventListener("pointercancel", up);
+    btn.addEventListener("pointerleave", up);
   });
 
-  // Keyboard support (optional)
+  // keyboard support
   window.addEventListener("keydown",(e)=>{
     const k=e.key.toLowerCase();
-    if(k==="arrowleft"||k==="a") I.left=true;
-    if(k==="arrowright"||k==="d") I.right=true;
-    if(k==="arrowup"||k==="w") I.up=true;
-    if(k==="arrowdown"||k==="s") I.down=true;
+    if(k==="arrowleft"||k==="a") setHold("left", true);
+    if(k==="arrowright"||k==="d") setHold("right", true);
+    if(k==="arrowup"||k==="w") setHold("up", true);
+    if(k==="arrowdown"||k==="s") setHold("down", true);
 
-    if(k==="enter") I.pressA=true;
-    if(k==="escape") I.pressB=true;
-    if(k==="p") I.pressStart=true;
-    if(k==="l") I.pressSelect=true;
+    if(k==="enter") jp.A=true;
+    if(k==="escape") jp.B=true;
+    if(k==="p") jp.START=true;
+    if(k==="l") jp.SELECT=true;
   },{passive:true});
 
   window.addEventListener("keyup",(e)=>{
     const k=e.key.toLowerCase();
-    if(k==="arrowleft"||k==="a") I.left=false;
-    if(k==="arrowright"||k==="d") I.right=false;
-    if(k==="arrowup"||k==="w") I.up=false;
-    if(k==="arrowdown"||k==="s") I.down=false;
+    if(k==="arrowleft"||k==="a") setHold("left", false);
+    if(k==="arrowright"||k==="d") setHold("right", false);
+    if(k==="arrowup"||k==="w") setHold("up", false);
+    if(k==="arrowdown"||k==="s") setHold("down", false);
   },{passive:true});
 
-  // ---------- Screen UI drawing (one status line only) ----------
-  function statusLine(){
-    const tm = fmtTime(S.time);
+  // ---------- drawing helpers ----------
+  function ellipsize(text, maxPx, font){
+    ctx.save();
+    ctx.font = font;
+    if(ctx.measureText(text).width <= maxPx){ ctx.restore(); return text; }
+    let s=text;
+    while(s.length>3 && ctx.measureText(s+"…").width > maxPx) s=s.slice(0,-1);
+    ctx.restore();
+    return s+"…";
+  }
+
+  function rr(x,y,w,h,r,fill){
+    const rad=Math.min(r,w/2,h/2);
+    ctx.beginPath();
+    ctx.moveTo(x+rad,y);
+    ctx.arcTo(x+w,y,x+w,y+h,rad);
+    ctx.arcTo(x+w,y+h,x,y+h,rad);
+    ctx.arcTo(x,y+h,x,y,rad);
+    ctx.arcTo(x,y,x+w,y,rad);
+    ctx.closePath();
+    if(fill) ctx.fill(); else ctx.stroke();
+  }
+
+  function topBarText(){
+    const tm=fmtTime(timeMs());
     if(S.mode==="menu"){
-      return `HM GAME | ${lang==="ar" ? "اختر لعبة" : "Choose Game"} | ${tm}`;
+      return `HM GAME | ${T[lang].choose} | ${tm}`;
     }
     if(S.game==="snake"){
-      const b=getBest("snake");
-      return `HM GAME | Snake Lv ${S.level} | 🍎${S.apples} Len ${S.length} | Score ${S.score} | Best ${b} | ${tm}`;
-    } else {
-      const b=getBest("bounce");
-      return `HM GAME | Bounce Lv ${S.stage} | ❤️${S.lives} | 🟡${S.hoopsLeft} | Score ${S.score} | Best ${b} | ${tm}`;
+      const best=getBest("snake");
+      return `HM GAME | Snake ${T[lang].level} ${S.level} | 🍎${S.apples} ${T[lang].len} ${S.len} | ${T[lang].score} ${S.score} | ${T[lang].best} ${best} | ${tm}`;
+    }else{
+      const best=getBest("bounce");
+      return `HM GAME | Bounce ${T[lang].level} ${S.stage} | ❤️${S.lives} | 🟡${S.hoopsLeft} | ${T[lang].score} ${S.score} | ${T[lang].best} ${best} | ${tm}`;
     }
   }
 
   function drawTopBar(){
-    ctx.save();
-    ctx.fillStyle="rgba(0,0,0,.30)";
-    ctx.fillRect(0,0,cv.width, Math.floor(cv.height*0.08));
+    const h=Math.floor(cv.height*0.075);
+    ctx.fillStyle="rgba(0,0,0,.32)";
+    ctx.fillRect(0,0,cv.width,h);
     ctx.fillStyle="rgba(255,255,255,.92)";
-    ctx.font = `${Math.floor(cv.height*0.032)}px system-ui`;
+
+    const font=`${Math.floor(h*0.46)}px system-ui`;
+    const tx=ellipsize(topBarText(), cv.width*0.96, font);
+
+    ctx.font=font;
     ctx.textAlign="left";
     ctx.textBaseline="middle";
-    ctx.fillText(statusLine(), Math.floor(cv.width*0.02), Math.floor(cv.height*0.04));
-    ctx.restore();
+    ctx.fillText(tx, Math.floor(cv.width*0.02), Math.floor(h/2));
+    return h;
   }
 
-  // ---------- Game switching ----------
-  function resetCommon(){
-    S.startedAt=now();
-    S.time=0;
-    S.score=0;
+  // ---------- result overlay (inside screen) ----------
+  function showResult(type, lines){
+    S.mode="result";
+    stopClock();
+    S.resultType=type;
+    S.resultLines=lines;
+    setBest(S.game, S.score);
   }
 
   function goMenu(){
     S.mode="menu";
     S.menuIdx=0;
     S.game="snake";
-    resetCommon();
+    S.score=0;
+    S.playMs=0;
+    S.lastRunAt=0;
+    S.toastText="";
+    S.toastUntil=0;
   }
 
-  function startGame(which){
+  function startGame(game){
     S.mode="play";
-    S.game=which;
-    resetCommon();
-    if(which==="snake") Snake.init();
+    S.game=game;
+    S.score=0;
+    S.playMs=0;
+    startClock();
+    if(game==="snake") Snake.init();
     else Bounce.init();
   }
 
   function togglePause(){
-    if(S.mode==="play"){ S.mode="pause"; }
-    else if(S.mode==="pause"){ S.mode="play"; }
+    if(S.mode==="play"){
+      S.mode="pause";
+      stopClock();
+    } else if(S.mode==="pause"){
+      S.mode="play";
+      startClock();
+    }
   }
-
-  function showResult(type, lines){
-    S.mode="result";
-    S.resultType=type; // "win"|"over"
-    S.resultLines=lines;
-    // best update
-    setBest(S.game, S.score);
-  }
-
-  // ---------- Menu draw ----------
-  function drawMenu(){
+function drawMenu(){
     ctx.fillStyle="#050b14";
     ctx.fillRect(0,0,cv.width,cv.height);
+    const topH=drawTopBar();
 
-    drawTopBar();
+    // sizes with clamp (avoid huge text)
+    const titleSize = clamp(cv.width*0.09, 26, 54);
+    const qSize     = clamp(cv.width*0.055, 16, 34);
+    const optSize   = clamp(cv.width*0.055, 16, 32);
+    const hintSize  = clamp(cv.width*0.040, 12, 22);
 
-    const y0 = cv.height*0.22;
-    ctx.fillStyle="rgba(255,255,255,.92)";
+    const centerY = topH + (cv.height-topH)*0.20;
+
     ctx.textAlign="center";
-    ctx.font=`${Math.floor(cv.width*0.09)}px system-ui`;
-    ctx.fillText("HM GAME", cv.width/2, y0);
+    ctx.fillStyle="rgba(255,255,255,.92)";
+    ctx.font=`${titleSize}px system-ui`;
+    ctx.fillText("HM GAME", cv.width/2, centerY);
 
-    ctx.font=`${Math.floor(cv.width*0.05)}px system-ui`;
     ctx.fillStyle="rgba(255,255,255,.78)";
-    ctx.fillText(T[lang].menuQ, cv.width/2, y0 + cv.height*0.10);
+    ctx.font=`${qSize}px system-ui`;
+    ctx.fillText(T[lang].q, cv.width/2, centerY + (cv.height-topH)*0.10);
 
     // options
     const opts=[T[lang].snake, T[lang].bounce];
-    const baseY = y0 + cv.height*0.22;
+    const cardW=cv.width*0.76;
+    const cardH=clamp((cv.height-topH)*0.12, 48, 90);
+    const startY=centerY + (cv.height-topH)*0.20;
 
     for(let i=0;i<2;i++){
-      const is=i===S.menuIdx;
-      const w=cv.width*0.70, h=cv.height*0.11;
-      const x=cv.width*0.15, y=baseY + i*(h+cv.height*0.04);
+      const x=(cv.width-cardW)/2;
+      const y=startY + i*(cardH + (cv.height-topH)*0.045);
+      const active=(i===S.menuIdx);
 
-      ctx.fillStyle = is ? "rgba(78,161,255,.18)" : "rgba(255,255,255,.06)";
-      roundRect(x,y,w,h,18,true);
-
-      ctx.strokeStyle = is ? "rgba(78,161,255,.60)" : "rgba(255,255,255,.14)";
-      ctx.lineWidth = 2;
-      roundRectStroke(x,y,w,h,18);
+      ctx.fillStyle= active ? "rgba(78,161,255,.18)" : "rgba(255,255,255,.06)";
+      rr(x,y,cardW,cardH,18,true);
+      ctx.strokeStyle= active ? "rgba(78,161,255,.60)" : "rgba(255,255,255,.14)";
+      ctx.lineWidth=2;
+      rr(x,y,cardW,cardH,18,false);
 
       ctx.fillStyle="rgba(255,255,255,.92)";
-      ctx.font=`${Math.floor(cv.width*0.055)}px system-ui`;
-      ctx.fillText(opts[i], cv.width/2, y + h*0.62);
+      ctx.font=`${optSize}px system-ui`;
+      ctx.fillText(opts[i], cv.width/2, y + cardH*0.64);
     }
 
+    // instructions (two lines with fixed spacing - no overlap)
+    const hintY = topH + (cv.height-topH)*0.86;
     ctx.fillStyle="rgba(255,255,255,.70)";
-    ctx.font=`${Math.floor(cv.width*0.04)}px system-ui`;
-    ctx.fillText(T[lang].menuHint, cv.width/2, cv.height*0.88);
-    ctx.fillStyle="rgba(255,255,255,.60)";
-    ctx.fillText(T[lang].start, cv.width/2, cv.height*0.93);
+    ctx.font=`${hintSize}px system-ui`;
+    ctx.fillText(T[lang].hint, cv.width/2, hintY);
+    ctx.fillStyle="rgba(255,255,255,.62)";
+    ctx.fillText((lang==="ar") ? "اضغط SELECT لتغيير اللغة" : "Press SELECT to change language", cv.width/2, hintY + hintSize*1.4);
   }
 
-  // ---------- Result panel drawn inside screen (transparent) ----------
   function drawResult(){
-    // draw current game behind (frozen)
+    // draw frozen game behind
     if(S.game==="snake") Snake.draw();
     else Bounce.draw();
-
     drawTopBar();
 
-    ctx.save();
-    ctx.fillStyle="rgba(0,0,0,.40)";
+    ctx.fillStyle="rgba(0,0,0,.42)";
     ctx.fillRect(0,0,cv.width,cv.height);
 
-    const w=cv.width*0.78, h=cv.height*0.42;
-    const x=(cv.width-w)/2, y=(cv.height-h)/2;
+    const w=cv.width*0.80;
+    const h=cv.height*0.42;
+    const x=(cv.width-w)/2;
+    const y=(cv.height-h)/2;
 
-    ctx.fillStyle="rgba(20,26,40,.92)";
-    roundRect(x,y,w,h,18,true);
+    ctx.fillStyle="rgba(16,22,36,.92)";
+    rr(x,y,w,h,18,true);
     ctx.strokeStyle="rgba(255,255,255,.16)";
     ctx.lineWidth=2;
-    roundRectStroke(x,y,w,h,18);
+    rr(x,y,w,h,18,false);
+
+    const titleSize=clamp(cv.width*0.06, 18, 34);
+    const lineSize =clamp(cv.width*0.045, 14, 26);
+    const footSize =clamp(cv.width*0.04,  12, 22);
 
     ctx.textAlign="center";
     ctx.fillStyle="rgba(255,255,255,.95)";
-    ctx.font=`${Math.floor(cv.width*0.06)}px system-ui`;
-    ctx.fillText(S.resultType==="win" ? T[lang].win : T[lang].over, cv.width/2, y + h*0.20);
+    ctx.font=`${titleSize}px system-ui`;
+    ctx.fillText(S.resultType==="win" ? T[lang].win : T[lang].over, cv.width/2, y + h*0.22);
 
-    ctx.font=`${Math.floor(cv.width*0.042)}px system-ui`;
-    ctx.fillStyle="rgba(255,255,255,.78)";
-    let yy = y + h*0.36;
+    ctx.fillStyle="rgba(255,255,255,.80)";
+    ctx.font=`${lineSize}px system-ui`;
+    let yy = y + h*0.40;
     for(const line of S.resultLines){
       ctx.fillText(line, cv.width/2, yy);
-      yy += cv.height*0.05;
+      yy += lineSize*1.35;
     }
 
-    ctx.fillStyle="rgba(255,255,255,.82)";
-    ctx.font=`${Math.floor(cv.width*0.04)}px system-ui`;
-    ctx.fillText(`${T[lang].again}   •   ${T[lang].back}   •   ${T[lang].close}`, cv.width/2, y + h*0.86);
-
-    ctx.restore();
+    ctx.fillStyle="rgba(255,255,255,.85)";
+    ctx.font=`${footSize}px system-ui`;
+    ctx.fillText(`${T[lang].restart}  •  ${T[lang].menu}  •  ${T[lang].close}`, cv.width/2, y + h*0.88);
   }
 
-  // ---------- Shapes ----------
-  function roundRect(x,y,w,h,r,fill){
-    const rr=Math.min(r,w/2,h/2);
-    ctx.beginPath();
-    ctx.moveTo(x+rr,y);
-    ctx.arcTo(x+w,y,x+w,y+h,rr);
-    ctx.arcTo(x+w,y+h,x,y+h,rr);
-    ctx.arcTo(x,y+h,x,y,rr);
-    ctx.arcTo(x,y,x+w,y,rr);
-    ctx.closePath();
-    if(fill) ctx.fill();
-  }
-  function roundRectStroke(x,y,w,h,r){
-    const rr=Math.min(r,w/2,h/2);
-    ctx.beginPath();
-    ctx.moveTo(x+rr,y);
-    ctx.arcTo(x+w,y,x+w,y+h,rr);
-    ctx.arcTo(x+w,y+h,x,y+h,rr);
-    ctx.arcTo(x,y+h,x,y,rr);
-    ctx.arcTo(x,y,x+w,y,rr);
-    ctx.closePath();
-    ctx.stroke();
+  function drawPause(){
+    if(S.game==="snake") Snake.draw();
+    else Bounce.draw();
+    const topH=drawTopBar();
+
+    ctx.fillStyle="rgba(0,0,0,.25)";
+    const w=cv.width*0.58, h=cv.height*0.12;
+    rr((cv.width-w)/2, topH + (cv.height-topH)*0.42, w, h, 16, true);
+
+    ctx.fillStyle="rgba(255,255,255,.92)";
+    ctx.textAlign="center";
+    ctx.textBaseline="middle";
+    ctx.font=`${clamp(cv.width*0.055, 16, 30)}px system-ui`;
+    ctx.fillText(T[lang].paused, cv.width/2, topH + (cv.height-topH)*0.48);
   }
 
-  // (Games are defined in next parts)
-  const Snake={}, Bounce={};
-
-  // ---------- Main loop ----------
-  let last=now();
-  function loop(){
-    resize();
-    const t=now();
-    const dt=clamp((t-last)/1000, 0, 0.04);
-    last=t;
-
-    // time
-    if(S.mode!=="menu"){ S.time = t - S.startedAt; }
-
-    // controller global actions
-    if(I.pressSelect){ toggleLang(); I.pressSelect=false; }
-    if(I.pressStart){ togglePause(); I.pressStart=false; }
-    if(I.pressL){ // restart
-      if(S.mode==="play"||S.mode==="pause"||S.mode==="result"){
-        startGame(S.game);
-      }
-      I.pressL=false;
-    }
-    if(I.pressR){ // menu
-      goMenu();
-      I.pressR=false;
-    }
-
-    // menu control
-    if(S.mode==="menu"){
-      if(I.left||I.right){
-        if(I.left) S.menuIdx=0;
-        if(I.right) S.menuIdx=1;
-        S.game = (S.menuIdx===0) ? "snake" : "bounce";
-      }
-      if(I.pressA){
-        startGame(S.menuIdx===0 ? "snake" : "bounce");
-        I.pressA=false;
-      }
-      drawMenu();
-      clearPresses();
-      requestAnimationFrame(loop);
-      return;
-    }
-
-    // result control
-    if(S.mode==="result"){
-      if(I.pressA){
-        startGame(S.game);
-        I.pressA=false;
-      }
-      if(I.pressB){
-        // close => stay in menu for simplicity
-        goMenu();
-        I.pressB=false;
-      }
-      drawResult();
-      clearPresses();
-      requestAnimationFrame(loop);
-      return;
-    }
-
-    // pause screen
-    if(S.mode==="pause"){
-      if(S.game==="snake") Snake.draw();
-      else Bounce.draw();
-      drawTopBar();
-
-      // small pause label (transparent)
-      ctx.fillStyle="rgba(0,0,0,.25)";
-      const w=cv.width*0.55, h=cv.height*0.12;
-      roundRect((cv.width-w)/2, cv.height*0.44, w, h, 16, true);
-      ctx.fillStyle="rgba(255,255,255,.92)";
-      ctx.textAlign="center";
-      ctx.font=`${Math.floor(cv.width*0.05)}px system-ui`;
-      ctx.fillText(T[lang].paused, cv.width/2, cv.height*0.51);
-
-      clearPresses();
-      requestAnimationFrame(loop);
-      return;
-    }
-
-    // play
-    if(S.mode==="play"){
-      if(S.game==="snake") Snake.update(dt);
-      else Bounce.update(dt);
-
-      if(S.game==="snake") Snake.draw();
-      else Bounce.draw();
-
-      drawTopBar();
-    }
-
-    clearPresses();
-    requestAnimationFrame(loop);
-  }
-// =================
-  // 🐍 SNAKE
-  // =================
+  // ---------- games placeholders ----------
+  const Snake = {};
+  const Bounce = {};
+// =========================
+  // 🐍 SNAKE (clear head, min cell, correct rules)
+  // =========================
   (function(){
-    const GW=22, GH=16; // fits phone nicely
+    const GW=22, GH=16;
     let cell=16, ox=0, oy=0;
-
-    let snake=[], dir={x:1,y:0};
-    let food={x:10,y:8};
+    let snake=[], dir={x:1,y:0}, food={x:10,y:8};
     let tick=0, speed=7;
     let alive=true;
 
-    function layout(){
-      const topBarH=Math.floor(cv.height*0.08);
-      const pad= Math.floor(Math.min(cv.width,cv.height)*0.06);
+    function layout(topH){
+      const pad=Math.floor(Math.min(cv.width,cv.height)*0.05);
       const usableW = cv.width - pad*2;
-      const usableH = (cv.height - topBarH) - pad*2;
+      const usableH = (cv.height - topH) - pad*2;
 
-      cell = Math.max(10, Math.floor(Math.min(usableW/GW, usableH/GH)));
+      cell = Math.floor(Math.min(usableW/GW, usableH/GH));
+      cell = clamp(cell, 12, 40); // IMPORTANT: min so head visible
       ox = Math.floor((cv.width - cell*GW)/2);
-      oy = Math.floor(topBarH + ( (cv.height-topBarH) - cell*GH )/2 );
+      oy = Math.floor(topH + ((cv.height-topH) - cell*GH)/2);
     }
 
     function placeFood(){
-      for(let i=0;i<2000;i++){
+      for(let i=0;i<3000;i++){
         const fx=(Math.random()*GW)|0;
         const fy=(Math.random()*GH)|0;
         if(!snake.some(p=>p.x===fx && p.y===fy)){ food={x:fx,y:fy}; return; }
@@ -753,21 +707,14 @@
     }
 
     function init(){
-      layout();
-      snake=[
-        {x:6,y:(GH/2)|0},
-        {x:5,y:(GH/2)|0},
-        {x:4,y:(GH/2)|0}
-      ];
+      S.apples=0; S.len=3; S.level=1;
+      snake=[ {x:6,y:(GH/2)|0},{x:5,y:(GH/2)|0},{x:4,y:(GH/2)|0} ];
       dir={x:1,y:0};
       tick=0; speed=7; alive=true;
-
-      S.score=0; S.apples=0; S.length=3; S.level=1;
       placeFood();
     }
 
     function setDir(nx,ny){
-      // prevent direct reverse
       if(nx===-dir.x && ny===-dir.y) return;
       dir={x:nx,y:ny};
     }
@@ -775,51 +722,50 @@
     function step(){
       if(!alive) return;
 
-      // dpad directions
-      if(I.up) setDir(0,-1);
-      else if(I.down) setDir(0,1);
-      else if(I.left) setDir(-1,0);
-      else if(I.right) setDir(1,0);
+      // D-Pad
+      if(jp.UP) setDir(0,-1);
+      else if(jp.DOWN) setDir(0,1);
+      else if(jp.LEFT) setDir(-1,0);
+      else if(jp.RIGHT) setDir(1,0);
 
       const h=snake[0];
       const nx=h.x+dir.x, ny=h.y+dir.y;
 
-      // wall
-      if(nx<0||nx>=GW||ny<0||ny>=GH){ gameOver(); return; }
-      // self
-      if(snake.some((p,i)=>i>0 && p.x===nx && p.y===ny)){ gameOver(); return; }
+      if(nx<0||nx>=GW||ny<0||ny>=GH){ over(); return; }
+      if(snake.some((p,i)=>i>0 && p.x===nx && p.y===ny)){ over(); return; }
 
       snake.unshift({x:nx,y:ny});
 
       if(nx===food.x && ny===food.y){
         S.score += 10;
         S.apples++;
-        S.length=snake.length;
+        S.len=snake.length;
 
         S.level = 1 + Math.floor(S.apples/5);
         speed = 7 + (S.level-1)*1.2;
 
         placeFood();
         setBest("snake", S.score);
-      }else{
+      } else {
         snake.pop();
-        S.length=snake.length;
+        S.len=snake.length;
       }
     }
 
-    function gameOver(){
+    function over(){
       alive=false;
-      setBest("snake", S.score);
       showResult("over", [
-        (lang==="ar") ? `النتيجة: ${S.score}` : `Score: ${S.score}`,
-        (lang==="ar") ? `التفاح: ${S.apples}` : `Apples: ${S.apples}`,
-        (lang==="ar") ? `الطول: ${S.length}` : `Length: ${S.length}`,
-        (lang==="ar") ? `الوقت: ${fmtTime(S.time)}` : `Time: ${fmtTime(S.time)}`
+        `${T[lang].score}: ${S.score}`,
+        `${T[lang].apples}: ${S.apples}`,
+        `${T[lang].len}: ${S.len}`,
+        `${T[lang].time}: ${fmtTime(timeMs())}`
       ]);
     }
 
     function update(dt){
-      layout();
+      const topH=drawTopBar(); // compute layout based on top bar
+      layout(topH);
+
       tick += dt*speed;
       while(tick>=1){
         tick-=1;
@@ -829,56 +775,49 @@
     }
 
     function draw(){
-      layout();
-      // background
+      const topH=drawTopBar();
+      layout(topH);
+
       ctx.fillStyle="#061025";
       ctx.fillRect(0,0,cv.width,cv.height);
 
-      // board area (transparent look)
+      // board frame
       ctx.fillStyle="rgba(255,255,255,.04)";
-      roundRect(ox-10, oy-10, cell*GW+20, cell*GH+20, 18, true);
+      rr(ox-10, oy-10, cell*GW+20, cell*GH+20, 18, true);
 
-      // grid faint
+      // grid
       ctx.fillStyle="rgba(255,255,255,.025)";
-      for(let y=0;y<=GH;y++){
-        ctx.fillRect(ox, oy+y*cell, cell*GW, 1);
-      }
-      for(let x=0;x<=GW;x++){
-        ctx.fillRect(ox+x*cell, oy, 1, cell*GH);
-      }
+      for(let y=0;y<=GH;y++) ctx.fillRect(ox, oy+y*cell, cell*GW, 1);
+      for(let x=0;x<=GW;x++) ctx.fillRect(ox+x*cell, oy, 1, cell*GH);
 
       // food
       const fx=ox+food.x*cell+cell/2;
       const fy=oy+food.y*cell+cell/2;
       ctx.fillStyle="rgba(255,211,79,.95)";
-      ctx.beginPath();
-      ctx.arc(fx,fy, cell*0.24, 0, Math.PI*2);
-      ctx.fill();
+      ctx.beginPath(); ctx.arc(fx,fy, cell*0.24, 0, Math.PI*2); ctx.fill();
 
-      // snake body
+      // snake (head + eyes)
       for(let i=snake.length-1;i>=0;i--){
         const p=snake[i];
         const x=ox+p.x*cell, y=oy+p.y*cell;
-        const inset=Math.floor(cell*0.12);
-        const rr=Math.floor(cell*0.28);
+        const inset=Math.max(2, Math.floor(cell*0.12));
+        const r=Math.floor(cell*0.28);
 
         if(i===0){
-          // head
           ctx.fillStyle="rgba(78,161,255,.95)";
-          roundRect(x+inset, y+inset, cell-inset*2, cell-inset*2, rr, true);
+          rr(x+inset,y+inset,cell-inset*2,cell-inset*2,r,true);
 
-          // eyes
           const ex1=x+cell*0.38, ex2=x+cell*0.62;
-          const ey=y+cell*0.42;
+          const ey=y+cell*0.43;
           ctx.fillStyle="rgba(255,255,255,.92)";
-          ctx.beginPath(); ctx.arc(ex1,ey, cell*0.07, 0, Math.PI*2); ctx.fill();
-          ctx.beginPath(); ctx.arc(ex2,ey, cell*0.07, 0, Math.PI*2); ctx.fill();
+          ctx.beginPath(); ctx.arc(ex1,ey, Math.max(2,cell*0.07), 0, Math.PI*2); ctx.fill();
+          ctx.beginPath(); ctx.arc(ex2,ey, Math.max(2,cell*0.07), 0, Math.PI*2); ctx.fill();
           ctx.fillStyle="rgba(0,0,0,.65)";
-          ctx.beginPath(); ctx.arc(ex1,ey, cell*0.035, 0, Math.PI*2); ctx.fill();
-          ctx.beginPath(); ctx.arc(ex2,ey, cell*0.035, 0, Math.PI*2); ctx.fill();
+          ctx.beginPath(); ctx.arc(ex1,ey, Math.max(1.3,cell*0.035), 0, Math.PI*2); ctx.fill();
+          ctx.beginPath(); ctx.arc(ex2,ey, Math.max(1.3,cell*0.035), 0, Math.PI*2); ctx.fill();
         } else {
-          ctx.fillStyle="rgba(78,161,255,.70)";
-          roundRect(x+inset, y+inset, cell-inset*2, cell-inset*2, rr, true);
+          ctx.fillStyle="rgba(78,161,255,.72)";
+          rr(x+inset,y+inset,cell-inset*2,cell-inset*2,r,true);
         }
       }
     }
@@ -887,13 +826,12 @@
     Snake.update=update;
     Snake.draw=draw;
   })();
-// =================
-  // 🔴 BOUNCE (core rules)
-  // =================
+
+  // =========================
+  // 🔴 BOUNCE (better collision + gate locked toast)
+  // =========================
   (function(){
     const TILE=24;
-
-    // # solid, . empty, o hoop, ^ spike, G gate, C checkpoint
     const LEVELS=[
       [
         "........................................",
@@ -948,43 +886,35 @@
       ]
     ];
 
-    let map=[], W=0,H=0;
-    let stage=0;
-    let hoopsTotal=0;
-    let respawn={x: TILE*2, y: TILE*2};
+    let map=[], W=0,H=0, stage=0;
+    let respawn={x:TILE*2,y:TILE*2};
 
     const ball={x:0,y:0,vx:0,vy:0,r:11};
-
     let camX=0, camY=0;
 
-    function loadStage(i, freshRun){
+    function loadStage(i, fresh){
       stage=i;
       S.stage=i+1;
 
       map=LEVELS[i].map(r=>r.split(""));
       H=map.length; W=map[0].length;
 
-      hoopsTotal=0;
-      for(let y=0;y<H;y++)for(let x=0;x<W;x++) if(map[y][x]==="o") hoopsTotal++;
+      let hoops=0;
+      for(let y=0;y<H;y++)for(let x=0;x<W;x++) if(map[y][x]==="o") hoops++;
+      S.hoopsLeft=hoops;
 
-      S.hoopsLeft=hoopsTotal;
+      respawn={x:TILE*2,y:TILE*2};
+      ball.x=respawn.x; ball.y=respawn.y; ball.vx=0; ball.vy=0;
+      camX=0; camY=0;
 
-      // respawn resets each stage to start
-      respawn={x:TILE*2, y:TILE*2};
-
-      // ball reset
-      ball.x=respawn.x; ball.y=respawn.y;
-      ball.vx=0; ball.vy=0;
-
-      if(freshRun){
-        S.score=0;
-        S.lives=3;      // core rule: starts with 3 lives 2
+      if(fresh){
+        S.lives=3;
         S.deaths=0;
       }
     }
 
     function init(){
-      loadStage(0, true);
+      loadStage(0,true);
     }
 
     function tileAt(tx,ty){
@@ -1005,10 +935,8 @@
     }
 
     function collideSolids(cx,cy,cr){
-      const L=( (cx-cr)/TILE )|0;
-      const R=( (cx+cr)/TILE )|0;
-      const Tt=( (cy-cr)/TILE )|0;
-      const B=( (cy+cr)/TILE )|0;
+      const L=((cx-cr)/TILE)|0, R=((cx+cr)/TILE)|0;
+      const Tt=((cy-cr)/TILE)|0, B=((cy+cr)/TILE)|0;
       for(let ty=Tt;ty<=B;ty++){
         for(let tx=L;tx<=R;tx++){
           if(isSolid(tx,ty)){
@@ -1020,73 +948,57 @@
       return false;
     }
 
-    function resolve(){
-      for(let i=0;i<24;i++){
-        if(!collideSolids(ball.x,ball.y,ball.r)) break;
-        ball.y -= 1;
-        if(!collideSolids(ball.x,ball.y,ball.r)){ ball.vy=Math.min(ball.vy,0); break; }
-        ball.y += 1;
-        ball.x += (ball.vx>=0)? -1 : 1;
-        if(!collideSolids(ball.x,ball.y,ball.r)){ ball.vx=0; break; }
-        ball.y -= 1;
-      }
-    }
-
-    function loseLife(reason){
+    function loseLife(){
       S.lives--;
       S.deaths++;
-
       if(S.lives<=0){
-        setBest("bounce", S.score);
         showResult("over", [
-          (lang==="ar") ? `المرحلة: ${S.stage}` : `Level: ${S.stage}`,
-          (lang==="ar") ? `النتيجة: ${S.score}` : `Score: ${S.score}`,
-          (lang==="ar") ? `مرات الخسارة: ${S.deaths}` : `Deaths: ${S.deaths}`,
-          (lang==="ar") ? `الوقت: ${fmtTime(S.time)}` : `Time: ${fmtTime(S.time)}`
+          `${T[lang].level}: ${S.stage}`,
+          `${T[lang].score}: ${S.score}`,
+          `Deaths: ${S.deaths}`,
+          `${T[lang].time}: ${fmtTime(timeMs())}`
         ]);
         return;
       }
-
-      // respawn at checkpoint
-      ball.x=respawn.x; ball.y=respawn.y;
-      ball.vx=0; ball.vy=0;
+      ball.x=respawn.x; ball.y=respawn.y; ball.vx=0; ball.vy=0;
     }
 
     function update(dt){
-      // movement (left/right like old phones)
-      const accel=1200, maxVx=520, gravity=1650, drag=0.995, bounce=0.72;
+      // left/right control only (classic)
+      const accel=1200, maxVx=520, gravity=1650, drag=0.995;
 
-      if(I.left) ball.vx -= accel*dt;
-      if(I.right) ball.vx += accel*dt;
+      // use HOLD for continuous movement
+      if(hold.left) ball.vx -= accel*dt;
+      if(hold.right) ball.vx += accel*dt;
       ball.vx = clamp(ball.vx, -maxVx, maxVx);
-
       ball.vy += gravity*dt;
 
+      // --- axis separation collision ---
+      // X
       ball.x += ball.vx*dt;
+      if(collideSolids(ball.x,ball.y,ball.r)){
+        ball.x -= ball.vx*dt;
+        ball.vx = -ball.vx*0.65;
+      }
+      // Y
       ball.y += ball.vy*dt;
+      if(collideSolids(ball.x,ball.y,ball.r)){
+        ball.y -= ball.vy*dt;
+        ball.vy = -Math.abs(ball.vy)*0.72;
+        // friction on ground hit
+        ball.vx *= 0.985;
+      }
 
       ball.vx *= Math.pow(drag, dt*60);
       ball.vy *= Math.pow(drag, dt*60);
 
-      if(collideSolids(ball.x,ball.y,ball.r)){
-        // simple bounce
-        ball.vy = -Math.abs(ball.vy)*bounce;
-        resolve();
-      }
+      if(ball.y > H*TILE + 420){ loseLife(); return; }
 
-      // fall -> lose
-      if(ball.y > H*TILE + 400){
-        loseLife("fall");
-        return;
-      }
-
-      // interactions around ball
       interact();
 
       // camera follow
       const viewW=cv.width, viewH=cv.height;
       const mapW=W*TILE, mapH=H*TILE;
-
       camX = clamp(ball.x - viewW*0.50, 0, Math.max(0, mapW-viewW));
       camY = clamp(ball.y - viewH*0.55, 0, Math.max(0, mapH-viewH));
     }
@@ -1099,51 +1011,36 @@
           const t=tileAt(x,y);
           const rx=x*TILE, ry=y*TILE;
 
-          // hoop collectible
-          if(t==="o"){
-            if(circleRect(ball.x,ball.y,ball.r, rx+6,ry+6,TILE-12,TILE-12)){
-              setTile(x,y,".");
-              S.score += 50;
-              S.hoopsLeft = Math.max(0, S.hoopsLeft-1);
-              setBest("bounce", S.score);
-            }
+          if(t==="o" && circleRect(ball.x,ball.y,ball.r, rx+6,ry+6,TILE-12,TILE-12)){
+            setTile(x,y,".");
+            S.score += 50;
+            S.hoopsLeft = Math.max(0,S.hoopsLeft-1);
+            setBest("bounce", S.score);
           }
 
-          // spike
-          if(t==="^"){
-            if(circleRect(ball.x,ball.y,ball.r, rx,ry,TILE,TILE)){
-              loseLife("spike");
-              return;
-            }
+          if(t==="^" && circleRect(ball.x,ball.y,ball.r, rx,ry,TILE,TILE)){
+            loseLife();
+            return;
           }
 
-          // checkpoint
-          if(t==="C"){
-            if(circleRect(ball.x,ball.y,ball.r, rx,ry,TILE,TILE)){
-              respawn={x: rx+TILE/2, y: ry+TILE/2};
-              // make it consumed visually
-              setTile(x,y,".");
-            }
+          if(t==="C" && circleRect(ball.x,ball.y,ball.r, rx,ry,TILE,TILE)){
+            respawn={x:rx+TILE/2, y:ry+TILE/2};
+            setTile(x,y,".");
           }
 
-          // gate: locked until hoopsLeft == 0 (core rule) 3
-          if(t==="G"){
-            if(circleRect(ball.x,ball.y,ball.r, rx,ry,TILE,TILE)){
-              if(S.hoopsLeft<=0){
-                // next stage or win
-                if(stage+1 < LEVELS.length){
-                  loadStage(stage+1, false);
-                }else{
-                  setBest("bounce", S.score);
-                  showResult("win", [
-                    (lang==="ar") ? `النتيجة: ${S.score}` : `Score: ${S.score}`,
-                    (lang==="ar") ? `مرات الخسارة: ${S.deaths}` : `Deaths: ${S.deaths}`,
-                    (lang==="ar") ? `الوقت: ${fmtTime(S.time)}` : `Time: ${fmtTime(S.time)}`
-                  ]);
-                }
+          if(t==="G" && circleRect(ball.x,ball.y,ball.r, rx,ry,TILE,TILE)){
+            if(S.hoopsLeft<=0){
+              if(stage+1<LEVELS.length){
+                loadStage(stage+1,false);
               }else{
-                // gate locked: tiny penalty or none
+                showResult("win", [
+                  `${T[lang].score}: ${S.score}`,
+                  `Deaths: ${S.deaths}`,
+                  `${T[lang].time}: ${fmtTime(timeMs())}`
+                ]);
               }
+            }else{
+              toast(T[lang].locked);
             }
           }
         }
@@ -1155,11 +1052,9 @@
       ctx.fillStyle="#4aaed6";
       ctx.fillRect(0,0,cv.width,cv.height);
 
-      // draw tiles in view
-      const startTx=(camX/TILE)|0;
-      const endTx=((camX+cv.width)/TILE+1)|0;
-      const startTy=(camY/TILE)|0;
-      const endTy=((camY+cv.height)/TILE+1)|0;
+      // tiles in view
+      const startTx=(camX/TILE)|0, endTx=((camX+cv.width)/TILE+1)|0;
+      const startTy=(camY/TILE)|0, endTy=((camY+cv.height)/TILE+1)|0;
 
       for(let ty=startTy;ty<endTy;ty++){
         for(let tx=startTx;tx<endTx;tx++){
@@ -1175,31 +1070,30 @@
         }
       }
 
-      // ball
-      drawBall(ball.x-camX, ball.y-camY, ball.r);
+      ballDraw(ball.x-camX, ball.y-camY, ball.r);
 
-      // small helper text inside game (transparent)
-      ctx.fillStyle="rgba(0,0,0,.20)";
-      ctx.font=`${Math.floor(cv.height*0.03)}px system-ui`;
-      ctx.textAlign="left";
-      ctx.fillText(`Hoops: ${S.hoopsLeft}`, 14, Math.floor(cv.height*0.13));
+      // toast
+      if(S.toastText && now()<S.toastUntil){
+        ctx.fillStyle="rgba(0,0,0,.25)";
+        const w=cv.width*0.72, h=cv.height*0.10;
+        rr((cv.width-w)/2, cv.height*0.78, w, h, 16, true);
+        ctx.fillStyle="rgba(255,255,255,.92)";
+        ctx.textAlign="center";
+        ctx.textBaseline="middle";
+        ctx.font=`${clamp(cv.width*0.045, 14, 24)}px system-ui`;
+        ctx.fillText(S.toastText, cv.width/2, cv.height*0.83);
+      }
     }
 
-    function drawBall(x,y,r){
+    function ballDraw(x,y,r){
       ctx.fillStyle="rgba(0,0,0,.18)";
-      ctx.beginPath();
-      ctx.ellipse(x, y + r*0.85, r*1.05, r*0.35, 0, 0, Math.PI*2);
-      ctx.fill();
+      ctx.beginPath(); ctx.ellipse(x, y+r*0.85, r*1.05, r*0.35, 0, 0, Math.PI*2); ctx.fill();
 
       ctx.fillStyle="#e83535";
-      ctx.beginPath();
-      ctx.arc(x,y,r,0,Math.PI*2);
-      ctx.fill();
+      ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
 
       ctx.fillStyle="rgba(255,255,255,.30)";
-      ctx.beginPath();
-      ctx.arc(x-r*0.35,y-r*0.35,r*0.35,0,Math.PI*2);
-      ctx.fill();
+      ctx.beginPath(); ctx.arc(x-r*0.35,y-r*0.35,r*0.35,0,Math.PI*2); ctx.fill();
     }
 
     function brick(x,y){
@@ -1211,7 +1105,6 @@
       ctx.lineWidth=2;
       ctx.strokeRect(x+1,y+1,TILE-2,TILE-2);
     }
-
     function hoop(x,y){
       ctx.strokeStyle="rgba(255,211,79,.95)";
       ctx.lineWidth=4;
@@ -1219,7 +1112,6 @@
       ctx.arc(x+TILE/2,y+TILE/2,TILE*0.28,0,Math.PI*2);
       ctx.stroke();
     }
-
     function spike(x,y){
       ctx.fillStyle="rgba(10,16,28,.92)";
       ctx.beginPath();
@@ -1231,27 +1123,23 @@
       ctx.closePath();
       ctx.fill();
     }
-
     function checkpoint(x,y){
       ctx.fillStyle="rgba(255,255,255,.18)";
-      roundRect(x+4,y+4,TILE-8,TILE-8,7,true);
+      rr(x+4,y+4,TILE-8,TILE-8,7,true);
       ctx.strokeStyle="rgba(255,255,255,.55)";
       ctx.lineWidth=2;
-      roundRectStroke(x+4,y+4,TILE-8,TILE-8,7);
+      rr(x+4,y+4,TILE-8,TILE-8,7,false);
       ctx.fillStyle="rgba(255,255,255,.85)";
       ctx.font=`${Math.floor(TILE*0.55)}px system-ui`;
       ctx.textAlign="center";
       ctx.fillText("C", x+TILE/2, y+TILE*0.73);
     }
-
     function gate(x,y,open){
       ctx.fillStyle=open ? "rgba(255,255,255,.22)" : "rgba(0,0,0,.20)";
-      roundRect(x+2,y+2,TILE-4,TILE-4,7,true);
-
+      rr(x+2,y+2,TILE-4,TILE-4,7,true);
       ctx.strokeStyle=open ? "rgba(255,255,255,.92)" : "rgba(255,255,255,.35)";
       ctx.lineWidth=2;
-      roundRectStroke(x+4,y+4,TILE-8,TILE-8,6);
-
+      rr(x+4,y+4,TILE-8,TILE-8,6,false);
       ctx.fillStyle=open ? "rgba(255,255,255,.92)" : "rgba(255,255,255,.70)";
       ctx.font=`${Math.floor(TILE*0.55)}px system-ui`;
       ctx.textAlign="center";
@@ -1262,9 +1150,80 @@
     Bounce.update=update;
     Bounce.draw=draw;
   })();
-// Start from menu
+function main(){
+    resize();
+
+    // global controls
+    if(jp.SELECT){ toggleLang(); }
+    if(jp.START){
+      if(S.mode==="play" || S.mode==="pause") togglePause();
+    }
+    if(jp.L){
+      if(S.mode!=="menu"){
+        startGame(S.game);
+      }
+    }
+    if(jp.R){
+      goMenu();
+    }
+
+    // menu controls (one step only)
+    if(S.mode==="menu"){
+      if(jp.LEFT){ S.menuIdx=0; S.game="snake"; }
+      if(jp.RIGHT){ S.menuIdx=1; S.game="bounce"; }
+      if(jp.A){
+        startGame(S.menuIdx===0 ? "snake" : "bounce");
+      }
+      drawMenu();
+      clearJustPressed();
+      requestAnimationFrame(main);
+      return;
+    }
+
+    // result controls
+    if(S.mode==="result"){
+      if(jp.A){
+        startGame(S.game);
+      }
+      if(jp.B){
+        goMenu();
+      }
+      drawResult();
+      clearJustPressed();
+      requestAnimationFrame(main);
+      return;
+    }
+
+    // pause
+    if(S.mode==="pause"){
+      drawPause();
+      clearJustPressed();
+      requestAnimationFrame(main);
+      return;
+    }
+
+    // play
+    const dt = 1/60; // stable on phones
+    if(S.mode==="play"){
+      if(S.game==="snake"){
+        Snake.update(dt);
+        Snake.draw();
+      } else {
+        Bounce.update(dt);
+        Bounce.draw();
+      }
+      // top bar drawn inside games; keep it once more? no (already drawn)
+      // but we want always, so drawTopBar at end:
+      drawTopBar();
+    }
+
+    clearJustPressed();
+    requestAnimationFrame(main);
+  }
+
+  // Boot
   goMenu();
-  requestAnimationFrame(loop);
+  requestAnimationFrame(main);
 
 })();
 </script>
