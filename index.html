@@ -1,4 +1,4 @@
-<!doctype html>
+<!doctype html发现   html>
 <html lang="en" dir="ltr">
 <head>
   <meta charset="utf-8" />
@@ -10,52 +10,41 @@
     :root{
       --bg:#070d18;
       --txt: rgba(255,255,255,.92);
-      --line: rgba(255,255,255,.14);
-
       --padBase: rgba(240,240,240,.94);
       --padDark: rgba(22,24,30,.94);
       --shadow: rgba(0,0,0,.35);
-
       --A:#e43b3b;
 
-      /* ✅ خليه أكبر للعبة (بدون ما نخفي الأزرار) */
-      --gamePart: 62;
-      --padPart: 38;
+      /* ✅ 50/50 فعلياً */
+      --gamePart: 50;
+      --padPart: 50;
 
-      /* ✅ سيتحدد من JS: 1% من الارتفاع الحقيقي */
+      /* ✅ ارتفاع مرئي حقيقي */
       --vh: 1vh;
     }
 
     *{box-sizing:border-box}
     html,body{height:100%}
-
     body{
       margin:0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
       background: radial-gradient(1200px 900px at 70% 15%, #1b2a55, var(--bg));
       color:var(--txt);
-
-      /* ✅ لا نسمح بسكرول يسبب قص/إخفاء عناصر */
       overflow:hidden;
       overscroll-behavior: none;
-
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
     }
 
-    /* ✅ أهم إصلاح: ارتفاع التطبيق = ارتفاع مرئي حقيقي */
     .app{
       height: calc(var(--vh) * 100);
       display:grid;
       grid-template-rows: calc(var(--gamePart) * 1fr) calc(var(--padPart) * 1fr);
-      min-height: 0;
+      min-height:0;
     }
 
-    /* ======= شاشة اللعبة ======= */
-    .screenWrap{
-      min-height: 0;
-      padding: 0;
-    }
+    /* ======= GAME ======= */
+    .screenWrap{min-height:0}
     .screenFrame{
       height:100%;
       width:100%;
@@ -68,20 +57,19 @@
       height:100%;
       display:block;
       background:#050b14;
-      touch-action: none;
+      touch-action:none;
     }
 
-    /* ======= يد التحكم ======= */
+    /* ======= PAD ======= */
     .pad{
-      min-height: 0;
+      min-height:0;
       padding: 10px 12px;
       padding-bottom: calc(10px + env(safe-area-inset-bottom));
       background: rgba(0,0,0,.12);
       overflow:hidden;
     }
-
     .padBody{
-      height: 100%;
+      height:100%;
       max-width: 980px;
       margin: 0 auto;
       border-radius: 26px;
@@ -94,12 +82,12 @@
       display:flex;
       flex-direction:column;
       justify-content:space-between;
-      min-height: 0;
+      min-height:0;
     }
     .padBody:before{
       content:"";
       position:absolute; inset:-45% -20% auto -20%;
-      height: 80%;
+      height:80%;
       transform: rotate(-10deg);
       background: rgba(255,255,255,.22);
       pointer-events:none;
@@ -110,13 +98,10 @@
       cursor:pointer;
       user-select:none;
       -webkit-user-select:none;
-
-      /* ✅ يقلل تأخر/تداخل المتصفح */
       touch-action:none;
     }
     .btn:active{ transform: translateY(1px); }
 
-    /* أعلى يد التحكم */
     .padTop{
       z-index:1;
       display:flex;
@@ -125,53 +110,55 @@
       gap:10px;
       padding: 2px 2px 6px 2px;
     }
+
+    /* ✅ كبرنا أزرار الأعلى */
     .smallBtn{
-      height: 48px;
-      padding: 0 16px;
-      border-radius: 16px;
+      height: 54px;
+      padding: 0 18px;
+      border-radius: 18px;
       background: rgba(0,0,0,.12);
       border: 1px solid rgba(0,0,0,.14);
-      font-weight: 1000;
-      color: rgba(0,0,0,.72);
+      font-weight: 1100;
+      color: rgba(0,0,0,.78);
+      font-size: 15px;
     }
 
-    /* ✅ D-PAD في الوسط + كبير */
     .padMain{
       z-index:1;
       display:grid;
-      grid-template-columns: 1fr 1.35fr 1fr; /* الوسط أكبر */
+      grid-template-columns: 1fr 1.35fr 1fr;
       align-items:center;
       gap: 10px;
       padding: 6px 0;
-      min-height: 0;
+      min-height:0;
     }
 
-    /* يسار: أزرار جانبية */
+    /* ✅ كبرنا أزرار الجوانب */
     .sideLeft{
       display:grid;
       justify-items:start;
-      gap: 12px;
+      gap: 14px;
       padding-left: 4px;
     }
     .pill{
-      width: 170px;
-      height: 64px;
+      width: 190px;
+      height: 72px;
       border-radius: 999px;
       background: rgba(0,0,0,.10);
       border: 1px solid rgba(0,0,0,.14);
-      font-weight: 1000;
-      color: rgba(0,0,0,.72);
-      font-size: 16px;
+      font-weight: 1100;
+      color: rgba(0,0,0,.78);
+      font-size: 17px;
     }
     .sub{
       font-size: 12px;
       font-weight: 900;
       color: rgba(0,0,0,.55);
-      margin-top: -6px;
-      padding-left: 8px;
+      margin-top: -8px;
+      padding-left: 10px;
     }
 
-    /* وسط: D-PAD عملاق */
+    /* D-PAD */
     .dpad{
       display:grid;
       justify-items:center;
@@ -188,7 +175,7 @@
       border-radius: 26px;
       background: var(--padDark);
       color: rgba(255,255,255,.94);
-      font-weight: 1100;
+      font-weight: 1200;
       font-size: 32px;
       box-shadow: inset 0 0 0 2px rgba(255,255,255,.06), 0 14px 26px rgba(0,0,0,.22);
     }
@@ -203,31 +190,31 @@
       box-shadow: inset 0 0 0 2px rgba(255,255,255,.05);
     }
 
-    /* يمين: A كبير + Restart */
     .sideRight{
       display:grid;
       justify-items:end;
-      gap: 12px;
+      gap: 14px;
       padding-right: 4px;
     }
     .A{
-      width: 148px;
-      height: 148px;
+      width: 154px;
+      height: 154px;
       border-radius: 999px;
       background: var(--A);
       color: rgba(255,255,255,.95);
-      font-weight: 1200;
-      font-size: 32px;
+      font-weight: 1300;
+      font-size: 34px;
       box-shadow: inset 0 0 0 3px rgba(255,255,255,.35), 0 16px 30px rgba(0,0,0,.25);
     }
     .restart{
-      width: 170px;
-      height: 58px;
+      width: 190px;
+      height: 64px;
       border-radius: 18px;
       background: rgba(0,0,0,.12);
       border: 1px solid rgba(0,0,0,.14);
       font-weight: 1100;
-      color: rgba(0,0,0,.72);
+      color: rgba(0,0,0,.78);
+      font-size: 15px;
     }
 
     .padHint{
@@ -242,21 +229,21 @@
       padding: 0 8px;
     }
 
-    /* ✅ للشاشات الصغيرة: ما يصير قص */
+    /* موبايل صغير */
     @media (max-width: 420px){
-      .padBtn{ width: 118px; height: 98px; font-size: 30px; }
-      .centerDot{ width: 84px; height: 84px; }
-      .pill{ width: 155px; height: 60px; }
-      .restart{ width: 155px; }
-      .A{ width: 136px; height: 136px; }
-      .padMain{ gap: 8px; }
+      .pill{ width: 170px; height: 68px; }
+      .restart{ width: 170px; height: 60px; }
+      .A{ width: 140px; height: 140px; }
+      .padBtn{ width: 122px; height: 102px; }
+      .centerDot{ width: 86px; height: 86px; }
     }
 
-    /* ✅ إذا الشاشة قصيرة جدًا: قلل قليلًا بدل ما تختفي الأزرار */
+    /* شاشة قصيرة جداً */
     @media (max-height: 720px){
-      :root{ --gamePart: 58; --padPart: 42; }
-      .padBtn{ width: 116px; height: 96px; }
-      .A{ width: 132px; height: 132px; }
+      .pill{ width: 170px; height: 66px; }
+      .restart{ width: 170px; height: 58px; }
+      .padBtn{ width: 118px; height: 98px; }
+      .A{ width: 138px; height: 138px; }
     }
   </style>
 </head>
@@ -273,19 +260,19 @@
       <div class="padBody">
 
         <div class="padTop">
-          <button class="btn smallBtn" data-k="SELECT">SELECT</button>
-          <button class="btn smallBtn" data-k="R">MENU</button>
+          <button class="btn smallBtn" data-k="SELECT" id="btnSelect">SELECT</button>
+          <button class="btn smallBtn" data-k="R" id="btnMenu">MENU</button>
         </div>
 
         <div class="padMain">
           <div class="sideLeft">
             <div>
-              <button class="btn pill" data-k="START">START</button>
-              <div class="sub">Pause</div>
+              <button class="btn pill" data-k="START" id="btnStart">START</button>
+              <div class="sub" id="lblPause">Pause</div>
             </div>
             <div>
-              <button class="btn pill" data-k="LANG">LANG</button>
-              <div class="sub">AR / EN</div>
+              <button class="btn pill" data-k="LANG" id="btnLang">LANG</button>
+              <div class="sub" id="lblLang">AR / EN</div>
             </div>
           </div>
 
@@ -300,12 +287,12 @@
           </div>
 
           <div class="sideRight">
-            <button class="btn A" data-k="A">A</button>
-            <button class="btn restart" data-k="L">RESTART</button>
+            <button class="btn A" data-k="A" id="btnA">A</button>
+            <button class="btn restart" data-k="L" id="btnRestart">RESTART</button>
           </div>
         </div>
 
-        <div class="padHint">
+        <div class="padHint" id="hintLine">
           HM GAME 🎮 — D-Pad Move • A Start/Confirm • START Pause • LANG/SELECT AR/EN • RESTART • MENU
         </div>
 
@@ -316,8 +303,7 @@
 (() => {
   "use strict";
 
-  /* ✅ FIX: viewport height الحقيقي (يحل مشكلة اختفاء الأزرار + قص اللعبة)
-     يعتمد على visualViewport إذا موجود، وإلا innerHeight */
+  // ✅ viewport height الحقيقي (يثبت 50/50 على كل الأوضاع)
   function setRealVH(){
     const h = (window.visualViewport?.height || window.innerHeight);
     document.documentElement.style.setProperty("--vh", (h * 0.01) + "px");
@@ -341,7 +327,6 @@
     ctx.imageSmoothingEnabled = false;
   }
 
-  // منع قائمة الضغط الطويل
   window.addEventListener("contextmenu", e => e.preventDefault(), {passive:false});
 
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
@@ -352,31 +337,72 @@
     return `${pad2(Math.floor(s/60))}:${pad2(s%60)}`;
   };
 
-  // Language
-  const LANG_KEY="HM_LANG_SNAKE_FINAL2";
+  // ---------- Language (يترجم كل شيء)
+  const LANG_KEY="HM_LANG_SNAKE_FINAL3";
   let lang = localStorage.getItem(LANG_KEY) || "en";
+
   const T={
     ar:{
       title:"HM GAME | ثعبان",
-      menu:"اضغط A للبدء",
+      menu:"اضغط زر (أ) للبدء",
       paused:"⏸️ متوقف مؤقتاً",
       over:"😵 انتهت اللعبة",
       score:"النتيجة", best:"الأفضل", time:"الوقت",
       apples:"تفاح", len:"الطول", level:"المستوى",
+      btnSelect:"تحديد",
+      btnMenu:"القائمة",
+      btnStart:"ابدأ",
+      lblPause:"إيقاف مؤقت",
+      btnLang:"اللغة",
+      btnRestart:"إعادة التشغيل",
+      hint:"HM GAME 🎮 — التحريك: الأسهم • (أ) بدء/تأكيد • ابدأ: إيقاف • اللغة/تحديد: AR/EN • إعادة التشغيل • القائمة",
+      resultFoot:"أ: إعادة  •  القائمة: قائمة  •  ابدأ: إغلاق"
     },
     en:{
       title:"HM GAME | Snake",
-      menu:"Press A to start",
+      menu:"Press (A) to start",
       paused:"⏸️ Paused",
       over:"😵 Game Over",
       score:"Score", best:"Best", time:"Time",
       apples:"Apples", len:"Len", level:"Level",
+      btnSelect:"SELECT",
+      btnMenu:"MENU",
+      btnStart:"START",
+      lblPause:"Pause",
+      btnLang:"LANG",
+      btnRestart:"RESTART",
+      hint:"HM GAME 🎮 — Move: D-Pad • A Start/Confirm • START Pause • LANG/SELECT AR/EN • RESTART • MENU",
+      resultFoot:"A: Restart   •   MENU: Menu   •   START: Close"
     }
   };
+
+  const ui = {
+    btnSelect: document.getElementById("btnSelect"),
+    btnMenu: document.getElementById("btnMenu"),
+    btnStart: document.getElementById("btnStart"),
+    lblPause: document.getElementById("lblPause"),
+    btnLang: document.getElementById("btnLang"),
+    btnRestart: document.getElementById("btnRestart"),
+    hintLine: document.getElementById("hintLine"),
+    btnA: document.getElementById("btnA"),
+  };
+
   function applyLang(){
     document.documentElement.lang = lang;
     document.documentElement.dir  = (lang==="ar") ? "rtl" : "ltr";
+
+    ui.btnSelect.textContent = T[lang].btnSelect;
+    ui.btnMenu.textContent   = T[lang].btnMenu;
+    ui.btnStart.textContent  = T[lang].btnStart;
+    ui.lblPause.textContent  = T[lang].lblPause;
+    ui.btnLang.textContent   = T[lang].btnLang;
+    ui.btnRestart.textContent= T[lang].btnRestart;
+    ui.hintLine.textContent  = T[lang].hint;
+
+    // زر A يبقى A (حسب طلبك) — إذا تريده "أ" بالعربي قلّي
+    ui.btnA.textContent = "A";
   }
+
   function toggleLang(){
     lang = (lang==="ar") ? "en" : "ar";
     localStorage.setItem(LANG_KEY, lang);
@@ -384,14 +410,14 @@
   }
   applyLang();
 
-  // Best score
-  const BEST_KEY="HM_BEST_SNAKE_FINAL2";
+  // ---------- Best score
+  const BEST_KEY="HM_BEST_SNAKE_FINAL3";
   let best = Number(localStorage.getItem(BEST_KEY) || "0");
   function setBest(v){
     if(v>best){ best=v; localStorage.setItem(BEST_KEY, String(best)); }
   }
 
-  // Input: PointerCapture + touch-action none
+  // ---------- Input (سريع)
   const hold={left:false,right:false,up:false,down:false};
   let wantDir = {x:1,y:0};
   const jp={A:false,START:false,LANG:false,L:false,R:false};
@@ -406,6 +432,7 @@
     if(k==="DOWN"){ hold.down=true; setWant(0,1); }
     if(k==="LEFT"){ hold.left=true; setWant(-1,0); }
     if(k==="RIGHT"){ hold.right=true; setWant(1,0); }
+
     if(k==="A") jp.A=true;
     if(k==="START") jp.START=true;
     if(k==="LANG" || k==="SELECT") jp.LANG=true;
@@ -436,7 +463,7 @@
     btn.addEventListener("lostpointercapture", off);
   });
 
-  // UI
+  // ---------- UI helpers
   function rr(x,y,w,h,r,fill){
     const rad=Math.min(r,w/2,h/2);
     ctx.beginPath();
@@ -456,7 +483,7 @@
     return s+"…";
   }
 
-  // State
+  // ---------- State
   const S={
     mode:"menu", // menu | play | pause | result
     score:0, apples:0, len:3, level:1,
@@ -496,7 +523,7 @@
     return h;
   }
 
-  // Snake
+  // ---------- Snake (Wrap + أبطأ + تفاحة أكبر)
   const Snake = {
     GW: 30, GH: 20,
     cell: 18, ox:0, oy:0,
@@ -505,7 +532,9 @@
     food: {x:5,y:5},
     alive: true,
     accMs: 0,
-    moveEveryMs: 90,
+
+    /* ✅ السرعة أبطأ ومناسبة */
+    moveEveryMs: 160,   // كان سريع جداً
 
     computeGridForScreen(){
       const topH = topBarH();
@@ -520,7 +549,7 @@
 
     layout(){
       const topH = topBarH();
-      const pad = 0; // ✅ بدون حواف تقريبًا
+      const pad = 0;
       const usableW = W - pad*2;
       const usableH = (H - topH) - pad*2;
 
@@ -557,7 +586,9 @@
 
       this.alive=true;
       this.accMs=0;
-      this.moveEveryMs=90;
+
+      /* ✅ بداية بطيئة مناسبة */
+      this.moveEveryMs=160;
 
       this.placeFood();
     },
@@ -582,11 +613,19 @@
       this.dir = {x: wantDir.x, y: wantDir.y};
 
       const h=this.snake[0];
-      const nx=h.x+this.dir.x;
-      const ny=h.y+this.dir.y;
+      let nx=h.x+this.dir.x;
+      let ny=h.y+this.dir.y;
 
-      if(nx<0||nx>=this.GW||ny<0||ny>=this.GH){ this.over(); return; }
-      if(this.snake.some((p,i)=>i>0 && p.x===nx && p.y===ny)){ this.over(); return; }
+      /* ✅ Wrap walls: يخرج من جهة ويدخل من الثانية */
+      if(nx < 0) nx = this.GW - 1;
+      if(nx >= this.GW) nx = 0;
+      if(ny < 0) ny = this.GH - 1;
+      if(ny >= this.GH) ny = 0;
+
+      /* ✅ Game over فقط عند الاصطدام بنفسه */
+      if(this.snake.some((p,i)=>i>0 && p.x===nx && p.y===ny)){
+        this.over(); return;
+      }
 
       this.snake.unshift({x:nx,y:ny});
 
@@ -595,8 +634,10 @@
         S.apples++;
         S.len=this.snake.length;
 
-        S.level = 1 + Math.floor(S.apples/5);
-        this.moveEveryMs = clamp(90 - (S.level-1)*6, 45, 90);
+        S.level = 1 + Math.floor(S.apples/6);
+
+        /* ✅ تسريع بسيط جداً مع المستويات (يبقى مناسب) */
+        this.moveEveryMs = clamp(160 - (S.level-1)*8, 110, 160);
 
         this.placeFood();
         setBest(S.score);
@@ -628,17 +669,17 @@
       ctx.fillStyle="#061025";
       ctx.fillRect(0,0,W,H);
 
-      // board background أكبر
       ctx.fillStyle="rgba(255,255,255,.05)";
       rr(this.ox-4, this.oy-4, this.cell*this.GW+8, this.cell*this.GH+8, 18, true);
 
-      // food
+      /* ✅ التفاحة أكبر */
       const fx=this.ox+this.food.x*this.cell+this.cell/2;
       const fy=this.oy+this.food.y*this.cell+this.cell/2;
       ctx.fillStyle="rgba(255,211,79,.95)";
-      ctx.beginPath(); ctx.arc(fx,fy, this.cell*0.24, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath();
+      ctx.arc(fx, fy, this.cell*0.34, 0, Math.PI*2);
+      ctx.fill();
 
-      // snake
       for(let i=this.snake.length-1;i>=0;i--){
         const p=this.snake[i];
         const x=this.ox+p.x*this.cell;
@@ -736,7 +777,7 @@
 
     ctx.fillStyle="rgba(255,255,255,.85)";
     ctx.font=`${footSize}px system-ui`;
-    ctx.fillText("A: Restart   •   MENU: Menu   •   START: Close", W/2, y + h*0.88);
+    ctx.fillText(T[lang].resultFoot, W/2, y + h*0.88);
   }
 
   function goMenu(){
