@@ -1,4 +1,4 @@
-<!doctype html发现   html>
+<!doctype html>
 <html lang="en" dir="ltr">
 <head>
   <meta charset="utf-8" />
@@ -10,46 +10,49 @@
     :root{
       --bg:#070d18;
       --txt: rgba(255,255,255,.92);
-      --padBase: rgba(240,240,240,.94);
-      --padDark: rgba(22,24,30,.94);
       --shadow: rgba(0,0,0,.35);
+
+      --padBase: rgba(240,240,240,.96);
+      --padDark: rgba(22,24,30,.95);
       --A:#e43b3b;
 
-      /* ✅ 50/50 فعلياً */
-      --gamePart: 50;
-      --padPart: 50;
-
-      /* ✅ ارتفاع مرئي حقيقي */
+      /* ✅ 50/50 فعلي */
       --vh: 1vh;
+
+      /* ✅ سكيل للأزرار (يتعدل من JS حسب ارتفاع لوحة التحكم) */
+      --padScale: 1;
     }
 
-    *{box-sizing:border-box}
-    html,body{height:100%}
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+
     body{
       margin:0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
       background: radial-gradient(1200px 900px at 70% 15%, #1b2a55, var(--bg));
-      color:var(--txt);
-      overflow:hidden;
-      overscroll-behavior: none;
+      color: var(--txt);
+
+      overflow:hidden;              /* ✅ لا سكرول */
+      overscroll-behavior:none;
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
     }
 
+    /* ✅ التطبيق = ارتفاع مرئي حقيقي */
     .app{
       height: calc(var(--vh) * 100);
       display:grid;
-      grid-template-rows: calc(var(--gamePart) * 1fr) calc(var(--padPart) * 1fr);
+      grid-template-rows: 1fr 1fr; /* ✅ 50/50 */
       min-height:0;
     }
 
-    /* ======= GAME ======= */
-    .screenWrap{min-height:0}
+    /* ======= Game Area ======= */
+    .screenWrap{ min-height:0; }
     .screenFrame{
       height:100%;
       width:100%;
-      border-bottom: 1px solid rgba(255,255,255,.10);
       background: rgba(0,0,0,.18);
+      border-bottom: 1px solid rgba(255,255,255,.10);
       overflow:hidden;
     }
     #cv{
@@ -60,39 +63,49 @@
       touch-action:none;
     }
 
-    /* ======= PAD ======= */
+    /* ======= Pad Area ======= */
     .pad{
       min-height:0;
-      padding: 10px 12px;
-      padding-bottom: calc(10px + env(safe-area-inset-bottom));
+      padding:0; /* ✅ مهم: لا نخلي padding هنا */
       background: rgba(0,0,0,.12);
       overflow:hidden;
     }
+
+    /* ✅ لوحة التحكم تملأ النصف بالكامل */
     .padBody{
       height:100%;
-      max-width: 980px;
-      margin: 0 auto;
-      border-radius: 26px;
-      border: 1px solid rgba(255,255,255,.10);
+      width:100%;
+      margin:0;
+      max-width:none;
+
       background: var(--padBase);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 26px;
       box-shadow: 0 16px 60px var(--shadow);
-      padding: 12px;
+
       position:relative;
       overflow:hidden;
+
+      /* ✅ padding داخلي (ما يأثر على التقسيم) */
+      padding: 12px;
+      padding-bottom: calc(12px + env(safe-area-inset-bottom));
+
       display:flex;
       flex-direction:column;
       justify-content:space-between;
       min-height:0;
     }
+
     .padBody:before{
       content:"";
       position:absolute; inset:-45% -20% auto -20%;
       height:80%;
-      transform: rotate(-10deg);
+      transform: hint  rotate(-10deg);
       background: rgba(255,255,255,.22);
       pointer-events:none;
     }
 
+    /* ======= Buttons Base ======= */
     .btn{
       border:none;
       cursor:pointer;
@@ -102,6 +115,7 @@
     }
     .btn:active{ transform: translateY(1px); }
 
+    /* ======= Top mini row ======= */
     .padTop{
       z-index:1;
       display:flex;
@@ -110,30 +124,29 @@
       gap:10px;
       padding: 2px 2px 6px 2px;
     }
-
-    /* ✅ كبرنا أزرار الأعلى */
     .smallBtn{
-      height: 54px;
-      padding: 0 18px;
-      border-radius: 18px;
+      height: calc(56px * var(--padScale));
+      padding: 0 calc(18px * var(--padScale));
+      border-radius: calc(18px * var(--padScale));
       background: rgba(0,0,0,.12);
       border: 1px solid rgba(0,0,0,.14);
       font-weight: 1100;
-      color: rgba(0,0,0,.78);
-      font-size: 15px;
+      color: rgba(0,0,0,.80);
+      font-size: calc(15px * var(--padScale));
     }
 
+    /* ======= Main pad grid ======= */
     .padMain{
       z-index:1;
       display:grid;
       grid-template-columns: 1fr 1.35fr 1fr;
       align-items:center;
-      gap: 10px;
+      gap: 12px;
       padding: 6px 0;
       min-height:0;
     }
 
-    /* ✅ كبرنا أزرار الجوانب */
+    /* Left side (bigger) */
     .sideLeft{
       display:grid;
       justify-items:start;
@@ -141,55 +154,56 @@
       padding-left: 4px;
     }
     .pill{
-      width: 190px;
-      height: 72px;
+      width: calc(210px * var(--padScale));
+      height: calc(78px * var(--padScale));
       border-radius: 999px;
       background: rgba(0,0,0,.10);
       border: 1px solid rgba(0,0,0,.14);
-      font-weight: 1100;
-      color: rgba(0,0,0,.78);
-      font-size: 17px;
+      font-weight: 1200;
+      color: rgba(0,0,0,.80);
+      font-size: calc(17px * var(--padScale));
     }
     .sub{
-      font-size: 12px;
+      font-size: calc(12px * var(--padScale));
       font-weight: 900;
       color: rgba(0,0,0,.55);
-      margin-top: -8px;
+      margin-top: calc(-8px * var(--padScale));
       padding-left: 10px;
     }
 
-    /* D-PAD */
+    /* Center D-Pad */
     .dpad{
       display:grid;
       justify-items:center;
-      gap: 14px;
+      gap: calc(14px * var(--padScale));
     }
     .drow{
       display:flex;
-      gap: 14px;
+      gap: calc(14px * var(--padScale));
       align-items:center;
     }
     .padBtn{
-      width: 132px;
-      height: 110px;
-      border-radius: 26px;
+      width: calc(140px * var(--padScale));
+      height: calc(120px * var(--padScale));
+      border-radius: calc(28px * var(--padScale));
       background: var(--padDark);
-      color: rgba(255,255,255,.94);
-      font-weight: 1200;
-      font-size: 32px;
+      color: rgba(255,255,255,.95);
+      font-weight: 1300;
+      font-size: calc(34px * var(--padScale));
       box-shadow: inset 0 0 0 2px rgba(255,255,255,.06), 0 14px 26px rgba(0,0,0,.22);
     }
     .centerDot{
-      width: 92px;
-      height: 92px;
-      border-radius: 24px;
+      width: calc(96px * var(--padScale));
+      height: calc(96px * var(--padScale));
+      border-radius: calc(24px * var(--padScale));
       background: rgba(0,0,0,.16);
       color: rgba(255,255,255,.78);
       font-weight: 1100;
-      font-size: 16px;
+      font-size: calc(16px * var(--padScale));
       box-shadow: inset 0 0 0 2px rgba(255,255,255,.05);
     }
 
+    /* Right side */
     .sideRight{
       display:grid;
       justify-items:end;
@@ -197,30 +211,30 @@
       padding-right: 4px;
     }
     .A{
-      width: 154px;
-      height: 154px;
+      width: calc(168px * var(--padScale));
+      height: calc(168px * var(--padScale));
       border-radius: 999px;
       background: var(--A);
       color: rgba(255,255,255,.95);
       font-weight: 1300;
-      font-size: 34px;
+      font-size: calc(36px * var(--padScale));
       box-shadow: inset 0 0 0 3px rgba(255,255,255,.35), 0 16px 30px rgba(0,0,0,.25);
     }
     .restart{
-      width: 190px;
-      height: 64px;
-      border-radius: 18px;
+      width: calc(210px * var(--padScale));
+      height: calc(68px * var(--padScale));
+      border-radius: calc(18px * var(--padScale));
       background: rgba(0,0,0,.12);
       border: 1px solid rgba(0,0,0,.14);
-      font-weight: 1100;
-      color: rgba(0,0,0,.78);
-      font-size: 15px;
+      font-weight: 1200;
+      color: rgba(0,0,0,.80);
+      font-size: calc(15px * var(--padScale));
     }
 
     .padHint{
       z-index:1;
       text-align:center;
-      font-size: 13px;
+      font-size: calc(13px * var(--padScale));
       color: rgba(0,0,0,.55);
       font-weight: 900;
       white-space: nowrap;
@@ -229,21 +243,18 @@
       padding: 0 8px;
     }
 
-    /* موبايل صغير */
-    @media (max-width: 420px){
-      .pill{ width: 170px; height: 68px; }
-      .restart{ width: 170px; height: 60px; }
-      .A{ width: 140px; height: 140px; }
-      .padBtn{ width: 122px; height: 102px; }
-      .centerDot{ width: 86px; height: 86px; }
-    }
-
-    /* شاشة قصيرة جداً */
-    @media (max-height: 720px){
-      .pill{ width: 170px; height: 66px; }
-      .restart{ width: 170px; height: 58px; }
-      .padBtn{ width: 118px; height: 98px; }
-      .A{ width: 138px; height: 138px; }
+    /* على الشاشات الكبيرة (كمبيوتر/تابلت) نخلي اللوحة وسط */
+    @media (min-width: 900px){
+      .pad{
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        padding: 10px;
+      }
+      .padBody{
+        max-width: 980px;
+        width: min(980px, 100%);
+      }
     }
   </style>
 </head>
@@ -257,7 +268,7 @@
     </div>
 
     <div class="pad">
-      <div class="padBody">
+      <div class="padBody" id="padBody">
 
         <div class="padTop">
           <button class="btn smallBtn" data-k="SELECT" id="btnSelect">SELECT</button>
@@ -280,7 +291,7 @@
             <button class="btn padBtn" data-k="UP">▲</button>
             <div class="drow">
               <button class="btn padBtn" data-k="LEFT">◀</button>
-              <button class="btn centerDot" data-k="CENTER">HM</button>
+              <button class="btn centerDot" data-k="CENTER" id="btnHM">HM</button>
               <button class="btn padBtn" data-k="RIGHT">▶</button>
             </div>
             <button class="btn padBtn" data-k="DOWN">▼</button>
@@ -293,7 +304,7 @@
         </div>
 
         <div class="padHint" id="hintLine">
-          HM GAME 🎮 — D-Pad Move • A Start/Confirm • START Pause • LANG/SELECT AR/EN • RESTART • MENU
+          HM GAME 🎮 — Move: D-Pad • A Start/Confirm • START Pause • LANG/SELECT AR/EN • RESTART • MENU
         </div>
 
       </div>
@@ -303,7 +314,7 @@
 (() => {
   "use strict";
 
-  // ✅ viewport height الحقيقي (يثبت 50/50 على كل الأوضاع)
+  // ====== Fix real viewport height (يثبت 50/50)
   function setRealVH(){
     const h = (window.visualViewport?.height || window.innerHeight);
     document.documentElement.style.setProperty("--vh", (h * 0.01) + "px");
@@ -313,6 +324,21 @@
   window.visualViewport?.addEventListener("resize", setRealVH);
   window.visualViewport?.addEventListener("scroll", setRealVH);
 
+  // ====== Auto scale pad buttons based on pad height
+  const padBody = document.getElementById("padBody");
+  function setPadScale(){
+    // ارتفاع نصف الشاشة الحقيقي (لوحة التحكم)
+    const h = padBody.getBoundingClientRect().height || 360;
+    // هدفنا: لو 400px => scale 1.0 ، لو أكبر يزيد تدريجياً، لو أصغر يقل
+    let scale = h / 400;
+    scale = Math.max(0.88, Math.min(1.25, scale)); // حدود آمنة
+    document.documentElement.style.setProperty("--padScale", scale.toFixed(3));
+  }
+  setPadScale();
+  window.addEventListener("resize", setPadScale);
+  window.visualViewport?.addEventListener("resize", setPadScale);
+
+  // ====== Canvas
   const cv = document.getElementById("cv");
   const ctx = cv.getContext("2d", { alpha:false });
 
@@ -337,14 +363,14 @@
     return `${pad2(Math.floor(s/60))}:${pad2(s%60)}`;
   };
 
-  // ---------- Language (يترجم كل شيء)
-  const LANG_KEY="HM_LANG_SNAKE_FINAL3";
+  // ====== Language
+  const LANG_KEY="HM_LANG_SNAKE_5050";
   let lang = localStorage.getItem(LANG_KEY) || "en";
 
   const T={
     ar:{
       title:"HM GAME | ثعبان",
-      menu:"اضغط زر (أ) للبدء",
+      menu:"اضغط زر (A) للبدء",
       paused:"⏸️ متوقف مؤقتاً",
       over:"😵 انتهت اللعبة",
       score:"النتيجة", best:"الأفضل", time:"الوقت",
@@ -354,9 +380,9 @@
       btnStart:"ابدأ",
       lblPause:"إيقاف مؤقت",
       btnLang:"اللغة",
-      btnRestart:"إعادة التشغيل",
-      hint:"HM GAME 🎮 — التحريك: الأسهم • (أ) بدء/تأكيد • ابدأ: إيقاف • اللغة/تحديد: AR/EN • إعادة التشغيل • القائمة",
-      resultFoot:"أ: إعادة  •  القائمة: قائمة  •  ابدأ: إغلاق"
+      btnRestart:"إعادة تشغيل",
+      hint:"HM GAME 🎮 — التحريك: الأسهم • A: بدء/تأكيد • ابدأ: إيقاف • اللغة/تحديد: AR/EN • إعادة • القائمة",
+      resultFoot:"A: إعادة  •  القائمة: قائمة  •  ابدأ: إغلاق"
     },
     en:{
       title:"HM GAME | Snake",
@@ -382,9 +408,11 @@
     btnStart: document.getElementById("btnStart"),
     lblPause: document.getElementById("lblPause"),
     btnLang: document.getElementById("btnLang"),
+    lblLang: document.getElementById("lblLang"),
     btnRestart: document.getElementById("btnRestart"),
     hintLine: document.getElementById("hintLine"),
     btnA: document.getElementById("btnA"),
+    btnHM: document.getElementById("btnHM"),
   };
 
   function applyLang(){
@@ -396,11 +424,12 @@
     ui.btnStart.textContent  = T[lang].btnStart;
     ui.lblPause.textContent  = T[lang].lblPause;
     ui.btnLang.textContent   = T[lang].btnLang;
+    ui.lblLang.textContent   = "AR / EN";
     ui.btnRestart.textContent= T[lang].btnRestart;
     ui.hintLine.textContent  = T[lang].hint;
 
-    // زر A يبقى A (حسب طلبك) — إذا تريده "أ" بالعربي قلّي
     ui.btnA.textContent = "A";
+    ui.btnHM.textContent = "HM";
   }
 
   function toggleLang(){
@@ -410,14 +439,17 @@
   }
   applyLang();
 
-  // ---------- Best score
-  const BEST_KEY="HM_BEST_SNAKE_FINAL3";
+  // ====== Best score
+  const BEST_KEY="HM_BEST_SNAKE_5050";
   let best = Number(localStorage.getItem(BEST_KEY) || "0");
   function setBest(v){
-    if(v>best){ best=v; localStorage.setItem(BEST_KEY, String(best)); }
+    if(v>best){
+      best=v;
+      localStorage.setItem(BEST_KEY, String(best));
+    }
   }
 
-  // ---------- Input (سريع)
+  // ====== Input (fast touch)
   const hold={left:false,right:false,up:false,down:false};
   let wantDir = {x:1,y:0};
   const jp={A:false,START:false,LANG:false,L:false,R:false};
@@ -427,6 +459,7 @@
     if(dx === -Snake.dir.x && dy === -Snake.dir.y) return;
     wantDir = {x:dx, y:dy};
   }
+
   function onDownKey(k){
     if(k==="UP"){ hold.up=true; setWant(0,-1); }
     if(k==="DOWN"){ hold.down=true; setWant(0,1); }
@@ -463,7 +496,7 @@
     btn.addEventListener("lostpointercapture", off);
   });
 
-  // ---------- UI helpers
+  // ====== Draw helpers
   function rr(x,y,w,h,r,fill){
     const rad=Math.min(r,w/2,h/2);
     ctx.beginPath();
@@ -483,7 +516,7 @@
     return s+"…";
   }
 
-  // ---------- State
+  // ====== State
   const S={
     mode:"menu", // menu | play | pause | result
     score:0, apples:0, len:3, level:1,
@@ -523,7 +556,7 @@
     return h;
   }
 
-  // ---------- Snake (Wrap + أبطأ + تفاحة أكبر)
+  // ====== Snake (Wrap + سرعة مناسبة + تفاحة أكبر)
   const Snake = {
     GW: 30, GH: 20,
     cell: 18, ox:0, oy:0,
@@ -532,9 +565,7 @@
     food: {x:5,y:5},
     alive: true,
     accMs: 0,
-
-    /* ✅ السرعة أبطأ ومناسبة */
-    moveEveryMs: 160,   // كان سريع جداً
+    moveEveryMs: 170, // ✅ بطيئة ومناسبة
 
     computeGridForScreen(){
       const topH = topBarH();
@@ -549,12 +580,11 @@
 
     layout(){
       const topH = topBarH();
-      const pad = 0;
-      const usableW = W - pad*2;
-      const usableH = (H - topH) - pad*2;
+      const usableW = W;
+      const usableH = (H - topH);
 
       this.cell = Math.floor(Math.min(usableW/this.GW, usableH/this.GH));
-      this.cell = clamp(this.cell, 14, 60);
+      this.cell = clamp(this.cell, 14, 80);
 
       this.ox = Math.floor((W - this.cell*this.GW)/2);
       this.oy = Math.floor(topH + ((H-topH) - this.cell*this.GH)/2);
@@ -586,9 +616,7 @@
 
       this.alive=true;
       this.accMs=0;
-
-      /* ✅ بداية بطيئة مناسبة */
-      this.moveEveryMs=160;
+      this.moveEveryMs=170;
 
       this.placeFood();
     },
@@ -616,13 +644,13 @@
       let nx=h.x+this.dir.x;
       let ny=h.y+this.dir.y;
 
-      /* ✅ Wrap walls: يخرج من جهة ويدخل من الثانية */
+      // ✅ Wrap walls
       if(nx < 0) nx = this.GW - 1;
       if(nx >= this.GW) nx = 0;
       if(ny < 0) ny = this.GH - 1;
       if(ny >= this.GH) ny = 0;
 
-      /* ✅ Game over فقط عند الاصطدام بنفسه */
+      // ✅ Game over فقط عند الاصطدام بنفسه
       if(this.snake.some((p,i)=>i>0 && p.x===nx && p.y===ny)){
         this.over(); return;
       }
@@ -635,9 +663,7 @@
         S.len=this.snake.length;
 
         S.level = 1 + Math.floor(S.apples/6);
-
-        /* ✅ تسريع بسيط جداً مع المستويات (يبقى مناسب) */
-        this.moveEveryMs = clamp(160 - (S.level-1)*8, 110, 160);
+        this.moveEveryMs = clamp(170 - (S.level-1)*8, 120, 170);
 
         this.placeFood();
         setBest(S.score);
@@ -669,17 +695,19 @@
       ctx.fillStyle="#061025";
       ctx.fillRect(0,0,W,H);
 
+      // board
       ctx.fillStyle="rgba(255,255,255,.05)";
       rr(this.ox-4, this.oy-4, this.cell*this.GW+8, this.cell*this.GH+8, 18, true);
 
-      /* ✅ التفاحة أكبر */
+      // ✅ Apple bigger
       const fx=this.ox+this.food.x*this.cell+this.cell/2;
       const fy=this.oy+this.food.y*this.cell+this.cell/2;
       ctx.fillStyle="rgba(255,211,79,.95)";
       ctx.beginPath();
-      ctx.arc(fx, fy, this.cell*0.34, 0, Math.PI*2);
+      ctx.arc(fx, fy, this.cell*0.36, 0, Math.PI*2);
       ctx.fill();
 
+      // snake
       for(let i=this.snake.length-1;i>=0;i--){
         const p=this.snake[i];
         const x=this.ox+p.x*this.cell;
@@ -707,6 +735,7 @@
     }
   };
 
+  // ====== Screens
   function drawMenu(){
     ctx.fillStyle="#050b14";
     ctx.fillRect(0,0,W,H);
@@ -732,14 +761,14 @@
     drawTopBar();
 
     ctx.fillStyle="rgba(0,0,0,.28)";
-    const w=W*0.62, h=H*0.14;
+    const w=W*0.66, h=H*0.16;
     rr((W-w)/2, H*0.42, w, h, 18, true);
 
     ctx.fillStyle="rgba(255,255,255,.92)";
     ctx.textAlign="center";
     ctx.textBaseline="middle";
     ctx.font=`${clamp(W*0.060, 18, 30)}px system-ui`;
-    ctx.fillText(T[lang].paused, W/2, H*0.49);
+    ctx.fillText(T[lang].paused, W/2, H*0.50);
   }
 
   function drawResult(){
@@ -749,7 +778,7 @@
     ctx.fillStyle="rgba(0,0,0,.42)";
     ctx.fillRect(0,0,W,H);
 
-    const w=W*0.84, h=H*0.44;
+    const w=W*0.86, h=H*0.50;
     const x=(W-w)/2, y=(H-h)/2;
 
     ctx.fillStyle="rgba(16,22,36,.92)";
@@ -759,8 +788,8 @@
     rr(x,y,w,h,18,false);
 
     const titleSize=clamp(W*0.065, 18, 34);
-    const lineSize =clamp(W*0.050, 14, 26);
-    const footSize =clamp(W*0.042, 12, 20);
+    const lineSize =clamp(W*0.052, 14, 26);
+    const footSize =clamp(W*0.044, 12, 20);
 
     ctx.textAlign="center";
     ctx.fillStyle="rgba(255,255,255,.95)";
@@ -780,6 +809,7 @@
     ctx.fillText(T[lang].resultFoot, W/2, y + h*0.88);
   }
 
+  // ====== Flow
   function goMenu(){
     S.mode="menu";
     S.score=0; S.apples=0; S.len=3; S.level=1;
@@ -799,6 +829,7 @@
   let last=now();
   function loop(){
     setRealVH();
+    setPadScale();
     resizeCanvas();
 
     const t=now();
