@@ -5,1538 +5,1268 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
   <meta name="theme-color" content="#0b1220" />
   <title>HM GAME</title>
-</head>
-
-<body>
-  <!-- TOP BAR -->
-  <header class="hmTopbar">
-    <div class="hmBrand">
-      <div class="hmLogo">HM</div>
-      <div class="hmBrandTxt">
-        <div class="hmTitle">HM GAME 🎮</div>
-        <div class="hmSub" id="subTitle">Choose a game</div>
-      </div>
-    </div>
-
-    <div class="hmActions">
-      <button class="hmBtn" id="btnLang" title="Language">AR</button>
-      <button class="hmBtn" id="btnMenu" title="Menu">Menu</button>
-      <button class="hmBtn" id="btnPause" title="Pause">Pause</button>
-      <button class="hmBtn hmPrimary" id="btnRestart" title="Restart">Restart</button>
-    </div>
-  </header>
-
-  <!-- MAIN: GAME (TOP) + CONTROLS (BOTTOM) -->
-  <main class="hmMain">
-    <!-- GAME AREA -->
-    <section class="hmGameArea">
-      <canvas id="cv"></canvas>
-
-      <!-- HUD (top overlay inside game area) -->
-      <div class="hmHud">
-        <div class="hmHudLeft">
-          <span class="hmPill" id="hudBrand">HM GAME</span>
-          <span class="hmPill" id="hudMode">—</span>
-          <span class="hmPill" id="hudExtra"> </span>
-        </div>
-        <div class="hmHudRight">
-          <span class="hmPill" id="hudScore">Score: 0</span>
-          <span class="hmPill" id="hudBest">Best: 0</span>
-          <span class="hmPill" id="hudTime">00:00</span>
-        </div>
-      </div>
-
-      <!-- CENTER OVERLAY (pause / win / lose / results) -->
-      <div class="hmOverlay" id="overlay" hidden>
-        <div class="hmCard">
-          <div class="hmCardTitle" id="ovTitle">HM GAME</div>
-          <div class="hmCardText" id="ovText">...</div>
-          <div class="hmCardActions" id="ovActions"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- CONTROLS AREA (fixed height) -->
-    <section class="hmControlsArea">
-      <!-- MENU VIEW (game selection) -->
-      <div class="hmMenuView" id="menuView">
-        <div class="hmMenuHead">
-          <div class="hmMenuHeadTitle" id="menuTitle">HM GAME ✨</div>
-          <div class="hmMenuHeadText" id="menuText">
-            Choose a game, then play using the buttons below.
-          </div>
-        </div>
-
-        <div class="hmGameSelect">
-          <button class="hmPick isActive" id="pickMenu" data-pick="menu">🏠 HM GAME</button>
-          <button class="hmPick" id="pickSnake" data-pick="snake">🐍 Snake</button>
-          <button class="hmPick" id="pickBounce" data-pick="bounce">🔴 Bounce</button>
-        </div>
-
-        <div class="hmMenuCTA">
-          <button class="hmBtn hmPrimary hmWide" id="btnStartSnake">🐍 Start Snake</button>
-          <button class="hmBtn hmWide" id="btnStartBounce">🔴 Start Bounce</button>
-        </div>
-
-        <div class="hmHint" id="menuHint">
-          Tip: Keyboard works too (WASD / Arrows). ✅
-        </div>
-      </div>
-
-      <!-- SNAKE CONTROLS -->
-      <div class="hmPlayView" id="snakeView" hidden>
-        <div class="hmControlsRow">
-          <div class="hmDpad">
-            <button class="hmPad" data-act="su">▲</button>
-            <div class="hmDpadMid">
-              <button class="hmPad" data-act="sl">◀</button>
-              <button class="hmPad hmPadCenter" data-act="noop">HM</button>
-              <button class="hmPad" data-act="sr">▶</button>
-            </div>
-            <button class="hmPad" data-act="sd">▼</button>
-          </div>
-
-          <div class="hmSide">
-            <button class="hmBtn hmWide" data-act="pause">⏸️ Pause</button>
-            <button class="hmBtn hmWide hmDanger" data-act="exit">🚪 Exit</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- BOUNCE CONTROLS (LEFT/RIGHT like original) -->
-      <div class="hmPlayView" id="bounceView" hidden>
-        <div class="hmControlsRow">
-          <div class="hmBounceRow">
-            <button class="hmBtn hmWide" data-act="bl">◀ Left</button>
-            <button class="hmBtn hmWide hmPrimary" data-act="pause">⏸️ Pause</button>
-            <button class="hmBtn hmWide" data-act="br">Right ▶</button>
-          </div>
-
-          <div class="hmSide">
-            <button class="hmBtn hmWide" data-act="restart">🔁 Restart</button>
-            <button class="hmBtn hmWide hmDanger" data-act="exit">🚪 Exit</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="hmFooter">© HM GAME</div>
-    </section>
-  </main>
-<style>
+  <style>
     :root{
-      --bg:#0b1220;
-      --panel:#111a2a;
-      --panel2:#0f1726;
-      --text:#eaf1ff;
-      --muted:#a7b7de;
-      --line:rgba(255,255,255,.10);
-      --accent:#4ea1ff;
-      --danger:#ff4e6a;
+      --bg:#070d18;
+      --glass: rgba(255,255,255,.08);
+      --glass2: rgba(255,255,255,.06);
+      --line: rgba(255,255,255,.14);
+      --txt: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.70);
 
-      /* Bounce colors */
-      --sky:#6fd4ff;
-      --brick:#b55a2d;
-      --brick2:#8f3d1f;
-      --ring:#ffd34f;
-      --ball:#e83535;
-      --spike:#1b2338;
-      --gate:#ffffff;
+      --padBase: rgba(240,240,240,.88);
+      --padShadow: rgba(0,0,0,.35);
+      --padDark: rgba(20,22,28,.92);
+
+      --A:#e43b3b;
+      --B:#f0c535;
+      --X:#2d71ff;
+      --Y:#2ecc71;
     }
 
-    *{ box-sizing:border-box; }
-    html,body{ height:100%; }
+    *{box-sizing:border-box}
+    html,body{height:100%}
     body{
       margin:0;
+      background: radial-gradient(1200px 900px at 70% 15%, #1b2a55, var(--bg));
+      color:var(--txt);
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      background: radial-gradient(1200px 800px at 80% 20%, #15244b, var(--bg));
-      color:var(--text);
-      overflow:hidden; /* IMPORTANT: fill phone, no scroll */
+      overflow:hidden;
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* Topbar */
-    .hmTopbar{
-      height: 64px;
-      padding: 10px 12px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      background: color-mix(in oklab, var(--panel) 92%, black);
-      border-bottom: 1px solid var(--line);
-      padding-top: calc(10px + env(safe-area-inset-top));
-    }
-
-    .hmBrand{ display:flex; align-items:center; gap:10px; min-width: 160px; }
-    .hmLogo{
-      width:42px; height:42px;
-      display:grid; place-items:center;
-      border-radius: 12px;
-      font-weight:1000;
-      background: rgba(78,161,255,.18);
-      border: 1px solid rgba(78,161,255,.55);
-      flex: 0 0 auto;
-    }
-    .hmTitle{ font-weight:1000; font-size:16px; }
-    .hmSub{ color:var(--muted); font-size:12px; margin-top:2px; }
-
-    .hmActions{ display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
-    .hmBtn{
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      padding: 10px 12px;
-      border-radius: 12px;
-      font-weight: 900;
-      cursor:pointer;
-      user-select:none;
-      line-height: 1;
-      white-space: nowrap;
-    }
-    .hmBtn:active{ transform: translateY(1px); }
-    .hmPrimary{
-      background: rgba(78,161,255,.18);
-      border-color: rgba(78,161,255,.55);
-    }
-    .hmDanger{
-      background: rgba(255,78,106,.12);
-      border-color: rgba(255,78,106,.55);
-    }
-    .hmWide{ width:100%; }
-
-    /* Main layout: BIG GAME TOP + FIXED CONTROLS BOTTOM */
-    .hmMain{
-      height: calc(100dvh - 64px - env(safe-area-inset-top));
+    /* App layout: TOP screen + BOTTOM controller */
+    .app{
+      height: 100dvh;
       display:grid;
       grid-template-rows: 1fr auto;
     }
 
-    /* Controls height: fixed-ish and phone-friendly */
-    .hmControlsArea{
-      height: clamp(240px, 34dvh, 360px);
-      padding: 12px;
-      padding-bottom: calc(12px + env(safe-area-inset-bottom));
-      background: color-mix(in oklab, var(--panel) 92%, black);
-      border-top: 1px solid var(--line);
+    .screenWrap{
+      position:relative;
+      padding: 10px;
+      padding-top: calc(10px + env(safe-area-inset-top));
     }
 
-    .hmGameArea{
+    /* Screen frame */
+    .screenFrame{
+      height: 100%;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,.25);
+      box-shadow: 0 20px 70px rgba(0,0,0,.40);
+      overflow:hidden;
       position:relative;
-      background: #061025;
     }
-    #cv{
+
+    canvas#cv{
       width:100%;
       height:100%;
       display:block;
-      background: #061025;
+      background: #050b14;
     }
 
-    /* HUD */
-    .hmHud{
-      position:absolute;
-      top: 10px;
-      left: 10px;
-      right: 10px;
+    /* Bottom controller area */
+    .pad{
+      padding: 12px;
+      padding-bottom: calc(12px + env(safe-area-inset-bottom));
+      background: rgba(0,0,0,.18);
+    }
+
+    .padBody{
+      max-width: 900px;
+      margin: 0 auto;
+      border-radius: 26px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: var(--padBase);
+      box-shadow: 0 16px 60px var(--padShadow);
+      padding: 14px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    /* Slight transparent glossy band */
+    .padBody:before{
+      content:"";
+      position:absolute; inset:-40% -20% auto -20%;
+      height: 70%;
+      transform: rotate(-10deg);
+      background: rgba(255,255,255,.22);
+      filter: blur(0px);
+      pointer-events:none;
+    }
+
+    .padTop{
       display:flex;
       justify-content:space-between;
       gap:10px;
-      pointer-events:none;
-    }
-    .hmHudLeft,.hmHudRight{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      align-items:center;
-    }
-    .hmPill{
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: rgba(0,0,0,.28);
-      border: 1px solid rgba(255,255,255,.16);
-      font-size: 12px;
-      font-weight: 900;
-      backdrop-filter: blur(8px);
+      margin-bottom: 10px;
     }
 
-    /* Center overlay */
-    .hmOverlay{
-      position:absolute;
-      inset:0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding: 16px;
-      background: rgba(0,0,0,.38);
-    }
-    .hmCard{
-      width: min(560px, 100%);
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(17,26,42,.94);
-      padding: 14px;
-      box-shadow: 0 22px 70px rgba(0,0,0,.45);
-    }
-    .hmCardTitle{ font-size: 18px; font-weight: 1000; margin-bottom: 6px; }
-    .hmCardText{ color: var(--muted); font-size: 13px; line-height: 1.7; }
-    .hmCardActions{ display:flex; gap:10px; flex-wrap:wrap; margin-top: 12px; }
-
-    /* Menu view */
-    .hmMenuHeadTitle{ font-weight:1000; margin-bottom:4px; }
-    .hmMenuHeadText{ color:var(--muted); font-size:13px; line-height:1.6; }
-
-    .hmGameSelect{
-      display:flex;
-      gap:10px;
-      margin-top: 10px;
-      flex-wrap:wrap;
-    }
-    .hmPick{
-      flex:1 1 120px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.06);
-      color:var(--text);
+    .shoulder{
+      flex: 1 1 0;
+      border-radius: 16px;
+      background: rgba(0,0,0,.08);
+      border: 1px solid rgba(0,0,0,.12);
       padding: 10px 12px;
-      border-radius: 14px;
       font-weight: 1000;
+      color: rgba(0,0,0,.70);
+      user-select:none;
+    }
+
+    .padMain{
+      display:grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items:center;
+      gap: 14px;
+    }
+
+    /* D-Pad */
+    .dpad{
+      display:grid;
+      justify-items:center;
+      gap:8px;
+    }
+    .dpadMid{display:flex; gap:8px; align-items:center}
+    .btn{
+      border:none;
       cursor:pointer;
       user-select:none;
-      text-align:center;
+      -webkit-user-select:none;
+      touch-action: manipulation;
     }
-    .hmPick.isActive{
-      border-color: rgba(78,161,255,.60);
-      background: rgba(78,161,255,.14);
+    .btn:active{ transform: translateY(1px); }
+
+    .padBtn{
+      width: 68px; height: 58px;
+      border-radius: 16px;
+      background: var(--padDark);
+      color: rgba(255,255,255,.92);
+      font-weight: 1000;
+      font-size: 18px;
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,.06), 0 10px 18px rgba(0,0,0,.22);
     }
 
-    .hmMenuCTA{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:10px;
-      margin-top: 12px;
-    }
-    .hmHint{
-      margin-top: 10px;
-      color: rgba(255,255,255,.60);
-      font-size: 12px;
-      text-align:center;
+    .padBtn.small{
+      width: 62px; height: 52px;
+      border-radius: 14px;
+      font-size: 16px;
+      opacity:.98;
     }
 
-    /* Play controls */
-    .hmControlsRow{
-      display:flex;
-      gap: 12px;
-      align-items: stretch;
-      height: calc(100% - 20px);
+    .padBtn.center{
+      background: rgba(0,0,0,.30);
+      color: rgba(0,0,0,.55);
+      box-shadow: inset 0 0 0 2px rgba(0,0,0,.12);
     }
-    .hmDpad{
-      flex: 1 1 220px;
+
+    /* Middle: Select / Start */
+    .midKeys{
       display:grid;
-      gap:8px;
       justify-items:center;
-      padding: 8px;
-      border-radius: 16px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
+      gap: 10px;
+      padding: 6px 8px;
     }
-    .hmDpadMid{ display:flex; gap:8px; }
-    .hmPad{
-      width: 64px;
-      height: 56px;
-      border-radius: 16px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      color: var(--text);
+    .midRow{ display:flex; gap: 12px; }
+    .pillKey{
+      width: 86px; height: 36px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.12);
+      border: 1px solid rgba(0,0,0,.14);
+      font-weight: 1000;
+      color: rgba(0,0,0,.70);
+    }
+    .keyLabel{
+      font-size: 11px;
+      color: rgba(0,0,0,.55);
+      font-weight: 900;
+      text-align:center;
+      margin-top: -2px;
+    }
+
+    /* ABXY */
+    .abxy{
+      display:grid;
+      justify-items:center;
+      gap:8px;
+    }
+    .abxyRow{display:flex; gap:10px}
+    .colorBtn{
+      width: 64px; height: 64px;
+      border-radius: 999px;
       font-weight: 1000;
       font-size: 20px;
-      cursor:pointer;
-      user-select:none;
+      color: rgba(0,0,0,.68);
+      box-shadow: inset 0 0 0 3px rgba(255,255,255,.35), 0 12px 22px rgba(0,0,0,.22);
     }
-    .hmPad:active{ transform: translateY(1px); }
-    .hmPadCenter{
-      border-color: rgba(78,161,255,.55);
-      background: rgba(78,161,255,.14);
-    }
-    .hmSide{
-      flex: 1 1 170px;
-      display:grid;
-      gap:10px;
-    }
-    .hmBounceRow{
-      flex: 1 1 320px;
-      display:flex;
-      gap:10px;
-      align-items: stretch;
-    }
-    .hmFooter{
+    .A{ background: var(--A); color: rgba(255,255,255,.92); }
+    .B{ background: var(--B); }
+    .X{ background: var(--X); color: rgba(255,255,255,.92); }
+    .Y{ background: var(--Y); }
+
+    /* Small footer hint (very small, optional) */
+    .padHint{
       margin-top: 10px;
       text-align:center;
-      color: rgba(255,255,255,.55);
       font-size: 12px;
+      color: rgba(0,0,0,.55);
+      font-weight: 800;
     }
 
     @media (max-width: 420px){
-      .hmBtn{ padding: 9px 10px; }
-      .hmPad{ width: 60px; height: 54px; }
-      .hmControlsArea{ height: clamp(230px, 36dvh, 360px); }
+      .padBtn{ width: 64px; height: 56px; }
+      .colorBtn{ width: 60px; height: 60px; }
+      .pillKey{ width: 78px; }
+      .padBody{ padding: 12px; border-radius: 24px; }
     }
   </style>
+</head>
+<body>
+  <div class="app">
+    <div class="screenWrap">
+      <div class="screenFrame">
+        <canvas id="cv"></canvas>
+      </div>
+    </div>
+
+    <div class="pad">
+      <div class="padBody">
+        <div class="padTop">
+          <button class="btn shoulder" data-k="L">L</button>
+          <button class="btn shoulder" data-k="R">R</button>
+        </div>
+
+        <div class="padMain">
+          <!-- D-Pad -->
+          <div class="dpad">
+            <button class="btn padBtn" data-k="UP">▲</button>
+            <div class="dpadMid">
+              <button class="btn padBtn" data-k="LEFT">◀</button>
+              <button class="btn padBtn center small" data-k="HM">HM</button>
+              <button class="btn padBtn" data-k="RIGHT">▶</button>
+            </div>
+            <button class="btn padBtn" data-k="DOWN">▼</button>
+          </div>
+
+          <!-- Select / Start -->
+          <div class="midKeys">
+            <div class="midRow">
+              <div>
+                <button class="btn pillKey" data-k="SELECT">SELECT</button>
+                <div class="keyLabel">LANG</div>
+              </div>
+              <div>
+                <button class="btn pillKey" data-k="START">START</button>
+                <div class="keyLabel">PAUSE</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ABXY -->
+          <div class="abxy">
+            <div class="abxyRow">
+              <button class="btn colorBtn X" data-k="X">X</button>
+            </div>
+            <div class="abxyRow">
+              <button class="btn colorBtn Y" data-k="Y">Y</button>
+              <button class="btn colorBtn A" data-k="A">A</button>
+            </div>
+            <div class="abxyRow">
+              <button class="btn colorBtn B" data-k="B">B</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="padHint">HM GAME 🎮 — A: Select • START: Pause • SELECT: Arabic/English • L: Restart • R: Menu</div>
+      </div>
+    </div>
+  </div>
 <script>
-  (() => {
-    "use strict";
+(() => {
+  "use strict";
 
-    const cv = document.getElementById("cv");
-    const ctx = cv.getContext("2d", { alpha:false });
+  const cv = document.getElementById("cv");
+  const ctx = cv.getContext("2d", { alpha:false });
 
-    const subTitle = document.getElementById("subTitle");
-    const btnLang = document.getElementById("btnLang");
-    const btnMenu = document.getElementById("btnMenu");
-    const btnPause = document.getElementById("btnPause");
-    const btnRestart = document.getElementById("btnRestart");
+  // ---------- Helpers ----------
+  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+  const now=()=>performance.now();
+  const pad2=n=>String(n).padStart(2,"0");
+  const DPR=()=>Math.max(1, Math.floor(window.devicePixelRatio||1));
 
-    const hudMode = document.getElementById("hudMode");
-    const hudExtra = document.getElementById("hudExtra");
-    const hudScore = document.getElementById("hudScore");
-    const hudBest  = document.getElementById("hudBest");
-    const hudTime  = document.getElementById("hudTime");
+  function resize(){
+    const r=cv.getBoundingClientRect();
+    const d=DPR();
+    const w=Math.floor(r.width*d), h=Math.floor(r.height*d);
+    if(cv.width!==w||cv.height!==h){ cv.width=w; cv.height=h; }
+  }
+  window.addEventListener("resize", resize);
 
-    const overlay = document.getElementById("overlay");
-    const ovTitle = document.getElementById("ovTitle");
-    const ovText  = document.getElementById("ovText");
-    const ovActions = document.getElementById("ovActions");
+  function fmtTime(ms){
+    const s=Math.floor(ms/1000);
+    const m=Math.floor(s/60);
+    return `${pad2(m)}:${pad2(s%60)}`;
+  }
 
-    const menuView = document.getElementById("menuView");
-    const snakeView = document.getElementById("snakeView");
-    const bounceView = document.getElementById("bounceView");
-
-    const menuTitle = document.getElementById("menuTitle");
-    const menuText  = document.getElementById("menuText");
-    const menuHint  = document.getElementById("menuHint");
-
-    const pickMenu = document.getElementById("pickMenu");
-    const pickSnake = document.getElementById("pickSnake");
-    const pickBounce = document.getElementById("pickBounce");
-
-    const btnStartSnake = document.getElementById("btnStartSnake");
-    const btnStartBounce = document.getElementById("btnStartBounce");
-
-    // ---------- Utils ----------
-    const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
-    const now = ()=>performance.now();
-    const pad2 = (n)=>String(n).padStart(2,"0");
-    const css = (v)=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
-
-    function fmtTime(ms){
-      const s = Math.floor(ms/1000);
-      const m = Math.floor(s/60);
-      const r = s%60;
-      return `${pad2(m)}:${pad2(r)}`;
+  // ---------- Language ----------
+  const LANG_KEY="HM_LANG";
+  let lang=localStorage.getItem(LANG_KEY)||"ar"; // default Arabic like your screenshots
+  const T={
+    ar:{
+      title:"HM GAME",
+      menuQ:"❓ أي لعبة تريد؟",
+      menuHint:"استعمل ◀ ▶ لاختيار اللعبة ثم اضغط A للبدء",
+      snake:"🐍 الثعبان",
+      bounce:"🔴 باونس",
+      start:"اضغط A للبدء",
+      paused:"⏸️ متوقف مؤقتاً",
+      win:"🏆 لقد ربحت!",
+      over:"😵 انتهت اللعبة",
+      again:"A: إعادة",
+      back:"R: القائمة",
+      close:"B: إغلاق",
+    },
+    en:{
+      title:"HM GAME",
+      menuQ:"❓ Which game do you want?",
+      menuHint:"Use ◀ ▶ to choose, then press A to start",
+      snake:"🐍 Snake",
+      bounce:"🔴 Bounce",
+      start:"Press A to start",
+      paused:"⏸️ Paused",
+      win:"🏆 YOU WIN!",
+      over:"😵 Game Over",
+      again:"A: Restart",
+      back:"R: Menu",
+      close:"B: Close",
     }
+  };
+  function toggleLang(){
+    lang = (lang==="ar") ? "en" : "ar";
+    localStorage.setItem(LANG_KEY, lang);
+    document.documentElement.lang = lang;
+    document.documentElement.dir  = (lang==="ar") ? "rtl" : "ltr";
+  }
+  toggleLang(); toggleLang(); // apply once without changing
 
-    function resize(){
-      const rect = cv.getBoundingClientRect();
-      const dpr = Math.max(1, Math.floor(window.devicePixelRatio || 1));
-      const w = Math.floor(rect.width * dpr);
-      const h = Math.floor(rect.height * dpr);
-      if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
-    }
-    window.addEventListener("resize", resize);
+  // ---------- Best scores ----------
+  const BEST_KEY="HM_BEST";
+  const bests=(()=>{try{return JSON.parse(localStorage.getItem(BEST_KEY)||"{}");}catch{return{};}})();
+  const getBest=(k)=>bests[k]||0;
+  const setBest=(k,v)=>{ if((bests[k]||0)<v){ bests[k]=v; localStorage.setItem(BEST_KEY,JSON.stringify(bests)); } };
 
-    // ---------- Language ----------
-    const LANG_KEY = "HM_GAME_LANG";
-    let lang = (localStorage.getItem(LANG_KEY) || "en"); // en|ar
+  // ---------- Global state ----------
+  const S={
+    mode:"menu",     // menu | play | pause | result
+    game:"snake",    // snake | bounce
+    menuIdx:0,       // 0 snake, 1 bounce
+    startedAt:0,
+    time:0,
+    score:0,
+    best:0,
 
-    const T = {
-      en:{
-        choose:"Choose a game",
-        menu:"Menu",
-        pause:"Pause",
-        resume:"Resume",
-        restart:"Restart",
-        exit:"Exit",
-        startSnake:"🐍 Start Snake",
-        startBounce:"🔴 Start Bounce",
-        snake:"Snake",
-        bounce:"Bounce",
-        tip:"Tip: Keyboard works too (WASD / Arrows). ✅",
-        menuText:"Choose a game, then play using the buttons below.",
-        pausedTitle:"⏸️ HM GAME — Paused",
-        pausedText:"Game is paused.<br/>Press Resume to continue.",
-        backMenu:"🏠 Back to Menu",
-        youWin:"🏆 YOU WIN!",
-        gameOver:"😵 Game Over",
-        best:"Best",
-        results:"Results",
-      },
-      ar:{
-        choose:"اختر لعبة",
-        menu:"القائمة",
-        pause:"توقف مؤقت",
-        resume:"متابعة",
-        restart:"إعادة التشغيل",
-        exit:"خروج",
-        startSnake:"🐍 تشغيل الثعبان",
-        startBounce:"🔴 تشغيل باونس",
-        snake:"الثعبان",
-        bounce:"باونس",
-        tip:"ملاحظة: يدعم الكيبورد أيضًا (WASD / الأسهم). ✅",
-        menuText:"اختر لعبة ثم العب بأزرار التحكم بالأسفل.",
-        pausedTitle:"⏸️ HM GAME — متوقف",
-        pausedText:"اللعبة متوقفة مؤقتًا.<br/>اضغط متابعة لإكمال اللعب.",
-        backMenu:"🏠 العودة للقائمة",
-        youWin:"🏆 لقد ربحت!",
-        gameOver:"😵 انتهت اللعبة",
-        best:"أفضل",
-        results:"النتائج",
-      }
-    };
+    // Snake stats
+    apples:0,
+    length:3,
+    level:1,
 
-    function applyLang(){
-      document.documentElement.lang = lang;
-      document.documentElement.dir  = (lang==="ar") ? "rtl" : "ltr";
+    // Bounce stats
+    lives:3,
+    hoopsLeft:0,
+    stage:1,
+    deaths:0,
 
-      btnLang.textContent = (lang==="ar") ? "EN" : "AR";
-      btnMenu.textContent = T[lang].menu;
-      btnRestart.textContent = T[lang].restart;
+    resultType:"over", // over | win
+    resultLines:[]
+  };
 
-      menuTitle.textContent = "HM GAME ✨";
-      menuText.textContent  = T[lang].menuText;
-      menuHint.textContent  = T[lang].tip;
+  // ---------- Input (from controller) ----------
+  const I={
+    left:false,right:false,up:false,down:false,
+    pressA:false,pressB:false,pressStart:false,pressSelect:false,pressL:false,pressR:false
+  };
 
-      pickMenu.textContent = "🏠 HM GAME";
-      pickSnake.textContent = `🐍 ${T[lang].snake}`;
-      pickBounce.textContent = `🔴 ${T[lang].bounce}`;
+  function clearPresses(){
+    I.pressA=I.pressB=I.pressStart=I.pressSelect=I.pressL=I.pressR=false;
+  }
 
-      btnStartSnake.textContent = T[lang].startSnake;
-      btnStartBounce.textContent = T[lang].startBounce;
+  // Buttons
+  document.querySelectorAll("[data-k]").forEach(btn=>{
+    const k=btn.dataset.k;
 
-      // pause text depends on state
-      btnPause.textContent = state.paused ? T[lang].resume : T[lang].pause;
+    // Hold keys
+    const isDir = ["LEFT","RIGHT","UP","DOWN"].includes(k);
 
-      // if overlay is showing, refresh it when needed
-      if (!overlay.hidden) refreshOverlay();
-      subTitle.textContent = (state.game==="menu") ? T[lang].choose : subTitle.textContent;
-    }
-
-    btnLang.addEventListener("click", ()=>{
-      lang = (lang==="en") ? "ar" : "en";
-      localStorage.setItem(LANG_KEY, lang);
-      applyLang();
-    });
-
-    // ---------- Best storage ----------
-    const BEST_KEY = "HM_GAME_BESTS";
-    const bests = (()=>{ try{return JSON.parse(localStorage.getItem(BEST_KEY)||"{}");}catch{return{};} })();
-    function getBest(k){ return bests[k] ?? 0; }
-    function setBest(k, v){
-      if ((bests[k] ?? 0) < v){
-        bests[k] = v;
-        localStorage.setItem(BEST_KEY, JSON.stringify(bests));
-      }
-      state.best = getBest(k);
-    }
-
-    // ---------- State ----------
-    const state = {
-      game:"menu",       // menu|snake|bounce
-      paused:false,
-      startedAt:0,
-      score:0,
-      best:0,
-      level:1,
-      extra:"",          // HUD extra text (rings/lives/apples...)
-      // per-game stats:
-      a:0, b:0, c:0
-    };
-
-    // ---------- Input ----------
-    const input = {
-      // snake dir queue
-      sDir:null,
-      // bounce holds
-      bLeft:false,
-      bRight:false,
-      // one-shots
-      pause:false,
-      restart:false,
-      exit:false
-    };
-
-    function bindHold(el, onDown, onUp){
-      el.addEventListener("pointerdown",(e)=>{ e.preventDefault(); onDown?.(); });
-      el.addEventListener("pointerup",(e)=>{ e.preventDefault(); onUp?.(); });
-      el.addEventListener("pointercancel",(e)=>{ e.preventDefault(); onUp?.(); });
-      el.addEventListener("pointerleave",(e)=>{ e.preventDefault(); onUp?.(); });
-    }
-
-    function queueSnake(x,y){ input.sDir = {x,y}; }
-
-    document.querySelectorAll("[data-act]").forEach(btn=>{
-      const a = btn.dataset.act;
-      if (a==="su") bindHold(btn, ()=>queueSnake(0,-1));
-      if (a==="sd") bindHold(btn, ()=>queueSnake(0, 1));
-      if (a==="sl") bindHold(btn, ()=>queueSnake(-1,0));
-      if (a==="sr") bindHold(btn, ()=>queueSnake(1,0));
-
-      if (a==="pause") bindHold(btn, ()=>input.pause=true);
-      if (a==="restart") bindHold(btn, ()=>input.restart=true);
-      if (a==="exit") bindHold(btn, ()=>input.exit=true);
-
-      if (a==="bl") bindHold(btn, ()=>input.bLeft=true, ()=>input.bLeft=false);
-      if (a==="br") bindHold(btn, ()=>input.bRight=true, ()=>input.bRight=false);
-    });
-
-    // keyboard
-    window.addEventListener("keydown",(e)=>{
-      const k = e.key.toLowerCase();
-      if (["arrowup","arrowdown","arrowleft","arrowright"," "].includes(e.key)) e.preventDefault();
-
-      if (state.game==="snake"){
-        if (k==="arrowup"||k==="w") queueSnake(0,-1);
-        if (k==="arrowdown"||k==="s") queueSnake(0, 1);
-        if (k==="arrowleft"||k==="a") queueSnake(-1,0);
-        if (k==="arrowright"||k==="d") queueSnake(1,0);
-      }
-      if (state.game==="bounce"){
-        if (k==="arrowleft"||k==="a") input.bLeft=true;
-        if (k==="arrowright"||k==="d") input.bRight=true;
-      }
-
-      if (k==="p") input.pause=true;
-      if (k==="r") input.restart=true;
-      if (k==="escape") input.exit=true;
-    },{passive:false});
-
-    window.addEventListener("keyup",(e)=>{
-      const k = e.key.toLowerCase();
-      if (state.game==="bounce"){
-        if (k==="arrowleft"||k==="a") input.bLeft=false;
-        if (k==="arrowright"||k==="d") input.bRight=false;
+    btn.addEventListener("pointerdown",(e)=>{
+      e.preventDefault();
+      if(k==="LEFT") I.left=true;
+      if(k==="RIGHT") I.right=true;
+      if(k==="UP") I.up=true;
+      if(k==="DOWN") I.down=true;
+      if(!isDir){
+        if(k==="A") I.pressA=true;
+        if(k==="B") I.pressB=true;
+        if(k==="START") I.pressStart=true;
+        if(k==="SELECT") I.pressSelect=true;
+        if(k==="L") I.pressL=true;
+        if(k==="R") I.pressR=true;
       }
     });
 
-    // ---------- UI view switching ----------
-    function setPickActive(which){
-      [pickMenu,pickSnake,pickBounce].forEach(b=>b.classList.remove("isActive"));
-      if (which==="menu") pickMenu.classList.add("isActive");
-      if (which==="snake") pickSnake.classList.add("isActive");
-      if (which==="bounce") pickBounce.classList.add("isActive");
+    btn.addEventListener("pointerup",(e)=>{
+      e.preventDefault();
+      if(k==="LEFT") I.left=false;
+      if(k==="RIGHT") I.right=false;
+      if(k==="UP") I.up=false;
+      if(k==="DOWN") I.down=false;
+    });
+
+    btn.addEventListener("pointercancel",(e)=>{
+      if(k==="LEFT") I.left=false;
+      if(k==="RIGHT") I.right=false;
+      if(k==="UP") I.up=false;
+      if(k==="DOWN") I.down=false;
+    });
+  });
+
+  // Keyboard support (optional)
+  window.addEventListener("keydown",(e)=>{
+    const k=e.key.toLowerCase();
+    if(k==="arrowleft"||k==="a") I.left=true;
+    if(k==="arrowright"||k==="d") I.right=true;
+    if(k==="arrowup"||k==="w") I.up=true;
+    if(k==="arrowdown"||k==="s") I.down=true;
+
+    if(k==="enter") I.pressA=true;
+    if(k==="escape") I.pressB=true;
+    if(k==="p") I.pressStart=true;
+    if(k==="l") I.pressSelect=true;
+  },{passive:true});
+
+  window.addEventListener("keyup",(e)=>{
+    const k=e.key.toLowerCase();
+    if(k==="arrowleft"||k==="a") I.left=false;
+    if(k==="arrowright"||k==="d") I.right=false;
+    if(k==="arrowup"||k==="w") I.up=false;
+    if(k==="arrowdown"||k==="s") I.down=false;
+  },{passive:true});
+
+  // ---------- Screen UI drawing (one status line only) ----------
+  function statusLine(){
+    const tm = fmtTime(S.time);
+    if(S.mode==="menu"){
+      return `HM GAME | ${lang==="ar" ? "اختر لعبة" : "Choose Game"} | ${tm}`;
+    }
+    if(S.game==="snake"){
+      const b=getBest("snake");
+      return `HM GAME | Snake Lv ${S.level} | 🍎${S.apples} Len ${S.length} | Score ${S.score} | Best ${b} | ${tm}`;
+    } else {
+      const b=getBest("bounce");
+      return `HM GAME | Bounce Lv ${S.stage} | ❤️${S.lives} | 🟡${S.hoopsLeft} | Score ${S.score} | Best ${b} | ${tm}`;
+    }
+  }
+
+  function drawTopBar(){
+    ctx.save();
+    ctx.fillStyle="rgba(0,0,0,.30)";
+    ctx.fillRect(0,0,cv.width, Math.floor(cv.height*0.08));
+    ctx.fillStyle="rgba(255,255,255,.92)";
+    ctx.font = `${Math.floor(cv.height*0.032)}px system-ui`;
+    ctx.textAlign="left";
+    ctx.textBaseline="middle";
+    ctx.fillText(statusLine(), Math.floor(cv.width*0.02), Math.floor(cv.height*0.04));
+    ctx.restore();
+  }
+
+  // ---------- Game switching ----------
+  function resetCommon(){
+    S.startedAt=now();
+    S.time=0;
+    S.score=0;
+  }
+
+  function goMenu(){
+    S.mode="menu";
+    S.menuIdx=0;
+    S.game="snake";
+    resetCommon();
+  }
+
+  function startGame(which){
+    S.mode="play";
+    S.game=which;
+    resetCommon();
+    if(which==="snake") Snake.init();
+    else Bounce.init();
+  }
+
+  function togglePause(){
+    if(S.mode==="play"){ S.mode="pause"; }
+    else if(S.mode==="pause"){ S.mode="play"; }
+  }
+
+  function showResult(type, lines){
+    S.mode="result";
+    S.resultType=type; // "win"|"over"
+    S.resultLines=lines;
+    // best update
+    setBest(S.game, S.score);
+  }
+
+  // ---------- Menu draw ----------
+  function drawMenu(){
+    ctx.fillStyle="#050b14";
+    ctx.fillRect(0,0,cv.width,cv.height);
+
+    drawTopBar();
+
+    const y0 = cv.height*0.22;
+    ctx.fillStyle="rgba(255,255,255,.92)";
+    ctx.textAlign="center";
+    ctx.font=`${Math.floor(cv.width*0.09)}px system-ui`;
+    ctx.fillText("HM GAME", cv.width/2, y0);
+
+    ctx.font=`${Math.floor(cv.width*0.05)}px system-ui`;
+    ctx.fillStyle="rgba(255,255,255,.78)";
+    ctx.fillText(T[lang].menuQ, cv.width/2, y0 + cv.height*0.10);
+
+    // options
+    const opts=[T[lang].snake, T[lang].bounce];
+    const baseY = y0 + cv.height*0.22;
+
+    for(let i=0;i<2;i++){
+      const is=i===S.menuIdx;
+      const w=cv.width*0.70, h=cv.height*0.11;
+      const x=cv.width*0.15, y=baseY + i*(h+cv.height*0.04);
+
+      ctx.fillStyle = is ? "rgba(78,161,255,.18)" : "rgba(255,255,255,.06)";
+      roundRect(x,y,w,h,18,true);
+
+      ctx.strokeStyle = is ? "rgba(78,161,255,.60)" : "rgba(255,255,255,.14)";
+      ctx.lineWidth = 2;
+      roundRectStroke(x,y,w,h,18);
+
+      ctx.fillStyle="rgba(255,255,255,.92)";
+      ctx.font=`${Math.floor(cv.width*0.055)}px system-ui`;
+      ctx.fillText(opts[i], cv.width/2, y + h*0.62);
     }
 
-    function showViews(game){
-      menuView.hidden = game!=="menu";
-      snakeView.hidden = game!=="snake";
-      bounceView.hidden = game!=="bounce";
+    ctx.fillStyle="rgba(255,255,255,.70)";
+    ctx.font=`${Math.floor(cv.width*0.04)}px system-ui`;
+    ctx.fillText(T[lang].menuHint, cv.width/2, cv.height*0.88);
+    ctx.fillStyle="rgba(255,255,255,.60)";
+    ctx.fillText(T[lang].start, cv.width/2, cv.height*0.93);
+  }
+
+  // ---------- Result panel drawn inside screen (transparent) ----------
+  function drawResult(){
+    // draw current game behind (frozen)
+    if(S.game==="snake") Snake.draw();
+    else Bounce.draw();
+
+    drawTopBar();
+
+    ctx.save();
+    ctx.fillStyle="rgba(0,0,0,.40)";
+    ctx.fillRect(0,0,cv.width,cv.height);
+
+    const w=cv.width*0.78, h=cv.height*0.42;
+    const x=(cv.width-w)/2, y=(cv.height-h)/2;
+
+    ctx.fillStyle="rgba(20,26,40,.92)";
+    roundRect(x,y,w,h,18,true);
+    ctx.strokeStyle="rgba(255,255,255,.16)";
+    ctx.lineWidth=2;
+    roundRectStroke(x,y,w,h,18);
+
+    ctx.textAlign="center";
+    ctx.fillStyle="rgba(255,255,255,.95)";
+    ctx.font=`${Math.floor(cv.width*0.06)}px system-ui`;
+    ctx.fillText(S.resultType==="win" ? T[lang].win : T[lang].over, cv.width/2, y + h*0.20);
+
+    ctx.font=`${Math.floor(cv.width*0.042)}px system-ui`;
+    ctx.fillStyle="rgba(255,255,255,.78)";
+    let yy = y + h*0.36;
+    for(const line of S.resultLines){
+      ctx.fillText(line, cv.width/2, yy);
+      yy += cv.height*0.05;
     }
 
-    pickMenu.addEventListener("click", ()=>goMenu());
-    pickSnake.addEventListener("click", ()=>{ setPickActive("snake"); });
-    pickBounce.addEventListener("click", ()=>{ setPickActive("bounce"); });
+    ctx.fillStyle="rgba(255,255,255,.82)";
+    ctx.font=`${Math.floor(cv.width*0.04)}px system-ui`;
+    ctx.fillText(`${T[lang].again}   •   ${T[lang].back}   •   ${T[lang].close}`, cv.width/2, y + h*0.86);
 
-    btnStartSnake.addEventListener("click", ()=>startGame("snake"));
-    btnStartBounce.addEventListener("click", ()=>startGame("bounce"));
+    ctx.restore();
+  }
 
-    btnMenu.addEventListener("click", ()=>goMenu());
-    btnPause.addEventListener("click", ()=>input.pause=true);
-    btnRestart.addEventListener("click", ()=>input.restart=true);
+  // ---------- Shapes ----------
+  function roundRect(x,y,w,h,r,fill){
+    const rr=Math.min(r,w/2,h/2);
+    ctx.beginPath();
+    ctx.moveTo(x+rr,y);
+    ctx.arcTo(x+w,y,x+w,y+h,rr);
+    ctx.arcTo(x+w,y+h,x,y+h,rr);
+    ctx.arcTo(x,y+h,x,y,rr);
+    ctx.arcTo(x,y,x+w,y,rr);
+    ctx.closePath();
+    if(fill) ctx.fill();
+  }
+  function roundRectStroke(x,y,w,h,r){
+    const rr=Math.min(r,w/2,h/2);
+    ctx.beginPath();
+    ctx.moveTo(x+rr,y);
+    ctx.arcTo(x+w,y,x+w,y+h,rr);
+    ctx.arcTo(x+w,y+h,x,y+h,rr);
+    ctx.arcTo(x,y+h,x,y,rr);
+    ctx.arcTo(x,y,x+w,y,rr);
+    ctx.closePath();
+    ctx.stroke();
+  }
 
-    // ---------- Overlay ----------
-    function showOverlay(title, html, actions){
-      ovTitle.textContent = title;
-      ovText.innerHTML = html;
-      ovActions.innerHTML = "";
-      actions.forEach(a=>{
-        const b = document.createElement("button");
-        b.className = "hmBtn " + (a.primary ? "hmPrimary" : "");
-        if (a.danger) b.className += " hmDanger";
-        b.textContent = a.label;
-        b.addEventListener("click", a.onClick);
-        ovActions.appendChild(b);
-      });
-      overlay.hidden = false;
+  // (Games are defined in next parts)
+  const Snake={}, Bounce={};
+
+  // ---------- Main loop ----------
+  let last=now();
+  function loop(){
+    resize();
+    const t=now();
+    const dt=clamp((t-last)/1000, 0, 0.04);
+    last=t;
+
+    // time
+    if(S.mode!=="menu"){ S.time = t - S.startedAt; }
+
+    // controller global actions
+    if(I.pressSelect){ toggleLang(); I.pressSelect=false; }
+    if(I.pressStart){ togglePause(); I.pressStart=false; }
+    if(I.pressL){ // restart
+      if(S.mode==="play"||S.mode==="pause"||S.mode==="result"){
+        startGame(S.game);
+      }
+      I.pressL=false;
     }
-    function hideOverlay(){ overlay.hidden = true; }
+    if(I.pressR){ // menu
+      goMenu();
+      I.pressR=false;
+    }
 
-    function refreshOverlay(){
-      if (state.paused){
-        showOverlay(
-          T[lang].pausedTitle,
-          T[lang].pausedText,
-          [
-            { label: T[lang].resume, primary:true, onClick: ()=>{ state.paused=false; hideOverlay(); } },
-            { label: T[lang].restart, onClick: ()=>{ input.restart=true; hideOverlay(); } },
-            { label: T[lang].backMenu, danger:true, onClick: ()=>goMenu() },
-          ]
-        );
+    // menu control
+    if(S.mode==="menu"){
+      if(I.left||I.right){
+        if(I.left) S.menuIdx=0;
+        if(I.right) S.menuIdx=1;
+        S.game = (S.menuIdx===0) ? "snake" : "bounce";
+      }
+      if(I.pressA){
+        startGame(S.menuIdx===0 ? "snake" : "bounce");
+        I.pressA=false;
+      }
+      drawMenu();
+      clearPresses();
+      requestAnimationFrame(loop);
+      return;
+    }
+
+    // result control
+    if(S.mode==="result"){
+      if(I.pressA){
+        startGame(S.game);
+        I.pressA=false;
+      }
+      if(I.pressB){
+        // close => stay in menu for simplicity
+        goMenu();
+        I.pressB=false;
+      }
+      drawResult();
+      clearPresses();
+      requestAnimationFrame(loop);
+      return;
+    }
+
+    // pause screen
+    if(S.mode==="pause"){
+      if(S.game==="snake") Snake.draw();
+      else Bounce.draw();
+      drawTopBar();
+
+      // small pause label (transparent)
+      ctx.fillStyle="rgba(0,0,0,.25)";
+      const w=cv.width*0.55, h=cv.height*0.12;
+      roundRect((cv.width-w)/2, cv.height*0.44, w, h, 16, true);
+      ctx.fillStyle="rgba(255,255,255,.92)";
+      ctx.textAlign="center";
+      ctx.font=`${Math.floor(cv.width*0.05)}px system-ui`;
+      ctx.fillText(T[lang].paused, cv.width/2, cv.height*0.51);
+
+      clearPresses();
+      requestAnimationFrame(loop);
+      return;
+    }
+
+    // play
+    if(S.mode==="play"){
+      if(S.game==="snake") Snake.update(dt);
+      else Bounce.update(dt);
+
+      if(S.game==="snake") Snake.draw();
+      else Bounce.draw();
+
+      drawTopBar();
+    }
+
+    clearPresses();
+    requestAnimationFrame(loop);
+  }
+// =================
+  // 🐍 SNAKE
+  // =================
+  (function(){
+    const GW=22, GH=16; // fits phone nicely
+    let cell=16, ox=0, oy=0;
+
+    let snake=[], dir={x:1,y:0};
+    let food={x:10,y:8};
+    let tick=0, speed=7;
+    let alive=true;
+
+    function layout(){
+      const topBarH=Math.floor(cv.height*0.08);
+      const pad= Math.floor(Math.min(cv.width,cv.height)*0.06);
+      const usableW = cv.width - pad*2;
+      const usableH = (cv.height - topBarH) - pad*2;
+
+      cell = Math.max(10, Math.floor(Math.min(usableW/GW, usableH/GH)));
+      ox = Math.floor((cv.width - cell*GW)/2);
+      oy = Math.floor(topBarH + ( (cv.height-topBarH) - cell*GH )/2 );
+    }
+
+    function placeFood(){
+      for(let i=0;i<2000;i++){
+        const fx=(Math.random()*GW)|0;
+        const fy=(Math.random()*GH)|0;
+        if(!snake.some(p=>p.x===fx && p.y===fy)){ food={x:fx,y:fy}; return; }
+      }
+      food={x:1,y:1};
+    }
+
+    function init(){
+      layout();
+      snake=[
+        {x:6,y:(GH/2)|0},
+        {x:5,y:(GH/2)|0},
+        {x:4,y:(GH/2)|0}
+      ];
+      dir={x:1,y:0};
+      tick=0; speed=7; alive=true;
+
+      S.score=0; S.apples=0; S.length=3; S.level=1;
+      placeFood();
+    }
+
+    function setDir(nx,ny){
+      // prevent direct reverse
+      if(nx===-dir.x && ny===-dir.y) return;
+      dir={x:nx,y:ny};
+    }
+
+    function step(){
+      if(!alive) return;
+
+      // dpad directions
+      if(I.up) setDir(0,-1);
+      else if(I.down) setDir(0,1);
+      else if(I.left) setDir(-1,0);
+      else if(I.right) setDir(1,0);
+
+      const h=snake[0];
+      const nx=h.x+dir.x, ny=h.y+dir.y;
+
+      // wall
+      if(nx<0||nx>=GW||ny<0||ny>=GH){ gameOver(); return; }
+      // self
+      if(snake.some((p,i)=>i>0 && p.x===nx && p.y===ny)){ gameOver(); return; }
+
+      snake.unshift({x:nx,y:ny});
+
+      if(nx===food.x && ny===food.y){
+        S.score += 10;
+        S.apples++;
+        S.length=snake.length;
+
+        S.level = 1 + Math.floor(S.apples/5);
+        speed = 7 + (S.level-1)*1.2;
+
+        placeFood();
+        setBest("snake", S.score);
+      }else{
+        snake.pop();
+        S.length=snake.length;
       }
     }
 
-    function togglePause(){
-      if (state.game==="menu") return;
-      state.paused = !state.paused;
-      btnPause.textContent = state.paused ? T[lang].resume : T[lang].pause;
-      if (state.paused) refreshOverlay();
-      else hideOverlay();
+    function gameOver(){
+      alive=false;
+      setBest("snake", S.score);
+      showResult("over", [
+        (lang==="ar") ? `النتيجة: ${S.score}` : `Score: ${S.score}`,
+        (lang==="ar") ? `التفاح: ${S.apples}` : `Apples: ${S.apples}`,
+        (lang==="ar") ? `الطول: ${S.length}` : `Length: ${S.length}`,
+        (lang==="ar") ? `الوقت: ${fmtTime(S.time)}` : `Time: ${fmtTime(S.time)}`
+      ]);
     }
 
-    // ---------- HUD ----------
-    function updateHUD(){
-      const elapsed = state.startedAt ? (now()-state.startedAt) : 0;
-      hudTime.textContent = fmtTime(elapsed);
+    function update(dt){
+      layout();
+      tick += dt*speed;
+      while(tick>=1){
+        tick-=1;
+        step();
+        if(S.mode!=="play") break;
+      }
+    }
 
-      if (state.game==="menu"){
-        hudMode.textContent = "—";
-        hudExtra.textContent = "";
-        hudScore.textContent = "HM GAME";
-        hudBest.textContent = "";
+    function draw(){
+      layout();
+      // background
+      ctx.fillStyle="#061025";
+      ctx.fillRect(0,0,cv.width,cv.height);
+
+      // board area (transparent look)
+      ctx.fillStyle="rgba(255,255,255,.04)";
+      roundRect(ox-10, oy-10, cell*GW+20, cell*GH+20, 18, true);
+
+      // grid faint
+      ctx.fillStyle="rgba(255,255,255,.025)";
+      for(let y=0;y<=GH;y++){
+        ctx.fillRect(ox, oy+y*cell, cell*GW, 1);
+      }
+      for(let x=0;x<=GW;x++){
+        ctx.fillRect(ox+x*cell, oy, 1, cell*GH);
+      }
+
+      // food
+      const fx=ox+food.x*cell+cell/2;
+      const fy=oy+food.y*cell+cell/2;
+      ctx.fillStyle="rgba(255,211,79,.95)";
+      ctx.beginPath();
+      ctx.arc(fx,fy, cell*0.24, 0, Math.PI*2);
+      ctx.fill();
+
+      // snake body
+      for(let i=snake.length-1;i>=0;i--){
+        const p=snake[i];
+        const x=ox+p.x*cell, y=oy+p.y*cell;
+        const inset=Math.floor(cell*0.12);
+        const rr=Math.floor(cell*0.28);
+
+        if(i===0){
+          // head
+          ctx.fillStyle="rgba(78,161,255,.95)";
+          roundRect(x+inset, y+inset, cell-inset*2, cell-inset*2, rr, true);
+
+          // eyes
+          const ex1=x+cell*0.38, ex2=x+cell*0.62;
+          const ey=y+cell*0.42;
+          ctx.fillStyle="rgba(255,255,255,.92)";
+          ctx.beginPath(); ctx.arc(ex1,ey, cell*0.07, 0, Math.PI*2); ctx.fill();
+          ctx.beginPath(); ctx.arc(ex2,ey, cell*0.07, 0, Math.PI*2); ctx.fill();
+          ctx.fillStyle="rgba(0,0,0,.65)";
+          ctx.beginPath(); ctx.arc(ex1,ey, cell*0.035, 0, Math.PI*2); ctx.fill();
+          ctx.beginPath(); ctx.arc(ex2,ey, cell*0.035, 0, Math.PI*2); ctx.fill();
+        } else {
+          ctx.fillStyle="rgba(78,161,255,.70)";
+          roundRect(x+inset, y+inset, cell-inset*2, cell-inset*2, rr, true);
+        }
+      }
+    }
+
+    Snake.init=init;
+    Snake.update=update;
+    Snake.draw=draw;
+  })();
+// =================
+  // 🔴 BOUNCE (core rules)
+  // =================
+  (function(){
+    const TILE=24;
+
+    // # solid, . empty, o hoop, ^ spike, G gate, C checkpoint
+    const LEVELS=[
+      [
+        "........................................",
+        "........................................",
+        ".............o.........................G",
+        "............#####.......................",
+        "........................................",
+        "....o......................o............",
+        "....###...........C......#####..........",
+        "........................................",
+        "..................^.....................",
+        "############......^......#############..",
+        "........................................",
+        "..............o.........................",
+        ".............#####......................",
+        "........................................",
+        "###############################.........",
+      ],
+      [
+        "........................................",
+        "........................................",
+        "....o.............o....................G",
+        "....###..........#####..................",
+        "........................................",
+        ".................^......................",
+        "....o............^..........C....o......",
+        "....###........#####...........#####....",
+        "........................................",
+        "..............o.........................",
+        "............#####.......................",
+        "........................................",
+        "############.............#############..",
+        "........................................",
+        "###############################.........",
+      ],
+      [
+        "........................................",
+        "........................................",
+        "....o..............o..................G.",
+        "....###..........#####..................",
+        "........................................",
+        ".................^......................",
+        "....o............^..........o...........",
+        "....###........#####......#####.........",
+        "....................C...................",
+        "........................................",
+        "..............o.........................",
+        "............#####.......................",
+        "........................................",
+        "############.............#############..",
+        "###############################.........",
+      ]
+    ];
+
+    let map=[], W=0,H=0;
+    let stage=0;
+    let hoopsTotal=0;
+    let respawn={x: TILE*2, y: TILE*2};
+
+    const ball={x:0,y:0,vx:0,vy:0,r:11};
+
+    let camX=0, camY=0;
+
+    function loadStage(i, freshRun){
+      stage=i;
+      S.stage=i+1;
+
+      map=LEVELS[i].map(r=>r.split(""));
+      H=map.length; W=map[0].length;
+
+      hoopsTotal=0;
+      for(let y=0;y<H;y++)for(let x=0;x<W;x++) if(map[y][x]==="o") hoopsTotal++;
+
+      S.hoopsLeft=hoopsTotal;
+
+      // respawn resets each stage to start
+      respawn={x:TILE*2, y:TILE*2};
+
+      // ball reset
+      ball.x=respawn.x; ball.y=respawn.y;
+      ball.vx=0; ball.vy=0;
+
+      if(freshRun){
+        S.score=0;
+        S.lives=3;      // core rule: starts with 3 lives 2
+        S.deaths=0;
+      }
+    }
+
+    function init(){
+      loadStage(0, true);
+    }
+
+    function tileAt(tx,ty){
+      if(ty<0||ty>=H||tx<0||tx>=W) return ".";
+      return map[ty][tx];
+    }
+    function setTile(tx,ty,v){
+      if(ty<0||ty>=H||tx<0||tx>=W) return;
+      map[ty][tx]=v;
+    }
+    function isSolid(tx,ty){ return tileAt(tx,ty)==="#"; }
+
+    function circleRect(cx,cy,cr, rx,ry,rw,rh){
+      const nx=clamp(cx,rx,rx+rw);
+      const ny=clamp(cy,ry,ry+rh);
+      const dx=cx-nx, dy=cy-ny;
+      return (dx*dx+dy*dy) <= cr*cr;
+    }
+
+    function collideSolids(cx,cy,cr){
+      const L=( (cx-cr)/TILE )|0;
+      const R=( (cx+cr)/TILE )|0;
+      const Tt=( (cy-cr)/TILE )|0;
+      const B=( (cy+cr)/TILE )|0;
+      for(let ty=Tt;ty<=B;ty++){
+        for(let tx=L;tx<=R;tx++){
+          if(isSolid(tx,ty)){
+            const rx=tx*TILE, ry=ty*TILE;
+            if(circleRect(cx,cy,cr, rx,ry,TILE,TILE)) return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    function resolve(){
+      for(let i=0;i<24;i++){
+        if(!collideSolids(ball.x,ball.y,ball.r)) break;
+        ball.y -= 1;
+        if(!collideSolids(ball.x,ball.y,ball.r)){ ball.vy=Math.min(ball.vy,0); break; }
+        ball.y += 1;
+        ball.x += (ball.vx>=0)? -1 : 1;
+        if(!collideSolids(ball.x,ball.y,ball.r)){ ball.vx=0; break; }
+        ball.y -= 1;
+      }
+    }
+
+    function loseLife(reason){
+      S.lives--;
+      S.deaths++;
+
+      if(S.lives<=0){
+        setBest("bounce", S.score);
+        showResult("over", [
+          (lang==="ar") ? `المرحلة: ${S.stage}` : `Level: ${S.stage}`,
+          (lang==="ar") ? `النتيجة: ${S.score}` : `Score: ${S.score}`,
+          (lang==="ar") ? `مرات الخسارة: ${S.deaths}` : `Deaths: ${S.deaths}`,
+          (lang==="ar") ? `الوقت: ${fmtTime(S.time)}` : `Time: ${fmtTime(S.time)}`
+        ]);
         return;
       }
 
-      hudScore.textContent = `Score: ${state.score}`;
-      hudBest.textContent  = `${T[lang].best}: ${state.best}`;
-      hudExtra.textContent = state.extra || "";
-      btnPause.textContent = state.paused ? T[lang].resume : T[lang].pause;
-
-      if (state.game==="snake") hudMode.textContent = `🐍 ${T[lang].snake} • Lv ${state.level}`;
-      if (state.game==="bounce") hudMode.textContent = `🔴 ${T[lang].bounce} • Lv ${state.level}`;
+      // respawn at checkpoint
+      ball.x=respawn.x; ball.y=respawn.y;
+      ball.vx=0; ball.vy=0;
     }
 
-    // ---------- Game API placeholders (defined next parts) ----------
-    const Snake = {};
-    const Bounce = {};
+    function update(dt){
+      // movement (left/right like old phones)
+      const accel=1200, maxVx=520, gravity=1650, drag=0.995, bounce=0.72;
 
-    function goMenu(){
-      state.game="menu";
-      state.paused=false;
-      state.startedAt=0;
-      state.score=0;
-      state.best=0;
-      state.level=1;
-      state.extra="";
-      setPickActive("menu");
-      showViews("menu");
-      subTitle.textContent = T[lang].choose;
-      hideOverlay();
-      drawMenu();
-      updateHUD();
-    }
+      if(I.left) ball.vx -= accel*dt;
+      if(I.right) ball.vx += accel*dt;
+      ball.vx = clamp(ball.vx, -maxVx, maxVx);
 
-    function startGame(game){
-      state.game = game;
-      state.paused=false;
-      state.startedAt = now();
-      state.score=0;
-      state.level=1;
-      state.extra="";
-      state.a=0; state.b=0; state.c=0;
+      ball.vy += gravity*dt;
 
-      showViews(game);
-      setPickActive(game);
+      ball.x += ball.vx*dt;
+      ball.y += ball.vy*dt;
 
-      if (game==="snake"){
-        state.best = getBest("snake");
-        subTitle.textContent = (lang==="en") ? "Playing Snake" : "تلعب الثعبان";
-        Snake.init();
-      } else {
-        state.best = getBest("bounce");
-        subTitle.textContent = (lang==="en") ? "Playing Bounce" : "تلعب باونس";
-        Bounce.init();
+      ball.vx *= Math.pow(drag, dt*60);
+      ball.vy *= Math.pow(drag, dt*60);
+
+      if(collideSolids(ball.x,ball.y,ball.r)){
+        // simple bounce
+        ball.vy = -Math.abs(ball.vy)*bounce;
+        resolve();
       }
-      hideOverlay();
-      updateHUD();
+
+      // fall -> lose
+      if(ball.y > H*TILE + 400){
+        loseLife("fall");
+        return;
+      }
+
+      // interactions around ball
+      interact();
+
+      // camera follow
+      const viewW=cv.width, viewH=cv.height;
+      const mapW=W*TILE, mapH=H*TILE;
+
+      camX = clamp(ball.x - viewW*0.50, 0, Math.max(0, mapW-viewW));
+      camY = clamp(ball.y - viewH*0.55, 0, Math.max(0, mapH-viewH));
     }
 
-    // ---------- Menu drawing ----------
-    function drawMenu(){
-      resize();
-      ctx.fillStyle = "#061025";
+    function interact(){
+      const tx=(ball.x/TILE)|0, ty=(ball.y/TILE)|0;
+
+      for(let y=ty-1;y<=ty+1;y++){
+        for(let x=tx-1;x<=tx+1;x++){
+          const t=tileAt(x,y);
+          const rx=x*TILE, ry=y*TILE;
+
+          // hoop collectible
+          if(t==="o"){
+            if(circleRect(ball.x,ball.y,ball.r, rx+6,ry+6,TILE-12,TILE-12)){
+              setTile(x,y,".");
+              S.score += 50;
+              S.hoopsLeft = Math.max(0, S.hoopsLeft-1);
+              setBest("bounce", S.score);
+            }
+          }
+
+          // spike
+          if(t==="^"){
+            if(circleRect(ball.x,ball.y,ball.r, rx,ry,TILE,TILE)){
+              loseLife("spike");
+              return;
+            }
+          }
+
+          // checkpoint
+          if(t==="C"){
+            if(circleRect(ball.x,ball.y,ball.r, rx,ry,TILE,TILE)){
+              respawn={x: rx+TILE/2, y: ry+TILE/2};
+              // make it consumed visually
+              setTile(x,y,".");
+            }
+          }
+
+          // gate: locked until hoopsLeft == 0 (core rule) 3
+          if(t==="G"){
+            if(circleRect(ball.x,ball.y,ball.r, rx,ry,TILE,TILE)){
+              if(S.hoopsLeft<=0){
+                // next stage or win
+                if(stage+1 < LEVELS.length){
+                  loadStage(stage+1, false);
+                }else{
+                  setBest("bounce", S.score);
+                  showResult("win", [
+                    (lang==="ar") ? `النتيجة: ${S.score}` : `Score: ${S.score}`,
+                    (lang==="ar") ? `مرات الخسارة: ${S.deaths}` : `Deaths: ${S.deaths}`,
+                    (lang==="ar") ? `الوقت: ${fmtTime(S.time)}` : `Time: ${fmtTime(S.time)}`
+                  ]);
+                }
+              }else{
+                // gate locked: tiny penalty or none
+              }
+            }
+          }
+        }
+      }
+    }
+
+    function draw(){
+      // sky
+      ctx.fillStyle="#4aaed6";
       ctx.fillRect(0,0,cv.width,cv.height);
 
-      ctx.fillStyle = "rgba(255,255,255,.92)";
-      ctx.textAlign = "center";
-      ctx.font = `${Math.floor(cv.width*0.08)}px system-ui`;
-      ctx.fillText("HM GAME 🎮", cv.width/2, cv.height*0.40);
+      // draw tiles in view
+      const startTx=(camX/TILE)|0;
+      const endTx=((camX+cv.width)/TILE+1)|0;
+      const startTy=(camY/TILE)|0;
+      const endTy=((camY+cv.height)/TILE+1)|0;
 
-      ctx.fillStyle = "rgba(255,255,255,.70)";
-      ctx.font = `${Math.floor(cv.width*0.04)}px system-ui`;
-      ctx.fillText(lang==="en" ? "Pick a game below" : "اختر لعبة من الأسفل", cv.width/2, cv.height*0.52);
+      for(let ty=startTy;ty<endTy;ty++){
+        for(let tx=startTx;tx<endTx;tx++){
+          const t=tileAt(tx,ty);
+          const x=tx*TILE - camX;
+          const y=ty*TILE - camY;
+
+          if(t==="#") brick(x,y);
+          else if(t==="o") hoop(x,y);
+          else if(t==="^") spike(x,y);
+          else if(t==="G") gate(x,y, S.hoopsLeft<=0);
+          else if(t==="C") checkpoint(x,y);
+        }
+      }
+
+      // ball
+      drawBall(ball.x-camX, ball.y-camY, ball.r);
+
+      // small helper text inside game (transparent)
+      ctx.fillStyle="rgba(0,0,0,.20)";
+      ctx.font=`${Math.floor(cv.height*0.03)}px system-ui`;
+      ctx.textAlign="left";
+      ctx.fillText(`Hoops: ${S.hoopsLeft}`, 14, Math.floor(cv.height*0.13));
     }
 
-    // ---------- Main Loop ----------
-    let last = now();
-    function loop(){
-      resize();
-      const t = now();
-      const dt = clamp((t-last)/1000, 0, 0.04);
-      last = t;
+    function drawBall(x,y,r){
+      ctx.fillStyle="rgba(0,0,0,.18)";
+      ctx.beginPath();
+      ctx.ellipse(x, y + r*0.85, r*1.05, r*0.35, 0, 0, Math.PI*2);
+      ctx.fill();
 
-      if (input.pause){ input.pause=false; togglePause(); }
-      if (input.exit){ input.exit=false; goMenu(); }
+      ctx.fillStyle="#e83535";
+      ctx.beginPath();
+      ctx.arc(x,y,r,0,Math.PI*2);
+      ctx.fill();
 
-      if (state.game==="menu"){
-        drawMenu();
-      } else if (state.game==="snake"){
-        if (input.restart){ input.restart=false; Snake.init(); state.paused=false; hideOverlay(); state.startedAt=now(); }
-        if (!state.paused) Snake.update(dt);
-        Snake.draw();
-      } else if (state.game==="bounce"){
-        if (input.restart){ input.restart=false; Bounce.init(); state.paused=false; hideOverlay(); state.startedAt=now(); }
-        if (!state.paused) Bounce.update(dt);
-        Bounce.draw();
-      }
-
-      updateHUD();
-      requestAnimationFrame(loop);
+      ctx.fillStyle="rgba(255,255,255,.30)";
+      ctx.beginPath();
+      ctx.arc(x-r*0.35,y-r*0.35,r*0.35,0,Math.PI*2);
+      ctx.fill();
     }
 
-    // Start
-    applyLang();
-    goMenu();
-    requestAnimationFrame(loop);
-// =========================
-    // 🐍 SNAKE (modern + smooth)
-    // =========================
-    (function defineSnake(){
-      const GW = 24;
-      const GH = 18;
+    function brick(x,y){
+      ctx.fillStyle="#b55a2d";
+      ctx.fillRect(x,y,TILE,TILE);
+      ctx.fillStyle="rgba(255,255,255,.10)";
+      ctx.fillRect(x+2,y+2,TILE-4,5);
+      ctx.strokeStyle="#8f3d1f";
+      ctx.lineWidth=2;
+      ctx.strokeRect(x+1,y+1,TILE-2,TILE-2);
+    }
+
+    function hoop(x,y){
+      ctx.strokeStyle="rgba(255,211,79,.95)";
+      ctx.lineWidth=4;
+      ctx.beginPath();
+      ctx.arc(x+TILE/2,y+TILE/2,TILE*0.28,0,Math.PI*2);
+      ctx.stroke();
+    }
+
+    function spike(x,y){
+      ctx.fillStyle="rgba(10,16,28,.92)";
+      ctx.beginPath();
+      ctx.moveTo(x, y+TILE);
+      ctx.lineTo(x+TILE*0.25, y+TILE*0.35);
+      ctx.lineTo(x+TILE*0.5, y+TILE);
+      ctx.lineTo(x+TILE*0.75, y+TILE*0.35);
+      ctx.lineTo(x+TILE, y+TILE);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    function checkpoint(x,y){
+      ctx.fillStyle="rgba(255,255,255,.18)";
+      roundRect(x+4,y+4,TILE-8,TILE-8,7,true);
+      ctx.strokeStyle="rgba(255,255,255,.55)";
+      ctx.lineWidth=2;
+      roundRectStroke(x+4,y+4,TILE-8,TILE-8,7);
+      ctx.fillStyle="rgba(255,255,255,.85)";
+      ctx.font=`${Math.floor(TILE*0.55)}px system-ui`;
+      ctx.textAlign="center";
+      ctx.fillText("C", x+TILE/2, y+TILE*0.73);
+    }
+
+    function gate(x,y,open){
+      ctx.fillStyle=open ? "rgba(255,255,255,.22)" : "rgba(0,0,0,.20)";
+      roundRect(x+2,y+2,TILE-4,TILE-4,7,true);
+
+      ctx.strokeStyle=open ? "rgba(255,255,255,.92)" : "rgba(255,255,255,.35)";
+      ctx.lineWidth=2;
+      roundRectStroke(x+4,y+4,TILE-8,TILE-8,6);
+
+      ctx.fillStyle=open ? "rgba(255,255,255,.92)" : "rgba(255,255,255,.70)";
+      ctx.font=`${Math.floor(TILE*0.55)}px system-ui`;
+      ctx.textAlign="center";
+      ctx.fillText(open ? "✓" : "G", x+TILE/2, y+TILE*0.73);
+    }
+
+    Bounce.init=init;
+    Bounce.update=update;
+    Bounce.draw=draw;
+  })();
+// Start from menu
+  goMenu();
+  requestAnimationFrame(loop);
 
-      let cell=18, ox=0, oy=0;
-      let snake=[], dir={x:1,y:0}, queued=null;
-      let food={x:10,y:9};
-      let tick=0;
-      let speed=7;
-      let alive=true;
-
-      function layout(){
-        const w=cv.width, h=cv.height;
-        const pad=Math.floor(Math.min(w,h)*0.06);
-        const uw=w-pad*2, uh=h-pad*2;
-        cell = Math.max(10, Math.floor(Math.min(uw/GW, uh/GH)));
-        ox = Math.floor((w - cell*GW)/2);
-        oy = Math.floor((h - cell*GH)/2);
-      }
-
-      function init(){
-        layout();
-        snake = [
-          {x:6,y:Math.floor(GH/2)},
-          {x:5,y:Math.floor(GH/2)},
-          {x:4,y:Math.floor(GH/2)},
-        ];
-        dir={x:1,y:0};
-        queued=null;
-        tick=0;
-        speed=7;
-        alive=true;
-
-        state.score=0;
-        state.a=0;              // apples
-        state.b=snake.length;   // length
-        state.level=1;
-        setBest("snake", 0);
-
-        placeFood();
-        updateExtra();
-      }
-
-      function updateExtra(){
-        // show apples + length
-        state.extra = (lang==="en")
-          ? `🍎 ${state.a} • 🧱 Len ${state.b}`
-          : `🍎 ${state.a} • 🧱 الطول ${state.b}`;
-      }
-
-      function placeFood(){
-        for (let i=0;i<2000;i++){
-          const fx = Math.floor(Math.random()*GW);
-          const fy = Math.floor(Math.random()*GH);
-          if (!snake.some(p=>p.x===fx && p.y===fy)){
-            food={x:fx,y:fy};
-            return;
-          }
-        }
-        food={x:1,y:1};
-      }
-
-      function step(){
-        if (!alive) return;
-
-        if (input.sDir) queued=input.sDir;
-        input.sDir=null;
-
-        if (queued){
-          const back = (queued.x===-dir.x && queued.y===-dir.y);
-          if (!back) dir=queued;
-          queued=null;
-        }
-
-        const head=snake[0];
-        const nx=head.x+dir.x;
-        const ny=head.y+dir.y;
-
-        // wall hit = lose
-        if (nx<0||nx>=GW||ny<0||ny>=GH){ lose(); return; }
-        // self hit
-        if (snake.some((p,i)=>i>0 && p.x===nx && p.y===ny)){ lose(); return; }
-
-        snake.unshift({x:nx,y:ny});
-
-        if (nx===food.x && ny===food.y){
-          state.score += 10;
-          state.a += 1;
-          // speed level up every 5 apples
-          state.level = 1 + Math.floor(state.a/5);
-          speed = 7 + (state.level-1)*1.25;
-
-          setBest("snake", state.score);
-          placeFood();
-        } else {
-          snake.pop();
-        }
-
-        state.b = snake.length;
-        updateExtra();
-
-        // optional win condition (big domination)
-        if (snake.length >= Math.floor(GW*GH*0.70)) win();
-      }
-
-      function lose(){
-        alive=false;
-        setBest("snake", state.score);
-
-        const elapsed = fmtTime(now()-state.startedAt);
-        const msg = (lang==="en")
-          ? `<b>${T[lang].gameOver}</b><br/>
-             Score: <b>${state.score}</b><br/>
-             Apples: <b>${state.a}</b> • Length: <b>${state.b}</b><br/>
-             Level: <b>${state.level}</b><br/>
-             Time: <b>${elapsed}</b><br/><br/>
-             ${T[lang].best}: <b>${state.best}</b>`
-          : `<b>${T[lang].gameOver}</b><br/>
-             النتيجة: <b>${state.score}</b><br/>
-             التفاح: <b>${state.a}</b> • الطول: <b>${state.b}</b><br/>
-             المستوى: <b>${state.level}</b><br/>
-             الوقت: <b>${elapsed}</b><br/><br/>
-             ${T[lang].best}: <b>${state.best}</b>`;
-
-        showOverlay(
-          `🐍 ${T[lang].snake} — ${T[lang].results}`,
-          msg,
-          [
-            { label:`🔁 ${T[lang].restart}`, primary:true, onClick:()=>{ init(); hideOverlay(); state.startedAt=now(); } },
-            { label:T[lang].backMenu, danger:true, onClick:()=>goMenu() },
-          ]
-        );
-      }
-
-      function win(){
-        alive=false;
-        setBest("snake", state.score);
-
-        const elapsed = fmtTime(now()-state.startedAt);
-        const msg = (lang==="en")
-          ? `🏆 <b>YOU WIN!</b><br/>
-             You mastered the board 😄<br/><br/>
-             Score: <b>${state.score}</b><br/>
-             Apples: <b>${state.a}</b> • Length: <b>${state.b}</b><br/>
-             Level: <b>${state.level}</b> • Time: <b>${elapsed}</b><br/><br/>
-             ${T[lang].best}: <b>${state.best}</b>`
-          : `🏆 <b>لقد ربحت!</b><br/>
-             سيطرت على اللوحة 😄<br/><br/>
-             النتيجة: <b>${state.score}</b><br/>
-             التفاح: <b>${state.a}</b> • الطول: <b>${state.b}</b><br/>
-             المستوى: <b>${state.level}</b> • الوقت: <b>${elapsed}</b><br/><br/>
-             ${T[lang].best}: <b>${state.best}</b>`;
-
-        showOverlay(
-          `🏆 ${T[lang].youWin}`,
-          msg,
-          [
-            { label:`🔁 ${T[lang].restart}`, primary:true, onClick:()=>{ init(); hideOverlay(); state.startedAt=now(); } },
-            { label:T[lang].backMenu, danger:true, onClick:()=>goMenu() },
-          ]
-        );
-      }
-
-      function update(dt){
-        layout();
-        if (!alive) return;
-
-        tick += dt*speed;
-        while (tick>=1){
-          tick -= 1;
-          step();
-          if (!alive) break;
-        }
-      }
-
-      function draw(){
-        layout();
-        const w=cv.width, h=cv.height;
-
-        // background
-        ctx.fillStyle = "#071735";
-        ctx.fillRect(0,0,w,h);
-
-        // board area with soft grid
-        ctx.fillStyle = "rgba(255,255,255,.05)";
-        roundRect(ox-8, oy-8, cell*GW+16, cell*GH+16, 18, true);
-
-        ctx.fillStyle = "rgba(255,255,255,.03)";
-        for (let y=0;y<GH;y++){
-          ctx.fillRect(ox, oy+y*cell, cell*GW, 1);
-        }
-        for (let x=0;x<GW;x++){
-          ctx.fillRect(ox+x*cell, oy, 1, cell*GH);
-        }
-
-        // food
-        const fx = ox + food.x*cell + cell/2;
-        const fy = oy + food.y*cell + cell/2;
-        ctx.fillStyle = "#ffd34f";
-        ctx.beginPath();
-        ctx.arc(fx,fy, cell*0.25, 0, Math.PI*2);
-        ctx.fill();
-
-        // snake
-        for (let i=0;i<snake.length;i++){
-          const p = snake[i];
-          const px = ox + p.x*cell;
-          const py = oy + p.y*cell;
-
-          const rr = Math.floor(cell*0.26);
-          const inset = Math.floor(cell*0.12);
-          ctx.fillStyle = (i===0) ? "#4ea1ff" : "rgba(78,161,255,.78)";
-          roundRect(px+inset, py+inset, cell-inset*2, cell-inset*2, rr, true);
-
-          // tiny shine
-          if (i===0){
-            ctx.fillStyle = "rgba(255,255,255,.25)";
-            roundRect(px+inset+3, py+inset+3, (cell-inset*2)*0.45, (cell-inset*2)*0.25, rr, true);
-          }
-        }
-      }
-
-      function roundRect(x,y,w,h,r,fill){
-        const rr=Math.min(r,w/2,h/2);
-        ctx.beginPath();
-        ctx.moveTo(x+rr,y);
-        ctx.arcTo(x+w,y,x+w,y+h,rr);
-        ctx.arcTo(x+w,y+h,x,y+h,rr);
-        ctx.arcTo(x,y+h,x,y,rr);
-        ctx.arcTo(x,y,x+w,y,rr);
-        ctx.closePath();
-        if (fill) ctx.fill();
-      }
-
-      Snake.init = init;
-      Snake.update = update;
-      Snake.draw = draw;
-    })();
-// ==================================
-    // 🔴 BOUNCE (classic-ish + mobile HUD)
-    // ==================================
-    (function defineBounce(){
-      const TILE = 24;
-
-      // # bricks, ^ spikes, o ring, G gate, . empty
-      const LEVELS = [
-        [
-          "........................................",
-          "........................................",
-          "..............o.........................",
-          "............#####.......................",
-          "........................................",
-          "....o............................o......",
-          "....###......................#####......",
-          "........................................",
-          "..................^.....................",
-          "############......^......#############..",
-          "........................................",
-          "..............o.........................",
-          ".............#####......................",
-          "........................................",
-          "###############################.....G...",
-        ],
-        [
-          "........................................",
-          "........................................",
-          ".............o..........................",
-          "..........#####.........................",
-          "........................................",
-          "....o..................^..........o.....",
-          "....###..............#####.......###....",
-          "........................................",
-          "...............o........................",
-          ".............#####......................",
-          "........................................",
-          "############.............#############..",
-          "........................................",
-          "..............o.........................",
-          "###############################.....G...",
-        ],
-        [
-          "........................................",
-          "........................................",
-          "....o..............o....................",
-          "....###..........#####..................",
-          "........................................",
-          ".................^......................",
-          ".................^......................",
-          "############....###....###############..",
-          "........................................",
-          "..............o.........................",
-          "............#####.......................",
-          "........................................",
-          "....o............................o......",
-          "....###......................#####......",
-          "###############################.....G...",
-        ],
-      ];
-
-      let map=[], wTiles=0, hTiles=0;
-      let levelIndex=0;
-      let ringsTotal=0;
-
-      const ball = { x:0, y:0, vx:0, vy:0, r:11 };
-      let camX=0, camY=0;
-
-      function init(){
-        loadLevel(0, true);
-      }
-
-      function loadLevel(i, resetAll){
-        levelIndex=i;
-        state.level = i+1;
-
-        if (resetAll){
-          state.score = 0;
-          state.a = 0; // rings collected (total across run)
-          state.b = 3; // lives
-          state.c = 0; // deaths
-          setBest("bounce", 0);
-        }
-
-        map = LEVELS[i].map(r=>r.split(""));
-        hTiles = map.length;
-        wTiles = map[0].length;
-
-        ringsTotal=0;
-        for (let y=0;y<hTiles;y++) for (let x=0;x<wTiles;x++) if (map[y][x]==="o") ringsTotal++;
-
-        // reset ball position
-        ball.x = TILE*2;
-        ball.y = TILE*3;
-        ball.vx = 0;
-        ball.vy = 0;
-
-        camX=0; camY=0;
-        updateExtra();
-      }
-
-      function updateExtra(){
-        const hearts = "❤️".repeat(Math.max(0, state.b));
-        const ringNow = `${ringsCollectedInLevel()}/${ringsTotal}`;
-        state.extra = (lang==="en")
-          ? `${hearts} • 🟡 ${ringNow}`
-          : `${hearts} • 🟡 ${ringNow}`;
-      }
-
-      function ringsCollectedInLevel(){
-        // rings left in map count
-        let left=0;
-        for (let y=0;y<hTiles;y++) for (let x=0;x<wTiles;x++) if (map[y][x]==="o") left++;
-        return ringsTotal - left;
-      }
-
-      function tileAt(tx,ty){
-        if (ty<0||ty>=hTiles) return ".";
-        if (tx<0||tx>=wTiles) return ".";
-        return map[ty][tx];
-      }
-      function setTile(tx,ty,v){
-        if (ty<0||ty>=hTiles) return;
-        if (tx<0||tx>=wTiles) return;
-        map[ty][tx]=v;
-      }
-      function isSolid(tx,ty){ return tileAt(tx,ty)==="#"; }
-
-      function circleRect(cx,cy,cr, rx,ry,rw,rh){
-        const nx = clamp(cx, rx, rx+rw);
-        const ny = clamp(cy, ry, ry+rh);
-        const dx = cx-nx, dy = cy-ny;
-        return (dx*dx + dy*dy) <= cr*cr;
-      }
-
-      function collideSolids(cx,cy,cr){
-        const L=Math.floor((cx-cr)/TILE);
-        const R=Math.floor((cx+cr)/TILE);
-        const Tt=Math.floor((cy-cr)/TILE);
-        const B=Math.floor((cy+cr)/TILE);
-
-        for (let ty=Tt; ty<=B; ty++){
-          for (let tx=L; tx<=R; tx++){
-            if (isSolid(tx,ty)){
-              const rx=tx*TILE, ry=ty*TILE;
-              if (circleRect(cx,cy,cr, rx,ry,TILE,TILE)) return true;
-            }
-          }
-        }
-        return false;
-      }
-
-      function resolve(){
-        for (let i=0;i<22;i++){
-          if (!collideSolids(ball.x, ball.y, ball.r)) break;
-          // push out gently
-          ball.y -= 1;
-          if (!collideSolids(ball.x, ball.y, ball.r)) { ball.vy = Math.min(ball.vy,0); break; }
-          ball.y += 1;
-          ball.x += (ball.vx>=0) ? -1 : 1;
-          if (!collideSolids(ball.x, ball.y, ball.r)) { ball.vx = 0; break; }
-          ball.y -= 1;
-        }
-      }
-
-      function update(dt){
-        // Physics: bouncy ball (close feel)
-        const accel = 1200;
-        const maxVx = 520;
-        const gravity = 1600;
-        const drag = 0.995;
-        const bounce = 0.72;
-        const groundFric = 0.985;
-
-        if (input.bLeft) ball.vx -= accel*dt;
-        if (input.bRight) ball.vx += accel*dt;
-        ball.vx = clamp(ball.vx, -maxVx, maxVx);
-
-        ball.vy += gravity*dt;
-
-        ball.x += ball.vx*dt;
-        ball.y += ball.vy*dt;
-
-        ball.vx *= Math.pow(drag, dt*60);
-        ball.vy *= Math.pow(drag, dt*60);
-
-        if (collideSolids(ball.x, ball.y, ball.r)){
-          const xOnly = collideSolids(ball.x - ball.vx*dt, ball.y, ball.r);
-          const yOnly = collideSolids(ball.x, ball.y - ball.vy*dt, ball.r);
-
-          if (yOnly && !xOnly){
-            ball.vy = -ball.vy * bounce;
-            ball.vx *= groundFric;
-          } else if (xOnly && !yOnly){
-            ball.vx = -ball.vx * bounce;
-          } else {
-            ball.vy = -ball.vy * bounce;
-            ball.vx = -ball.vx * bounce * 0.6;
-          }
-          resolve();
-        }
-
-        // fall out => lose life
-        if (ball.y > hTiles*TILE + 400){
-          loseLife("fall");
-          return;
-        }
-
-        interact();
-
-        // camera follow
-        const viewW=cv.width, viewH=cv.height;
-        const mapW=wTiles*TILE, mapH=hTiles*TILE;
-        camX = clamp(ball.x - viewW*0.5, 0, Math.max(0, mapW-viewW));
-        camY = clamp(ball.y - viewH*0.55, 0, Math.max(0, mapH-viewH));
-
-        updateExtra();
-      }
-
-      function interact(){
-        const tx = Math.floor(ball.x / TILE);
-        const ty = Math.floor(ball.y / TILE);
-
-        for (let y=ty-1; y<=ty+1; y++){
-          for (let x=tx-1; x<=tx+1; x++){
-            const t = tileAt(x,y);
-            const rx=x*TILE, ry=y*TILE;
-
-            if (t==="o"){
-              if (circleRect(ball.x,ball.y,ball.r, rx+6,ry+6, TILE-12,TILE-12)){
-                setTile(x,y,".");
-                state.score += 50;
-                state.a += 1; // total rings
-                setBest("bounce", state.score);
-              }
-            }
-
-            if (t==="^"){
-              if (circleRect(ball.x,ball.y,ball.r, rx,ry,TILE,TILE)){
-                loseLife("spike");
-                return;
-              }
-            }
-
-            if (t==="G"){
-              if (circleRect(ball.x,ball.y,ball.r, rx,ry,TILE,TILE)){
-                finishLevel();
-                return;
-              }
-            }
-          }
-        }
-      }
-
-      function loseLife(reason){
-        state.b -= 1; // lives
-        state.c += 1; // deaths
-        updateExtra();
-
-        if (state.b <= 0){
-          // GAME OVER results
-          setBest("bounce", state.score);
-          const elapsed = fmtTime(now()-state.startedAt);
-          const msg = (lang==="en")
-            ? `<b>${T[lang].gameOver}</b><br/>
-               Level: <b>${state.level}</b><br/>
-               Score: <b>${state.score}</b><br/>
-               Rings total: <b>${state.a}</b><br/>
-               Deaths: <b>${state.c}</b><br/>
-               Time: <b>${elapsed}</b><br/><br/>
-               ${T[lang].best}: <b>${state.best}</b>`
-            : `<b>${T[lang].gameOver}</b><br/>
-               المرحلة: <b>${state.level}</b><br/>
-               النتيجة: <b>${state.score}</b><br/>
-               مجموع الحلقات: <b>${state.a}</b><br/>
-               مرات الخسارة: <b>${state.c}</b><br/>
-               الوقت: <b>${elapsed}</b><br/><br/>
-               ${T[lang].best}: <b>${state.best}</b>`;
-
-          showOverlay(
-            `🔴 ${T[lang].bounce} — ${T[lang].results}`,
-            msg,
-            [
-              { label:`🔁 ${T[lang].restart}`, primary:true, onClick:()=>{ init(); hideOverlay(); state.startedAt=now(); } },
-              { label:T[lang].backMenu, danger:true, onClick:()=>goMenu() },
-            ]
-          );
-          return;
-        }
-
-        // restart current level position (keep score/rings/lives)
-        ball.x = TILE*2;
-        ball.y = TILE*3;
-        ball.vx = 0;
-        ball.vy = 0;
-
-        // small overlay info (optional, short)
-        const txt = (lang==="en")
-          ? `You lost a life! ❤️ left: <b>${state.b}</b>`
-          : `خسرت حياة! ❤️ المتبقي: <b>${state.b}</b>`;
-        showOverlay(
-          `🔴 ${T[lang].bounce}`,
-          txt,
-          [
-            { label: (lang==="en") ? "Continue" : "متابعة", primary:true, onClick:()=>{ hideOverlay(); } },
-          ]
-        );
-      }
-
-      function finishLevel(){
-        const elapsed = fmtTime(now()-state.startedAt);
-
-        if (levelIndex + 1 < LEVELS.length){
-          showOverlay(
-            "✅ HM GAME",
-            (lang==="en")
-              ? `🎉 Level cleared!<br/>
-                 Next: <b>Level ${state.level+1}</b><br/>
-                 Score: <b>${state.score}</b><br/>
-                 Lives: <b>${state.b}</b> • Time: <b>${elapsed}</b>`
-              : `🎉 تم إنهاء المرحلة!<br/>
-                 التالي: <b>المرحلة ${state.level+1}</b><br/>
-                 النتيجة: <b>${state.score}</b><br/>
-                 الحياة: <b>${state.b}</b> • الوقت: <b>${elapsed}</b>`,
-            [
-              { label: (lang==="en") ? "➡️ Next" : "➡️ التالي", primary:true, onClick:()=>{
-                  loadLevel(levelIndex+1, false);
-                  hideOverlay();
-                }
-              },
-              { label: `🔁 ${T[lang].restart}`, onClick:()=>{ loadLevel(levelIndex,false); hideOverlay(); } },
-              { label: T[lang].backMenu, danger:true, onClick:()=>goMenu() },
-            ]
-          );
-        } else {
-          // YOU WIN
-          setBest("bounce", state.score);
-          const msg = (lang==="en")
-            ? `🏆 <b>YOU WIN!</b><br/>
-               You finished all levels 😄<br/><br/>
-               Final Score: <b>${state.score}</b><br/>
-               Total Rings: <b>${state.a}</b><br/>
-               Deaths: <b>${state.c}</b><br/>
-               Time: <b>${elapsed}</b><br/><br/>
-               ${T[lang].best}: <b>${state.best}</b>`
-            : `🏆 <b>لقد ربحت!</b><br/>
-               أنهيت جميع المراحل 😄<br/><br/>
-               النتيجة النهائية: <b>${state.score}</b><br/>
-               مجموع الحلقات: <b>${state.a}</b><br/>
-               مرات الخسارة: <b>${state.c}</b><br/>
-               الوقت: <b>${elapsed}</b><br/><br/>
-               ${T[lang].best}: <b>${state.best}</b>`;
-
-          showOverlay(
-            `🏆 ${T[lang].youWin}`,
-            msg,
-            [
-              { label:`🔁 ${T[lang].restart}`, primary:true, onClick:()=>{ init(); hideOverlay(); state.startedAt=now(); } },
-              { label:T[lang].backMenu, danger:true, onClick:()=>goMenu() },
-            ]
-          );
-        }
-      }
-
-      function draw(){
-        // sky
-        ctx.fillStyle = css("--sky");
-        ctx.fillRect(0,0,cv.width,cv.height);
-
-        // clouds (simple)
-        ctx.fillStyle = "rgba(255,255,255,.35)";
-        for (let i=0;i<6;i++){
-          const x = ((i*280 + camX*0.15) % (cv.width+320)) - 160;
-          const y = 70 + i*42;
-          roundRect(x,y,150,36,18,true);
-        }
-
-        // tiles viewport
-        const startTx = Math.floor(camX/TILE);
-        const endTx = Math.ceil((camX+cv.width)/TILE);
-        const startTy = Math.floor(camY/TILE);
-        const endTy = Math.ceil((camY+cv.height)/TILE);
-
-        for (let ty=startTy; ty<endTy; ty++){
-          for (let tx=startTx; tx<endTx; tx++){
-            const t = tileAt(tx,ty);
-            const x = tx*TILE - camX;
-            const y = ty*TILE - camY;
-
-            if (t==="#") drawBrick(x,y);
-            else if (t==="o") drawRing(x,y);
-            else if (t==="^") drawSpike(x,y);
-            else if (t==="G") drawGate(x,y);
-          }
-        }
-
-        // ball
-        drawBall(ball.x - camX, ball.y - camY, ball.r);
-
-        // small text inside canvas (rings in current level)
-        const ringNow = `${ringsCollectedInLevel()}/${ringsTotal}`;
-        ctx.fillStyle = "rgba(0,0,0,.25)";
-        ctx.font = `${Math.floor(Math.min(cv.width,cv.height)*0.032)}px system-ui`;
-        ctx.textAlign = "left";
-        ctx.fillText(`Rings: ${ringNow}`, 14, 34);
-      }
-
-      function drawBall(x,y,r){
-        ctx.fillStyle = "rgba(0,0,0,.18)";
-        ctx.beginPath();
-        ctx.ellipse(x, y + r*0.85, r*1.05, r*0.35, 0, 0, Math.PI*2);
-        ctx.fill();
-
-        ctx.fillStyle = css("--ball");
-        ctx.beginPath();
-        ctx.arc(x,y,r,0,Math.PI*2);
-        ctx.fill();
-
-        ctx.fillStyle = "rgba(255,255,255,.30)";
-        ctx.beginPath();
-        ctx.arc(x - r*0.35, y - r*0.35, r*0.35, 0, Math.PI*2);
-        ctx.fill();
-      }
-
-      function drawBrick(x,y){
-        ctx.fillStyle = css("--brick");
-        ctx.fillRect(x,y,TILE,TILE);
-        ctx.fillStyle = "rgba(255,255,255,.10)";
-        ctx.fillRect(x+2,y+2,TILE-4,5);
-        ctx.fillStyle = "rgba(0,0,0,.12)";
-        ctx.fillRect(x+2,y+TILE-6,TILE-4,4);
-        ctx.strokeStyle = css("--brick2");
-        ctx.lineWidth = 2;
-        ctx.strokeRect(x+1,y+1,TILE-2,TILE-2);
-      }
-
-      function drawRing(x,y){
-        ctx.strokeStyle = css("--ring");
-        ctx.lineWidth = 4;
-        ctx.beginPath();
-        ctx.arc(x+TILE/2,y+TILE/2,TILE*0.28,0,Math.PI*2);
-        ctx.stroke();
-
-        ctx.strokeStyle = "rgba(255,255,255,.35)";
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(x+TILE/2-1,y+TILE/2-2,TILE*0.22,0,Math.PI*2);
-        ctx.stroke();
-      }
-
-      function drawSpike(x,y){
-        ctx.fillStyle = css("--spike");
-        ctx.beginPath();
-        ctx.moveTo(x, y+TILE);
-        ctx.lineTo(x+TILE*0.25, y+TILE*0.35);
-        ctx.lineTo(x+TILE*0.5, y+TILE);
-        ctx.lineTo(x+TILE*0.75, y+TILE*0.35);
-        ctx.lineTo(x+TILE, y+TILE);
-        ctx.closePath();
-        ctx.fill();
-      }
-
-      function drawGate(x,y){
-        ctx.fillStyle = "rgba(0,0,0,.18)";
-        roundRect(x+2,y+2,TILE-4,TILE-4,7,true);
-        ctx.strokeStyle = css("--gate");
-        ctx.lineWidth = 2;
-        roundRectStroke(x+4,y+4,TILE-8,TILE-8,6);
-
-        ctx.fillStyle = "rgba(255,255,255,.88)";
-        ctx.font = `${Math.floor(TILE*0.62)}px system-ui`;
-        ctx.textAlign = "center";
-        ctx.fillText("G", x+TILE/2, y+TILE*0.73);
-      }
-
-      function roundRect(x,y,w,h,r,fill){
-        const rr = Math.min(r,w/2,h/2);
-        ctx.beginPath();
-        ctx.moveTo(x+rr,y);
-        ctx.arcTo(x+w,y,x+w,y+h,rr);
-        ctx.arcTo(x+w,y+h,x,y+h,rr);
-        ctx.arcTo(x,y+h,x,y,rr);
-        ctx.arcTo(x,y,x+w,y,rr);
-        ctx.closePath();
-        if (fill) ctx.fill();
-      }
-      function roundRectStroke(x,y,w,h,r){
-        const rr = Math.min(r,w/2,h/2);
-        ctx.beginPath();
-        ctx.moveTo(x+rr,y);
-        ctx.arcTo(x+w,y,x+w,y+h,rr);
-        ctx.arcTo(x+w,y+h,x,y+h,rr);
-        ctx.arcTo(x,y+h,x,y,rr);
-        ctx.arcTo(x,y,x+w,y,rr);
-        ctx.closePath();
-        ctx.stroke();
-      }
-
-      Bounce.init = init;
-      Bounce.update = update;
-      Bounce.draw = draw;
-    })();
 })();
-  </script>
-
+</script>
 </body>
 </html>
