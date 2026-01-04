@@ -16,10 +16,10 @@
       --padDark: rgba(22,24,30,.95);
       --A:#e43b3b;
 
-      /* ✅ 50/50 فعلي */
+      /* real viewport height */
       --vh: 1vh;
 
-      /* ✅ سكيل للأزرار (يتعدل من JS حسب ارتفاع لوحة التحكم) */
+      /* auto scale for pad */
       --padScale: 1;
     }
 
@@ -31,22 +31,21 @@
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
       background: radial-gradient(1200px 900px at 70% 15%, #1b2a55, var(--bg));
       color: var(--txt);
-
-      overflow:hidden;              /* ✅ لا سكرول */
+      overflow:hidden;
       overscroll-behavior:none;
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
     }
 
-    /* ✅ التطبيق = ارتفاع مرئي حقيقي */
+    /* 50/50 real */
     .app{
       height: calc(var(--vh) * 100);
       display:grid;
-      grid-template-rows: 1fr 1fr; /* ✅ 50/50 */
+      grid-template-rows: 1fr 1fr;
       min-height:0;
     }
 
-    /* ======= Game Area ======= */
+    /* ===== GAME AREA ===== */
     .screenWrap{ min-height:0; }
     .screenFrame{
       height:100%;
@@ -63,15 +62,13 @@
       touch-action:none;
     }
 
-    /* ======= Pad Area ======= */
+    /* ===== PAD AREA ===== */
     .pad{
       min-height:0;
-      padding:0; /* ✅ مهم: لا نخلي padding هنا */
+      padding:0;
       background: rgba(0,0,0,.12);
       overflow:hidden;
     }
-
-    /* ✅ لوحة التحكم تملأ النصف بالكامل */
     .padBody{
       height:100%;
       width:100%;
@@ -86,7 +83,6 @@
       position:relative;
       overflow:hidden;
 
-      /* ✅ padding داخلي (ما يأثر على التقسيم) */
       padding: 12px;
       padding-bottom: calc(12px + env(safe-area-inset-bottom));
 
@@ -95,17 +91,15 @@
       justify-content:space-between;
       min-height:0;
     }
-
     .padBody:before{
       content:"";
       position:absolute; inset:-45% -20% auto -20%;
       height:80%;
-      transform: hint  rotate(-10deg);
+      transform: rotate(-10deg);
       background: rgba(255,255,255,.22);
       pointer-events:none;
     }
 
-    /* ======= Buttons Base ======= */
     .btn{
       border:none;
       cursor:pointer;
@@ -115,7 +109,7 @@
     }
     .btn:active{ transform: translateY(1px); }
 
-    /* ======= Top mini row ======= */
+    /* ===== TOP MINI ===== */
     .padTop{
       z-index:1;
       display:flex;
@@ -124,6 +118,8 @@
       gap:10px;
       padding: 2px 2px 6px 2px;
     }
+
+    /* ===== AUTO SCALE SIZES ===== */
     .smallBtn{
       height: calc(56px * var(--padScale));
       padding: 0 calc(18px * var(--padScale));
@@ -133,28 +129,43 @@
       font-weight: 1100;
       color: rgba(0,0,0,.80);
       font-size: calc(15px * var(--padScale));
+      white-space:nowrap;
     }
 
-    /* ======= Main pad grid ======= */
+    /* ===== PHONE-FIRST LAYOUT =====
+       حل مشكلة قص زر A: نستخدم 3 مناطق:
+       - يسار: أزرار (ابدأ/لغة)
+       - وسط: D-pad كبير
+       - يمين: A + Restart (داخل الشاشة دائمًا)
+       والعمود الأوسط يأخذ أكبر مساحة */
     .padMain{
       z-index:1;
       display:grid;
-      grid-template-columns: 1fr 1.35fr 1fr;
+      grid-template-columns: 0.95fr 1.35fr 0.95fr;
       align-items:center;
       gap: 12px;
       padding: 6px 0;
       min-height:0;
     }
 
-    /* Left side (bigger) */
     .sideLeft{
       display:grid;
       justify-items:start;
       gap: 14px;
       padding-left: 4px;
+      min-width: 0;
     }
+
+    .sideRight{
+      display:grid;
+      justify-items:end;
+      gap: 14px;
+      padding-right: 4px;
+      min-width: 0;
+    }
+
     .pill{
-      width: calc(210px * var(--padScale));
+      width: min(100%, calc(220px * var(--padScale)));
       height: calc(78px * var(--padScale));
       border-radius: 999px;
       background: rgba(0,0,0,.10);
@@ -171,19 +182,22 @@
       padding-left: 10px;
     }
 
-    /* Center D-Pad */
+    /* D-Pad */
     .dpad{
       display:grid;
       justify-items:center;
       gap: calc(14px * var(--padScale));
+      min-width:0;
     }
     .drow{
       display:flex;
       gap: calc(14px * var(--padScale));
       align-items:center;
+      justify-content:center;
     }
+
     .padBtn{
-      width: calc(140px * var(--padScale));
+      width: calc(138px * var(--padScale));
       height: calc(120px * var(--padScale));
       border-radius: calc(28px * var(--padScale));
       background: var(--padDark);
@@ -192,6 +206,7 @@
       font-size: calc(34px * var(--padScale));
       box-shadow: inset 0 0 0 2px rgba(255,255,255,.06), 0 14px 26px rgba(0,0,0,.22);
     }
+
     .centerDot{
       width: calc(96px * var(--padScale));
       height: calc(96px * var(--padScale));
@@ -201,17 +216,14 @@
       font-weight: 1100;
       font-size: calc(16px * var(--padScale));
       box-shadow: inset 0 0 0 2px rgba(255,255,255,.05);
+      display:flex;
+      align-items:center;
+      justify-content:center;
     }
 
-    /* Right side */
-    .sideRight{
-      display:grid;
-      justify-items:end;
-      gap: 14px;
-      padding-right: 4px;
-    }
+    /* A + Restart — ✅ منع القص: الحجم يتقلص تلقائياً */
     .A{
-      width: calc(168px * var(--padScale));
+      width: min(100%, calc(168px * var(--padScale)));
       height: calc(168px * var(--padScale));
       border-radius: 999px;
       background: var(--A);
@@ -220,8 +232,9 @@
       font-size: calc(36px * var(--padScale));
       box-shadow: inset 0 0 0 3px rgba(255,255,255,.35), 0 16px 30px rgba(0,0,0,.25);
     }
+
     .restart{
-      width: calc(210px * var(--padScale));
+      width: min(100%, calc(220px * var(--padScale)));
       height: calc(68px * var(--padScale));
       border-radius: calc(18px * var(--padScale));
       background: rgba(0,0,0,.12);
@@ -229,6 +242,7 @@
       font-weight: 1200;
       color: rgba(0,0,0,.80);
       font-size: calc(15px * var(--padScale));
+      white-space:nowrap;
     }
 
     .padHint{
@@ -243,7 +257,14 @@
       padding: 0 8px;
     }
 
-    /* على الشاشات الكبيرة (كمبيوتر/تابلت) نخلي اللوحة وسط */
+    /* ✅ على شاشات ضيقة جداً: نجعل الأعمدة أقرب لتجنب القص */
+    @media (max-width: 360px){
+      .padMain{ grid-template-columns: 1fr 1.25fr 1fr; }
+      .padBtn{ width: calc(128px * var(--padScale)); }
+      .A{ height: calc(156px * var(--padScale)); }
+    }
+
+    /* Desktop: pad centered */
     @media (min-width: 900px){
       .pad{
         display:flex;
@@ -314,7 +335,7 @@
 (() => {
   "use strict";
 
-  // ====== Fix real viewport height (يثبت 50/50)
+  /* ====== Viewport height fix (50/50) ====== */
   function setRealVH(){
     const h = (window.visualViewport?.height || window.innerHeight);
     document.documentElement.style.setProperty("--vh", (h * 0.01) + "px");
@@ -324,25 +345,24 @@
   window.visualViewport?.addEventListener("resize", setRealVH);
   window.visualViewport?.addEventListener("scroll", setRealVH);
 
-  // ====== Auto scale pad buttons based on pad height
+  /* ====== Auto scale PAD ====== */
   const padBody = document.getElementById("padBody");
   function setPadScale(){
-    // ارتفاع نصف الشاشة الحقيقي (لوحة التحكم)
     const h = padBody.getBoundingClientRect().height || 360;
-    // هدفنا: لو 400px => scale 1.0 ، لو أكبر يزيد تدريجياً، لو أصغر يقل
-    let scale = h / 400;
-    scale = Math.max(0.88, Math.min(1.25, scale)); // حدود آمنة
+    // هدف: نصف الشاشة تقريباً => scale مناسب
+    let scale = h / 380;
+    scale = Math.max(0.92, Math.min(1.28, scale));
     document.documentElement.style.setProperty("--padScale", scale.toFixed(3));
   }
   setPadScale();
   window.addEventListener("resize", setPadScale);
   window.visualViewport?.addEventListener("resize", setPadScale);
 
-  // ====== Canvas
+  /* ====== Canvas ====== */
   const cv = document.getElementById("cv");
   const ctx = cv.getContext("2d", { alpha:false });
-
   let W=0, H=0, D=1;
+
   function resizeCanvas(){
     const r=cv.getBoundingClientRect();
     D = Math.max(1, window.devicePixelRatio || 1);
@@ -354,7 +374,6 @@
   }
 
   window.addEventListener("contextmenu", e => e.preventDefault(), {passive:false});
-
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
   const now=()=>performance.now();
   const pad2=n=>String(n).padStart(2,"0");
@@ -363,14 +382,14 @@
     return `${pad2(Math.floor(s/60))}:${pad2(s%60)}`;
   };
 
-  // ====== Language
-  const LANG_KEY="HM_LANG_SNAKE_5050";
-  let lang = localStorage.getItem(LANG_KEY) || "en";
+  /* ====== Language ====== */
+  const LANG_KEY="HM_LANG_SNAKE_FINAL";
+  let lang = localStorage.getItem(LANG_KEY) || "ar"; // افتراضاً عربي
 
   const T={
     ar:{
       title:"HM GAME | ثعبان",
-      menu:"اضغط زر (A) للبدء",
+      menu:"اضغط (A) للبدء",
       paused:"⏸️ متوقف مؤقتاً",
       over:"😵 انتهت اللعبة",
       score:"النتيجة", best:"الأفضل", time:"الوقت",
@@ -381,7 +400,7 @@
       lblPause:"إيقاف مؤقت",
       btnLang:"اللغة",
       btnRestart:"إعادة تشغيل",
-      hint:"HM GAME 🎮 — التحريك: الأسهم • A: بدء/تأكيد • ابدأ: إيقاف • اللغة/تحديد: AR/EN • إعادة • القائمة",
+      hint:"HM GAME 🎮 — التحريك: الأسهم • A: بدء/تأكيد • ابدأ: إيقاف • اللغة/تحديد: AR/EN • إعادة تشغيل • القائمة",
       resultFoot:"A: إعادة  •  القائمة: قائمة  •  ابدأ: إغلاق"
     },
     en:{
@@ -429,7 +448,7 @@
     ui.hintLine.textContent  = T[lang].hint;
 
     ui.btnA.textContent = "A";
-    ui.btnHM.textContent = "HM";
+    ui.btnHM.textContent = "HM"; // ✅ ثابت
   }
 
   function toggleLang(){
@@ -439,8 +458,8 @@
   }
   applyLang();
 
-  // ====== Best score
-  const BEST_KEY="HM_BEST_SNAKE_5050";
+  /* ====== Best Score ====== */
+  const BEST_KEY="HM_BEST_SNAKE_FINAL";
   let best = Number(localStorage.getItem(BEST_KEY) || "0");
   function setBest(v){
     if(v>best){
@@ -449,10 +468,11 @@
     }
   }
 
-  // ====== Input (fast touch)
+  /* ====== Input (fast) ====== */
   const hold={left:false,right:false,up:false,down:false};
   let wantDir = {x:1,y:0};
   const jp={A:false,START:false,LANG:false,L:false,R:false};
+
   function clearJP(){ for(const k in jp) jp[k]=false; }
 
   function setWant(dx,dy){
@@ -472,6 +492,7 @@
     if(k==="L") jp.L=true;
     if(k==="R") jp.R=true;
   }
+
   function onUpKey(k){
     if(k==="UP") hold.up=false;
     if(k==="DOWN") hold.down=false;
@@ -496,7 +517,7 @@
     btn.addEventListener("lostpointercapture", off);
   });
 
-  // ====== Draw helpers
+  /* ====== UI helpers ====== */
   function rr(x,y,w,h,r,fill){
     const rad=Math.min(r,w/2,h/2);
     ctx.beginPath();
@@ -508,6 +529,7 @@
     ctx.closePath();
     if(fill) ctx.fill(); else ctx.stroke();
   }
+
   function topBarH(){ return clamp(H*0.060, 26, 40); }
   function ellipsize(text, maxW){
     if(ctx.measureText(text).width <= maxW) return text;
@@ -516,13 +538,14 @@
     return s+"…";
   }
 
-  // ====== State
+  /* ====== State ====== */
   const S={
     mode:"menu", // menu | play | pause | result
     score:0, apples:0, len:3, level:1,
     playMs:0, lastRunAt:0,
     resultLines:[]
   };
+
   function startClock(){ S.lastRunAt = now(); }
   function stopClock(){
     const t=now();
@@ -556,7 +579,7 @@
     return h;
   }
 
-  // ====== Snake (Wrap + سرعة مناسبة + تفاحة أكبر)
+  /* ====== Snake (board fills the area better) ====== */
   const Snake = {
     GW: 30, GH: 20,
     cell: 18, ox:0, oy:0,
@@ -565,17 +588,13 @@
     food: {x:5,y:5},
     alive: true,
     accMs: 0,
-    moveEveryMs: 170, // ✅ بطيئة ومناسبة
+    moveEveryMs: 170,
 
-    computeGridForScreen(){
-      const topH = topBarH();
-      const usableW = Math.max(1, W);
-      const usableH = Math.max(1, H - topH);
-      const GH = 20;
-      let GW = Math.round(GH * (usableW / usableH));
-      GW = clamp(GW, 26, 38);
-      this.GH = GH;
-      this.GW = GW;
+    computeGrid(){
+      // نختار Grid ثابت “نسبياً” لكي تمتلئ المساحة أفضل
+      // ثم نكبر cell إلى أقصى حد ممكن
+      this.GH = 20;
+      this.GW = 30;
     },
 
     layout(){
@@ -586,8 +605,9 @@
       this.cell = Math.floor(Math.min(usableW/this.GW, usableH/this.GH));
       this.cell = clamp(this.cell, 14, 80);
 
-      this.ox = Math.floor((W - this.cell*this.GW)/2);
-      this.oy = Math.floor(topH + ((H-topH) - this.cell*this.GH)/2);
+      // ✅ نقلل الفراغ حول اللوحة (مقارنة بالنسخة السابقة)
+      this.ox = Math.floor((usableW - this.cell*this.GW)/2);
+      this.oy = Math.floor(topH + (usableH - this.cell*this.GH)/2);
     },
 
     placeFood(){
@@ -603,7 +623,7 @@
     },
 
     init(){
-      this.computeGridForScreen();
+      this.computeGrid();
       this.layout();
 
       S.score=0; S.apples=0; S.level=1; S.playMs=0;
@@ -644,13 +664,13 @@
       let nx=h.x+this.dir.x;
       let ny=h.y+this.dir.y;
 
-      // ✅ Wrap walls
+      // Wrap
       if(nx < 0) nx = this.GW - 1;
       if(nx >= this.GW) nx = 0;
       if(ny < 0) ny = this.GH - 1;
       if(ny >= this.GH) ny = 0;
 
-      // ✅ Game over فقط عند الاصطدام بنفسه
+      // collision with self only
       if(this.snake.some((p,i)=>i>0 && p.x===nx && p.y===ny)){
         this.over(); return;
       }
@@ -663,7 +683,9 @@
         S.len=this.snake.length;
 
         S.level = 1 + Math.floor(S.apples/6);
-        this.moveEveryMs = clamp(170 - (S.level-1)*8, 120, 170);
+
+        // ✅ سرعة أهدأ
+        this.moveEveryMs = clamp(175 - (S.level-1)*7, 125, 175);
 
         this.placeFood();
         setBest(S.score);
@@ -695,16 +717,22 @@
       ctx.fillStyle="#061025";
       ctx.fillRect(0,0,W,H);
 
-      // board
-      ctx.fillStyle="rgba(255,255,255,.05)";
-      rr(this.ox-4, this.oy-4, this.cell*this.GW+8, this.cell*this.GH+8, 18, true);
+      // board frame (bigger and tighter)
+      const pad = Math.max(6, Math.floor(this.cell*0.40));
+      const bx = this.ox - pad;
+      const by = this.oy - pad;
+      const bw = this.cell*this.GW + pad*2;
+      const bh = this.cell*this.GH + pad*2;
 
-      // ✅ Apple bigger
+      ctx.fillStyle="rgba(255,255,255,.05)";
+      rr(bx,by,bw,bh,18,true);
+
+      // Apple bigger
       const fx=this.ox+this.food.x*this.cell+this.cell/2;
       const fy=this.oy+this.food.y*this.cell+this.cell/2;
       ctx.fillStyle="rgba(255,211,79,.95)";
       ctx.beginPath();
-      ctx.arc(fx, fy, this.cell*0.36, 0, Math.PI*2);
+      ctx.arc(fx, fy, this.cell*0.38, 0, Math.PI*2);
       ctx.fill();
 
       // snake
@@ -735,7 +763,7 @@
     }
   };
 
-  // ====== Screens
+  /* ====== Screens ====== */
   function drawMenu(){
     ctx.fillStyle="#050b14";
     ctx.fillRect(0,0,W,H);
@@ -761,7 +789,7 @@
     drawTopBar();
 
     ctx.fillStyle="rgba(0,0,0,.28)";
-    const w=W*0.66, h=H*0.16;
+    const w=W*0.72, h=H*0.16;
     rr((W-w)/2, H*0.42, w, h, 18, true);
 
     ctx.fillStyle="rgba(255,255,255,.92)";
@@ -809,7 +837,7 @@
     ctx.fillText(T[lang].resultFoot, W/2, y + h*0.88);
   }
 
-  // ====== Flow
+  /* ====== Flow ====== */
   function goMenu(){
     S.mode="menu";
     S.score=0; S.apples=0; S.len=3; S.level=1;
@@ -826,6 +854,7 @@
     else if(S.mode==="pause"){ S.mode="play"; startClock(); }
   }
 
+  /* ====== Main loop ====== */
   let last=now();
   function loop(){
     setRealVH();
