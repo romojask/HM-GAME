@@ -11,9 +11,6 @@
       --bg:#070d18;
       --txt: rgba(255,255,255,.92);
       --muted: rgba(255,255,255,.70);
-
-      --glass: rgba(255,255,255,.08);
-      --glass2: rgba(255,255,255,.06);
       --line: rgba(255,255,255,.14);
 
       --padBase: rgba(240,240,240,.92);
@@ -38,14 +35,13 @@
       touch-action: manipulation;
     }
 
-    /* IMPORTANT: fixed 2-part layout, no scroll, no half/half */
+    /* تقسيم مضبوط: الأعلى = شاشة، الأسفل = أزرار */
     .app{
       height: 100dvh;
       display:grid;
       grid-template-rows: 1fr auto;
     }
 
-    /* Top: screen ALWAYS takes the remaining space */
     .screenWrap{
       padding: 10px;
       padding-top: calc(10px + env(safe-area-inset-top));
@@ -60,7 +56,6 @@
       background: rgba(0,0,0,.22);
       box-shadow: 0 20px 70px rgba(0,0,0,.40);
       overflow:hidden;
-      position:relative;
     }
 
     canvas#cv{
@@ -70,12 +65,12 @@
       background:#050b14;
     }
 
-    /* Bottom: controller fixed-ish height so screen stays big */
+    /* أهم تعديل: خلّيت يد التحكم أقل، عشان الشاشة أكبر */
     .pad{
       padding: 12px;
       padding-bottom: calc(12px + env(safe-area-inset-bottom));
       background: rgba(0,0,0,.14);
-      height: clamp(240px, 36dvh, 360px);
+      height: clamp(210px, 32dvh, 310px);
     }
 
     .padBody{
@@ -103,11 +98,7 @@
       pointer-events:none;
     }
 
-    .padTop{
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-    }
+    .padTop{ display:flex; justify-content:space-between; gap:10px; z-index:1; }
     .shoulder{
       flex:1 1 0;
       border-radius: 16px;
@@ -117,7 +108,6 @@
       font-weight: 1000;
       color: rgba(0,0,0,.70);
       user-select:none;
-      z-index:1;
     }
 
     .padMain{
@@ -142,7 +132,7 @@
     .dpadMid{ display:flex; gap:8px; align-items:center; }
 
     .padBtn{
-      width: 66px; height: 56px;
+      width: 62px; height: 54px;
       border-radius: 16px;
       background: var(--padDark);
       color: rgba(255,255,255,.92);
@@ -157,10 +147,10 @@
     }
 
     /* Select/Start */
-    .midKeys{ display:grid; justify-items:center; gap: 10px; }
+    .midKeys{ display:grid; justify-items:center; gap: 10px; z-index:1; }
     .midRow{ display:flex; gap: 12px; }
     .pillKey{
-      width: 86px; height: 36px;
+      width: 82px; height: 36px;
       border-radius: 999px;
       background: rgba(0,0,0,.12);
       border: 1px solid rgba(0,0,0,.14);
@@ -176,11 +166,10 @@
     }
 
     /* ABXY */
-    .abxy{ display:grid; justify-items:center; gap:8px; }
+    .abxy{ display:grid; justify-items:center; gap:8px; z-index:1; }
     .abxyRow{ display:flex; gap:10px; }
-
     .colorBtn{
-      width: 62px; height: 62px;
+      width: 58px; height: 58px;
       border-radius: 999px;
       font-weight: 1000;
       font-size: 20px;
@@ -202,13 +191,6 @@
       overflow:hidden;
       text-overflow: ellipsis;
       padding: 0 6px;
-    }
-
-    @media (max-width: 420px){
-      .pad{ height: clamp(230px, 38dvh, 360px); }
-      .padBtn{ width: 62px; height: 54px; }
-      .colorBtn{ width: 58px; height: 58px; }
-      .pillKey{ width: 78px; }
     }
   </style>
 </head>
@@ -275,32 +257,40 @@
   const cv = document.getElementById("cv");
   const ctx = cv.getContext("2d", { alpha:false });
 
-  // ---------- helpers ----------
+  // ---- IMPORTANT: draw in CSS pixels, upscale by DPR for crispness
+  let W=0, H=0, D=1; // CSS width/height + DPR
+  function resize(){
+    const r=cv.getBoundingClientRect();
+    D = Math.max(1, window.devicePixelRatio || 1);
+    W = r.width;
+    H = r.height;
+
+    cv.width  = Math.floor(W * D);
+    cv.height = Math.floor(H * D);
+
+    // All drawing coordinates now use CSS pixels
+    ctx.setTransform(D,0,0,D,0,0);
+    ctx.imageSmoothingEnabled = false;
+  }
+  window.addEventListener("resize", resize);
+
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
   const now=()=>performance.now();
-  const DPR=()=>Math.max(1, Math.floor(window.devicePixelRatio||1));
   const pad2=n=>String(n).padStart(2,"0");
   const fmtTime=(ms)=>{
     const s=Math.floor(ms/1000);
     return `${pad2(Math.floor(s/60))}:${pad2(s%60)}`;
   };
 
-  function resize(){
-    const r=cv.getBoundingClientRect();
-    const d=DPR();
-    const w=Math.floor(r.width*d), h=Math.floor(r.height*d);
-    if(cv.width!==w || cv.height!==h){ cv.width=w; cv.height=h; }
-  }
-  window.addEventListener("resize", resize);
-
-  // ---------- language ----------
-  const LANG_KEY="HM_LANG_V2";
+  // ---- language
+  const LANG_KEY="HM_LANG_V3";
   let lang=localStorage.getItem(LANG_KEY) || "ar";
   const T={
     ar:{
       choose:"اختر لعبة",
       q:"❓ أي لعبة تريد؟",
-      hint:"استعمل ◀ ▶ لاختيار اللعبة ثم اضغط A للبدء",
+      hint1:"استعمل ◀ ▶ لاختيار اللعبة ثم اضغط A للبدء",
+      hint2:"SELECT لتغيير اللغة",
       snake:"🐍 الثعبان",
       bounce:"🔴 باونس",
       paused:"⏸️ متوقف مؤقتاً",
@@ -322,7 +312,8 @@
     en:{
       choose:"Choose Game",
       q:"❓ Which game do you want?",
-      hint:"Use ◀ ▶ to choose, then press A to start",
+      hint1:"Use ◀ ▶ to choose, then press A to start",
+      hint2:"SELECT to change language",
       snake:"🐍 Snake",
       bounce:"🔴 Bounce",
       paused:"⏸️ Paused",
@@ -354,47 +345,34 @@
   }
   applyLang();
 
-  // ---------- best scores ----------
-  const BEST_KEY="HM_BEST_V2";
-  const bests=(()=>{try{return JSON.parse(localStorage.getItem(BEST_KEY)||"{}");}catch{return{};}})();
+  // ---- best
+  const BEST_KEY="HM_BEST_V3";
+  const bests=(()=>{ try{return JSON.parse(localStorage.getItem(BEST_KEY)||"{}");}catch{return{};} })();
   const getBest=(k)=>bests[k]||0;
   const setBest=(k,v)=>{ if((bests[k]||0)<v){ bests[k]=v; localStorage.setItem(BEST_KEY,JSON.stringify(bests)); } };
 
-  // ---------- state ----------
+  // ---- state
   const S={
-    mode:"menu",   // menu | play | pause | result
-    game:"snake",  // snake | bounce
-    menuIdx:0,
-
+    mode:"menu", game:"snake", menuIdx:0,
     score:0,
-    // fixed timer that pauses correctly:
-    playMs:0,
-    lastRunAt:0,
-
+    playMs:0, lastRunAt:0,
     // snake
     apples:0, len:3, level:1,
-
     // bounce
     lives:3, hoopsLeft:0, stage:1, deaths:0,
-
-    resultType:"over",
-    resultLines:[],
-    toastText:"",
-    toastUntil:0
+    // overlays
+    resultType:"over", resultLines:[],
+    toastText:"", toastUntil:0
   };
 
-  function startClock(){
-    S.lastRunAt = now();
-  }
+  function startClock(){ S.lastRunAt = now(); }
   function stopClock(){
     const t=now();
     if(S.lastRunAt) S.playMs += (t - S.lastRunAt);
     S.lastRunAt = 0;
   }
   function timeMs(){
-    if(S.mode==="play" && S.lastRunAt){
-      return S.playMs + (now() - S.lastRunAt);
-    }
+    if(S.mode==="play" && S.lastRunAt) return S.playMs + (now() - S.lastRunAt);
     return S.playMs;
   }
 
@@ -403,26 +381,26 @@
     S.toastUntil = now() + 1200;
   }
 
-  // ---------- input with "just pressed" (no menu jitter) ----------
+  // ---- input (hold + edge)
   const hold={left:false,right:false,up:false,down:false};
   const jp={A:false,B:false,START:false,SELECT:false,L:false,R:false,LEFT:false,RIGHT:false,UP:false,DOWN:false};
 
   function setHold(key, val){
-    if(hold[key] === val) return;
-    hold[key] = val;
-    if(val) jp[key.toUpperCase()] = true; // edge trigger
+    if(hold[key]===val) return;
+    hold[key]=val;
+    if(val){
+      const K=key.toUpperCase();
+      if(K in jp) jp[K]=true;
+    }
   }
+  function clearJP(){ for(const k in jp) jp[k]=false; }
 
-  function clearJustPressed(){
-    for(const k in jp) jp[k]=false;
-  }
-
-  // pointer handling (fix stuck keys using pointerleave)
   document.querySelectorAll("[data-k]").forEach(btn=>{
     const k=btn.dataset.k;
 
     btn.addEventListener("pointerdown",(e)=>{
       e.preventDefault();
+
       if(k==="LEFT") setHold("left", true);
       if(k==="RIGHT") setHold("right", true);
       if(k==="UP") setHold("up", true);
@@ -436,51 +414,19 @@
       if(k==="R") jp.R=true;
     });
 
-    const up=()=>{
+    const off=()=>{
       if(k==="LEFT") setHold("left", false);
       if(k==="RIGHT") setHold("right", false);
       if(k==="UP") setHold("up", false);
       if(k==="DOWN") setHold("down", false);
     };
 
-    btn.addEventListener("pointerup",(e)=>{ e.preventDefault(); up(); });
-    btn.addEventListener("pointercancel", up);
-    btn.addEventListener("pointerleave", up);
+    btn.addEventListener("pointerup",(e)=>{ e.preventDefault(); off(); });
+    btn.addEventListener("pointercancel", off);
+    btn.addEventListener("pointerleave", off);
   });
 
-  // keyboard support
-  window.addEventListener("keydown",(e)=>{
-    const k=e.key.toLowerCase();
-    if(k==="arrowleft"||k==="a") setHold("left", true);
-    if(k==="arrowright"||k==="d") setHold("right", true);
-    if(k==="arrowup"||k==="w") setHold("up", true);
-    if(k==="arrowdown"||k==="s") setHold("down", true);
-
-    if(k==="enter") jp.A=true;
-    if(k==="escape") jp.B=true;
-    if(k==="p") jp.START=true;
-    if(k==="l") jp.SELECT=true;
-  },{passive:true});
-
-  window.addEventListener("keyup",(e)=>{
-    const k=e.key.toLowerCase();
-    if(k==="arrowleft"||k==="a") setHold("left", false);
-    if(k==="arrowright"||k==="d") setHold("right", false);
-    if(k==="arrowup"||k==="w") setHold("up", false);
-    if(k==="arrowdown"||k==="s") setHold("down", false);
-  },{passive:true});
-
-  // ---------- drawing helpers ----------
-  function ellipsize(text, maxPx, font){
-    ctx.save();
-    ctx.font = font;
-    if(ctx.measureText(text).width <= maxPx){ ctx.restore(); return text; }
-    let s=text;
-    while(s.length>3 && ctx.measureText(s+"…").width > maxPx) s=s.slice(0,-1);
-    ctx.restore();
-    return s+"…";
-  }
-
+  // ---- canvas helpers
   function rr(x,y,w,h,r,fill){
     const rad=Math.min(r,w/2,h/2);
     ctx.beginPath();
@@ -493,45 +439,52 @@
     if(fill) ctx.fill(); else ctx.stroke();
   }
 
-  function topBarText(){
-    const tm=fmtTime(timeMs());
-    if(S.mode==="menu"){
-      return `HM GAME | ${T[lang].choose} | ${tm}`;
-    }
-    if(S.game==="snake"){
-      const best=getBest("snake");
-      return `HM GAME | Snake ${T[lang].level} ${S.level} | 🍎${S.apples} ${T[lang].len} ${S.len} | ${T[lang].score} ${S.score} | ${T[lang].best} ${best} | ${tm}`;
-    }else{
-      const best=getBest("bounce");
-      return `HM GAME | Bounce ${T[lang].level} ${S.stage} | ❤️${S.lives} | 🟡${S.hoopsLeft} | ${T[lang].score} ${S.score} | ${T[lang].best} ${best} | ${tm}`;
-    }
+  function ellipsize(text, maxW){
+    if(ctx.measureText(text).width <= maxW) return text;
+    let s=text;
+    while(s.length>3 && ctx.measureText(s+"…").width > maxW) s=s.slice(0,-1);
+    return s+"…";
   }
 
+  function topBarH(){ return clamp(H*0.060, 26, 40); }
+
   function drawTopBar(){
-    const h=Math.floor(cv.height*0.075);
-    ctx.fillStyle="rgba(0,0,0,.32)";
-    ctx.fillRect(0,0,cv.width,h);
+    const h=topBarH();
+    ctx.fillStyle="rgba(0,0,0,.34)";
+    ctx.fillRect(0,0,W,h);
+
+    const fontSize = clamp(h*0.55, 12, 18);
+    ctx.font = `${fontSize}px system-ui`;
     ctx.fillStyle="rgba(255,255,255,.92)";
-
-    const font=`${Math.floor(h*0.46)}px system-ui`;
-    const tx=ellipsize(topBarText(), cv.width*0.96, font);
-
-    ctx.font=font;
-    ctx.textAlign="left";
     ctx.textBaseline="middle";
-    ctx.fillText(tx, Math.floor(cv.width*0.02), Math.floor(h/2));
+
+    const tm=fmtTime(timeMs());
+    let line="";
+
+    if(S.mode==="menu"){
+      line = `HM GAME | ${T[lang].choose} | ${tm}`;
+    }else if(S.game==="snake"){
+      line = `HM GAME | Snake ${T[lang].level} ${S.level} | 🍎${S.apples} ${T[lang].len} ${S.len} | ${T[lang].score} ${S.score} | ${T[lang].best} ${getBest("snake")} | ${tm}`;
+    }else{
+      line = `HM GAME | Bounce ${T[lang].level} ${S.stage} | ❤️${S.lives} | 🟡${S.hoopsLeft} | ${T[lang].score} ${S.score} | ${T[lang].best} ${getBest("bounce")} | ${tm}`;
+    }
+
+    const margin = W*0.02;
+    const maxW = W - margin*2;
+    line = ellipsize(line, maxW);
+
+    if(lang==="ar"){
+      ctx.textAlign="right";
+      ctx.fillText(line, W - margin, h/2);
+    }else{
+      ctx.textAlign="left";
+      ctx.fillText(line, margin, h/2);
+    }
+
     return h;
   }
 
-  // ---------- result overlay (inside screen) ----------
-  function showResult(type, lines){
-    S.mode="result";
-    stopClock();
-    S.resultType=type;
-    S.resultLines=lines;
-    setBest(S.game, S.score);
-  }
-
+  // ---- navigation
   function goMenu(){
     S.mode="menu";
     S.menuIdx=0;
@@ -554,45 +507,46 @@
   }
 
   function togglePause(){
-    if(S.mode==="play"){
-      S.mode="pause";
-      stopClock();
-    } else if(S.mode==="pause"){
-      S.mode="play";
-      startClock();
-    }
+    if(S.mode==="play"){ S.mode="pause"; stopClock(); }
+    else if(S.mode==="pause"){ S.mode="play"; startClock(); }
+  }
+
+  function showResult(type, lines){
+    S.mode="result";
+    stopClock();
+    S.resultType=type;
+    S.resultLines=lines;
+    setBest(S.game, S.score);
   }
 function drawMenu(){
     ctx.fillStyle="#050b14";
-    ctx.fillRect(0,0,cv.width,cv.height);
+    ctx.fillRect(0,0,W,H);
     const topH=drawTopBar();
 
-    // sizes with clamp (avoid huge text)
-    const titleSize = clamp(cv.width*0.09, 26, 54);
-    const qSize     = clamp(cv.width*0.055, 16, 34);
-    const optSize   = clamp(cv.width*0.055, 16, 32);
-    const hintSize  = clamp(cv.width*0.040, 12, 22);
+    const titleSize = clamp(W*0.10, 26, 52);
+    const qSize     = clamp(W*0.055, 16, 30);
+    const optSize   = clamp(W*0.055, 16, 28);
+    const hintSize  = clamp(W*0.040, 12, 20);
 
-    const centerY = topH + (cv.height-topH)*0.20;
+    const midTop = topH + (H-topH)*0.20;
 
     ctx.textAlign="center";
     ctx.fillStyle="rgba(255,255,255,.92)";
     ctx.font=`${titleSize}px system-ui`;
-    ctx.fillText("HM GAME", cv.width/2, centerY);
+    ctx.fillText("HM GAME", W/2, midTop);
 
     ctx.fillStyle="rgba(255,255,255,.78)";
     ctx.font=`${qSize}px system-ui`;
-    ctx.fillText(T[lang].q, cv.width/2, centerY + (cv.height-topH)*0.10);
+    ctx.fillText(T[lang].q, W/2, midTop + (H-topH)*0.10);
 
-    // options
     const opts=[T[lang].snake, T[lang].bounce];
-    const cardW=cv.width*0.76;
-    const cardH=clamp((cv.height-topH)*0.12, 48, 90);
-    const startY=centerY + (cv.height-topH)*0.20;
+    const cardW=W*0.78;
+    const cardH=clamp((H-topH)*0.12, 48, 86);
+    const startY=midTop + (H-topH)*0.20;
 
     for(let i=0;i<2;i++){
-      const x=(cv.width-cardW)/2;
-      const y=startY + i*(cardH + (cv.height-topH)*0.045);
+      const x=(W-cardW)/2;
+      const y=startY + i*(cardH + (H-topH)*0.05);
       const active=(i===S.menuIdx);
 
       ctx.fillStyle= active ? "rgba(78,161,255,.18)" : "rgba(255,255,255,.06)";
@@ -603,31 +557,27 @@ function drawMenu(){
 
       ctx.fillStyle="rgba(255,255,255,.92)";
       ctx.font=`${optSize}px system-ui`;
-      ctx.fillText(opts[i], cv.width/2, y + cardH*0.64);
+      ctx.fillText(opts[i], W/2, y + cardH*0.64);
     }
 
-    // instructions (two lines with fixed spacing - no overlap)
-    const hintY = topH + (cv.height-topH)*0.86;
+    const hintY = topH + (H-topH)*0.86;
     ctx.fillStyle="rgba(255,255,255,.70)";
     ctx.font=`${hintSize}px system-ui`;
-    ctx.fillText(T[lang].hint, cv.width/2, hintY);
-    ctx.fillStyle="rgba(255,255,255,.62)";
-    ctx.fillText((lang==="ar") ? "اضغط SELECT لتغيير اللغة" : "Press SELECT to change language", cv.width/2, hintY + hintSize*1.4);
+    ctx.fillText(T[lang].hint1, W/2, hintY);
+    ctx.fillStyle="rgba(255,255,255,.60)";
+    ctx.fillText(T[lang].hint2, W/2, hintY + hintSize*1.45);
   }
 
   function drawResult(){
-    // draw frozen game behind
     if(S.game==="snake") Snake.draw();
     else Bounce.draw();
     drawTopBar();
 
     ctx.fillStyle="rgba(0,0,0,.42)";
-    ctx.fillRect(0,0,cv.width,cv.height);
+    ctx.fillRect(0,0,W,H);
 
-    const w=cv.width*0.80;
-    const h=cv.height*0.42;
-    const x=(cv.width-w)/2;
-    const y=(cv.height-h)/2;
+    const w=W*0.82, h=H*0.42;
+    const x=(W-w)/2, y=(H-h)/2;
 
     ctx.fillStyle="rgba(16,22,36,.92)";
     rr(x,y,w,h,18,true);
@@ -635,26 +585,26 @@ function drawMenu(){
     ctx.lineWidth=2;
     rr(x,y,w,h,18,false);
 
-    const titleSize=clamp(cv.width*0.06, 18, 34);
-    const lineSize =clamp(cv.width*0.045, 14, 26);
-    const footSize =clamp(cv.width*0.04,  12, 22);
+    const titleSize=clamp(W*0.060, 18, 32);
+    const lineSize =clamp(W*0.045, 14, 24);
+    const footSize =clamp(W*0.040, 12, 20);
 
     ctx.textAlign="center";
     ctx.fillStyle="rgba(255,255,255,.95)";
     ctx.font=`${titleSize}px system-ui`;
-    ctx.fillText(S.resultType==="win" ? T[lang].win : T[lang].over, cv.width/2, y + h*0.22);
+    ctx.fillText(S.resultType==="win" ? T[lang].win : T[lang].over, W/2, y + h*0.22);
 
     ctx.fillStyle="rgba(255,255,255,.80)";
     ctx.font=`${lineSize}px system-ui`;
     let yy = y + h*0.40;
     for(const line of S.resultLines){
-      ctx.fillText(line, cv.width/2, yy);
+      ctx.fillText(line, W/2, yy);
       yy += lineSize*1.35;
     }
 
     ctx.fillStyle="rgba(255,255,255,.85)";
     ctx.font=`${footSize}px system-ui`;
-    ctx.fillText(`${T[lang].restart}  •  ${T[lang].menu}  •  ${T[lang].close}`, cv.width/2, y + h*0.88);
+    ctx.fillText(`${T[lang].restart}  •  ${T[lang].menu}  •  ${T[lang].close}`, W/2, y + h*0.88);
   }
 
   function drawPause(){
@@ -663,42 +613,46 @@ function drawMenu(){
     const topH=drawTopBar();
 
     ctx.fillStyle="rgba(0,0,0,.25)";
-    const w=cv.width*0.58, h=cv.height*0.12;
-    rr((cv.width-w)/2, topH + (cv.height-topH)*0.42, w, h, 16, true);
+    const w=W*0.60, h=(H-topH)*0.14;
+    rr((W-w)/2, topH + (H-topH)*0.42, w, h, 16, true);
 
     ctx.fillStyle="rgba(255,255,255,.92)";
     ctx.textAlign="center";
     ctx.textBaseline="middle";
-    ctx.font=`${clamp(cv.width*0.055, 16, 30)}px system-ui`;
-    ctx.fillText(T[lang].paused, cv.width/2, topH + (cv.height-topH)*0.48);
+    ctx.font=`${clamp(W*0.055, 16, 28)}px system-ui`;
+    ctx.fillText(T[lang].paused, W/2, topH + (H-topH)*0.49);
   }
 
-  // ---------- games placeholders ----------
-  const Snake = {};
-  const Bounce = {};
-// =========================
-  // 🐍 SNAKE (clear head, min cell, correct rules)
-  // =========================
-  (function(){
-    const GW=22, GH=16;
-    let cell=16, ox=0, oy=0;
-    let snake=[], dir={x:1,y:0}, food={x:10,y:8};
-    let tick=0, speed=7;
-    let alive=true;
+  // ------------------
+  // 🐍 Snake (fills more of the screen now)
+  // ------------------
+  const Snake = (() => {
+    let GW=0, GH=0; // dynamic grid to fill screen
+    let cell=18, ox=0, oy=0;
 
-    function layout(topH){
-      const pad=Math.floor(Math.min(cv.width,cv.height)*0.05);
-      const usableW = cv.width - pad*2;
-      const usableH = (cv.height - topH) - pad*2;
+    let snake=[], dir={x:1,y:0}, food={x:5,y:5};
+    let tick=0, speed=7, alive=true;
 
-      cell = Math.floor(Math.min(usableW/GW, usableH/GH));
-      cell = clamp(cell, 12, 40); // IMPORTANT: min so head visible
-      ox = Math.floor((cv.width - cell*GW)/2);
-      oy = Math.floor(topH + ((cv.height-topH) - cell*GH)/2);
+    function layout(){
+      const topH=topBarH();
+      const pad = clamp(Math.min(W,H)*0.04, 10, 18);
+
+      const usableW = W - pad*2;
+      const usableH = (H - topH) - pad*2;
+
+      // dynamic grid based on aspect
+      cell = clamp(Math.floor(Math.min(usableW/26, usableH/18)), 14, 28);
+      GW = Math.floor(usableW / cell);
+      GH = Math.floor(usableH / cell);
+      GW = clamp(GW, 18, 30);
+      GH = clamp(GH, 14, 22);
+
+      ox = Math.floor((W - cell*GW)/2);
+      oy = Math.floor(topH + ((H-topH) - cell*GH)/2);
     }
 
     function placeFood(){
-      for(let i=0;i<3000;i++){
+      for(let i=0;i<4000;i++){
         const fx=(Math.random()*GW)|0;
         const fy=(Math.random()*GH)|0;
         if(!snake.some(p=>p.x===fx && p.y===fy)){ food={x:fx,y:fy}; return; }
@@ -707,8 +661,11 @@ function drawMenu(){
     }
 
     function init(){
+      layout();
       S.apples=0; S.len=3; S.level=1;
-      snake=[ {x:6,y:(GH/2)|0},{x:5,y:(GH/2)|0},{x:4,y:(GH/2)|0} ];
+
+      const sy=(GH/2)|0;
+      snake=[{x:6,y:sy},{x:5,y:sy},{x:4,y:sy}];
       dir={x:1,y:0};
       tick=0; speed=7; alive=true;
       placeFood();
@@ -722,7 +679,6 @@ function drawMenu(){
     function step(){
       if(!alive) return;
 
-      // D-Pad
       if(jp.UP) setDir(0,-1);
       else if(jp.DOWN) setDir(0,1);
       else if(jp.LEFT) setDir(-1,0);
@@ -731,8 +687,8 @@ function drawMenu(){
       const h=snake[0];
       const nx=h.x+dir.x, ny=h.y+dir.y;
 
-      if(nx<0||nx>=GW||ny<0||ny>=GH){ over(); return; }
-      if(snake.some((p,i)=>i>0 && p.x===nx && p.y===ny)){ over(); return; }
+      if(nx<0||nx>=GW||ny<0||ny>=GH){ gameOver(); return; }
+      if(snake.some((p,i)=>i>0 && p.x===nx && p.y===ny)){ gameOver(); return; }
 
       snake.unshift({x:nx,y:ny});
 
@@ -740,19 +696,17 @@ function drawMenu(){
         S.score += 10;
         S.apples++;
         S.len=snake.length;
-
         S.level = 1 + Math.floor(S.apples/5);
         speed = 7 + (S.level-1)*1.2;
-
         placeFood();
         setBest("snake", S.score);
-      } else {
+      }else{
         snake.pop();
         S.len=snake.length;
       }
     }
 
-    function over(){
+    function gameOver(){
       alive=false;
       showResult("over", [
         `${T[lang].score}: ${S.score}`,
@@ -763,9 +717,7 @@ function drawMenu(){
     }
 
     function update(dt){
-      const topH=drawTopBar(); // compute layout based on top bar
-      layout(topH);
-
+      layout();
       tick += dt*speed;
       while(tick>=1){
         tick-=1;
@@ -775,13 +727,10 @@ function drawMenu(){
     }
 
     function draw(){
-      const topH=drawTopBar();
-      layout(topH);
-
+      layout();
       ctx.fillStyle="#061025";
-      ctx.fillRect(0,0,cv.width,cv.height);
+      ctx.fillRect(0,0,W,H);
 
-      // board frame
       ctx.fillStyle="rgba(255,255,255,.04)";
       rr(ox-10, oy-10, cell*GW+20, cell*GH+20, 18, true);
 
@@ -796,7 +745,7 @@ function drawMenu(){
       ctx.fillStyle="rgba(255,211,79,.95)";
       ctx.beginPath(); ctx.arc(fx,fy, cell*0.24, 0, Math.PI*2); ctx.fill();
 
-      // snake (head + eyes)
+      // snake
       for(let i=snake.length-1;i>=0;i--){
         const p=snake[i];
         const x=ox+p.x*cell, y=oy+p.y*cell;
@@ -815,117 +764,76 @@ function drawMenu(){
           ctx.fillStyle="rgba(0,0,0,.65)";
           ctx.beginPath(); ctx.arc(ex1,ey, Math.max(1.3,cell*0.035), 0, Math.PI*2); ctx.fill();
           ctx.beginPath(); ctx.arc(ex2,ey, Math.max(1.3,cell*0.035), 0, Math.PI*2); ctx.fill();
-        } else {
+        }else{
           ctx.fillStyle="rgba(78,161,255,.72)";
           rr(x+inset,y+inset,cell-inset*2,cell-inset*2,r,true);
         }
       }
     }
 
-    Snake.init=init;
-    Snake.update=update;
-    Snake.draw=draw;
+    return { init, update, draw };
   })();
+// ------------------
+  // 🔴 Bounce
+  // ------------------
+  const Bounce = (() => {
+    const TILE=26;
 
-  // =========================
-  // 🔴 BOUNCE (better collision + gate locked toast)
-  // =========================
-  (function(){
-    const TILE=24;
     const LEVELS=[
       [
         "........................................",
-        "........................................",
-        ".............o.........................G",
-        "............#####.......................",
+        ".............o..........................",
+        "............#####......................G",
         "........................................",
         "....o......................o............",
         "....###...........C......#####..........",
-        "........................................",
         "..................^.....................",
         "############......^......#############..",
         "........................................",
         "..............o.........................",
         ".............#####......................",
         "........................................",
-        "###############################.........",
-      ],
-      [
-        "........................................",
-        "........................................",
-        "....o.............o....................G",
-        "....###..........#####..................",
-        "........................................",
-        ".................^......................",
-        "....o............^..........C....o......",
-        "....###........#####...........#####....",
-        "........................................",
-        "..............o.........................",
-        "............#####.......................",
-        "........................................",
         "############.............#############..",
         "........................................",
-        "###############################.........",
-      ],
-      [
-        "........................................",
-        "........................................",
-        "....o..............o..................G.",
-        "....###..........#####..................",
-        "........................................",
-        ".................^......................",
-        "....o............^..........o...........",
-        "....###........#####......#####.........",
-        "....................C...................",
-        "........................................",
-        "..............o.........................",
-        "............#####.......................",
-        "........................................",
-        "############.............#############..",
         "###############################.........",
       ]
     ];
 
-    let map=[], W=0,H=0, stage=0;
+    let map=[], Wm=0,Hm=0, stage=0;
     let respawn={x:TILE*2,y:TILE*2};
-
     const ball={x:0,y:0,vx:0,vy:0,r:11};
     let camX=0, camY=0;
+
+    function tileAt(tx,ty){
+      if(ty<0||ty>=Hm||tx<0||tx>=Wm) return ".";
+      return map[ty][tx];
+    }
+    function setTile(tx,ty,v){
+      if(ty<0||ty>=Hm||tx<0||tx>=Wm) return;
+      map[ty][tx]=v;
+    }
+    function isSolid(tx,ty){ return tileAt(tx,ty)==="#"; }
 
     function loadStage(i, fresh){
       stage=i;
       S.stage=i+1;
 
       map=LEVELS[i].map(r=>r.split(""));
-      H=map.length; W=map[0].length;
+      Hm=map.length; Wm=map[0].length;
 
       let hoops=0;
-      for(let y=0;y<H;y++)for(let x=0;x<W;x++) if(map[y][x]==="o") hoops++;
+      for(let y=0;y<Hm;y++)for(let x=0;x<Wm;x++) if(map[y][x]==="o") hoops++;
       S.hoopsLeft=hoops;
 
       respawn={x:TILE*2,y:TILE*2};
       ball.x=respawn.x; ball.y=respawn.y; ball.vx=0; ball.vy=0;
+
+      if(fresh){ S.lives=3; S.deaths=0; }
+
       camX=0; camY=0;
-
-      if(fresh){
-        S.lives=3;
-        S.deaths=0;
-      }
     }
 
-    function init(){
-      loadStage(0,true);
-    }
-
-    function tileAt(tx,ty){
-      if(ty<0||ty>=H||tx<0||tx>=W) return ".";
-      return map[ty][tx];
-    }
-    function setTile(tx,ty,v){
-      if(ty<0||ty>=H||tx<0||tx>=W) return;
-      map[ty][tx]=v;
-    }
-    function isSolid(tx,ty){ return tileAt(tx,ty)==="#"; }
+    function init(){ loadStage(0,true); }
 
     function circleRect(cx,cy,cr, rx,ry,rw,rh){
       const nx=clamp(cx,rx,rx+rw);
@@ -949,8 +857,7 @@ function drawMenu(){
     }
 
     function loseLife(){
-      S.lives--;
-      S.deaths++;
+      S.lives--; S.deaths++;
       if(S.lives<=0){
         showResult("over", [
           `${T[lang].level}: ${S.stage}`,
@@ -961,46 +868,6 @@ function drawMenu(){
         return;
       }
       ball.x=respawn.x; ball.y=respawn.y; ball.vx=0; ball.vy=0;
-    }
-
-    function update(dt){
-      // left/right control only (classic)
-      const accel=1200, maxVx=520, gravity=1650, drag=0.995;
-
-      // use HOLD for continuous movement
-      if(hold.left) ball.vx -= accel*dt;
-      if(hold.right) ball.vx += accel*dt;
-      ball.vx = clamp(ball.vx, -maxVx, maxVx);
-      ball.vy += gravity*dt;
-
-      // --- axis separation collision ---
-      // X
-      ball.x += ball.vx*dt;
-      if(collideSolids(ball.x,ball.y,ball.r)){
-        ball.x -= ball.vx*dt;
-        ball.vx = -ball.vx*0.65;
-      }
-      // Y
-      ball.y += ball.vy*dt;
-      if(collideSolids(ball.x,ball.y,ball.r)){
-        ball.y -= ball.vy*dt;
-        ball.vy = -Math.abs(ball.vy)*0.72;
-        // friction on ground hit
-        ball.vx *= 0.985;
-      }
-
-      ball.vx *= Math.pow(drag, dt*60);
-      ball.vy *= Math.pow(drag, dt*60);
-
-      if(ball.y > H*TILE + 420){ loseLife(); return; }
-
-      interact();
-
-      // camera follow
-      const viewW=cv.width, viewH=cv.height;
-      const mapW=W*TILE, mapH=H*TILE;
-      camX = clamp(ball.x - viewW*0.50, 0, Math.max(0, mapW-viewW));
-      camY = clamp(ball.y - viewH*0.55, 0, Math.max(0, mapH-viewH));
     }
 
     function interact(){
@@ -1019,8 +886,7 @@ function drawMenu(){
           }
 
           if(t==="^" && circleRect(ball.x,ball.y,ball.r, rx,ry,TILE,TILE)){
-            loseLife();
-            return;
+            loseLife(); return;
           }
 
           if(t==="C" && circleRect(ball.x,ball.y,ball.r, rx,ry,TILE,TILE)){
@@ -1030,15 +896,11 @@ function drawMenu(){
 
           if(t==="G" && circleRect(ball.x,ball.y,ball.r, rx,ry,TILE,TILE)){
             if(S.hoopsLeft<=0){
-              if(stage+1<LEVELS.length){
-                loadStage(stage+1,false);
-              }else{
-                showResult("win", [
-                  `${T[lang].score}: ${S.score}`,
-                  `Deaths: ${S.deaths}`,
-                  `${T[lang].time}: ${fmtTime(timeMs())}`
-                ]);
-              }
+              showResult("win", [
+                `${T[lang].score}: ${S.score}`,
+                `Deaths: ${S.deaths}`,
+                `${T[lang].time}: ${fmtTime(timeMs())}`
+              ]);
             }else{
               toast(T[lang].locked);
             }
@@ -1047,14 +909,46 @@ function drawMenu(){
       }
     }
 
-    function draw(){
-      // sky
-      ctx.fillStyle="#4aaed6";
-      ctx.fillRect(0,0,cv.width,cv.height);
+    function update(dt){
+      const accel=1200, maxVx=520, gravity=1650, drag=0.995;
 
-      // tiles in view
-      const startTx=(camX/TILE)|0, endTx=((camX+cv.width)/TILE+1)|0;
-      const startTy=(camY/TILE)|0, endTy=((camY+cv.height)/TILE+1)|0;
+      if(hold.left) ball.vx -= accel*dt;
+      if(hold.right) ball.vx += accel*dt;
+      ball.vx = clamp(ball.vx, -maxVx, maxVx);
+      ball.vy += gravity*dt;
+
+      // axis separation
+      ball.x += ball.vx*dt;
+      if(collideSolids(ball.x,ball.y,ball.r)){
+        ball.x -= ball.vx*dt;
+        ball.vx = -ball.vx*0.65;
+      }
+
+      ball.y += ball.vy*dt;
+      if(collideSolids(ball.x,ball.y,ball.r)){
+        ball.y -= ball.vy*dt;
+        ball.vy = -Math.abs(ball.vy)*0.72;
+        ball.vx *= 0.985;
+      }
+
+      ball.vx *= Math.pow(drag, dt*60);
+      ball.vy *= Math.pow(drag, dt*60);
+
+      if(ball.y > Hm*TILE + 420){ loseLife(); return; }
+      interact();
+
+      // camera
+      const mapW=Wm*TILE, mapH=Hm*TILE;
+      camX = clamp(ball.x - W*0.50, 0, Math.max(0, mapW-W));
+      camY = clamp(ball.y - H*0.55, 0, Math.max(0, mapH-H));
+    }
+
+    function draw(){
+      ctx.fillStyle="#4aaed6";
+      ctx.fillRect(0,0,W,H);
+
+      const startTx=(camX/TILE)|0, endTx=((camX+W)/TILE+1)|0;
+      const startTy=(camY/TILE)|0, endTy=((camY+H)/TILE+1)|0;
 
       for(let ty=startTy;ty<endTy;ty++){
         for(let tx=startTx;tx<endTx;tx++){
@@ -1062,168 +956,125 @@ function drawMenu(){
           const x=tx*TILE - camX;
           const y=ty*TILE - camY;
 
-          if(t==="#") brick(x,y);
-          else if(t==="o") hoop(x,y);
-          else if(t==="^") spike(x,y);
-          else if(t==="G") gate(x,y, S.hoopsLeft<=0);
-          else if(t==="C") checkpoint(x,y);
+          if(t==="#"){
+            ctx.fillStyle="#b55a2d";
+            ctx.fillRect(x,y,TILE,TILE);
+            ctx.strokeStyle="#8f3d1f";
+            ctx.lineWidth=2;
+            ctx.strokeRect(x+1,y+1,TILE-2,TILE-2);
+          }else if(t==="o"){
+            ctx.strokeStyle="rgba(255,211,79,.95)";
+            ctx.lineWidth=4;
+            ctx.beginPath();
+            ctx.arc(x+TILE/2,y+TILE/2,TILE*0.28,0,Math.PI*2);
+            ctx.stroke();
+          }else if(t==="^"){
+            ctx.fillStyle="rgba(10,16,28,.92)";
+            ctx.beginPath();
+            ctx.moveTo(x, y+TILE);
+            ctx.lineTo(x+TILE*0.25, y+TILE*0.35);
+            ctx.lineTo(x+TILE*0.5, y+TILE);
+            ctx.lineTo(x+TILE*0.75, y+TILE*0.35);
+            ctx.lineTo(x+TILE, y+TILE);
+            ctx.closePath();
+            ctx.fill();
+          }else if(t==="G"){
+            ctx.fillStyle=(S.hoopsLeft<=0) ? "rgba(255,255,255,.22)" : "rgba(0,0,0,.20)";
+            rr(x+2,y+2,TILE-4,TILE-4,7,true);
+          }else if(t==="C"){
+            ctx.fillStyle="rgba(255,255,255,.18)";
+            rr(x+4,y+4,TILE-8,TILE-8,7,true);
+          }
         }
       }
 
-      ballDraw(ball.x-camX, ball.y-camY, ball.r);
+      // ball
+      const bx=ball.x-camX, by=ball.y-camY;
+      ctx.fillStyle="#e83535";
+      ctx.beginPath(); ctx.arc(bx,by,ball.r,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle="rgba(255,255,255,.30)";
+      ctx.beginPath(); ctx.arc(bx-ball.r*0.35,by-ball.r*0.35,ball.r*0.35,0,Math.PI*2); ctx.fill();
 
       // toast
       if(S.toastText && now()<S.toastUntil){
         ctx.fillStyle="rgba(0,0,0,.25)";
-        const w=cv.width*0.72, h=cv.height*0.10;
-        rr((cv.width-w)/2, cv.height*0.78, w, h, 16, true);
+        const w=W*0.74, h=H*0.10;
+        rr((W-w)/2, H*0.78, w, h, 16, true);
         ctx.fillStyle="rgba(255,255,255,.92)";
         ctx.textAlign="center";
         ctx.textBaseline="middle";
-        ctx.font=`${clamp(cv.width*0.045, 14, 24)}px system-ui`;
-        ctx.fillText(S.toastText, cv.width/2, cv.height*0.83);
+        ctx.font=`${clamp(W*0.045, 14, 22)}px system-ui`;
+        ctx.fillText(S.toastText, W/2, H*0.83);
       }
     }
 
-    function ballDraw(x,y,r){
-      ctx.fillStyle="rgba(0,0,0,.18)";
-      ctx.beginPath(); ctx.ellipse(x, y+r*0.85, r*1.05, r*0.35, 0, 0, Math.PI*2); ctx.fill();
-
-      ctx.fillStyle="#e83535";
-      ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
-
-      ctx.fillStyle="rgba(255,255,255,.30)";
-      ctx.beginPath(); ctx.arc(x-r*0.35,y-r*0.35,r*0.35,0,Math.PI*2); ctx.fill();
-    }
-
-    function brick(x,y){
-      ctx.fillStyle="#b55a2d";
-      ctx.fillRect(x,y,TILE,TILE);
-      ctx.fillStyle="rgba(255,255,255,.10)";
-      ctx.fillRect(x+2,y+2,TILE-4,5);
-      ctx.strokeStyle="#8f3d1f";
-      ctx.lineWidth=2;
-      ctx.strokeRect(x+1,y+1,TILE-2,TILE-2);
-    }
-    function hoop(x,y){
-      ctx.strokeStyle="rgba(255,211,79,.95)";
-      ctx.lineWidth=4;
-      ctx.beginPath();
-      ctx.arc(x+TILE/2,y+TILE/2,TILE*0.28,0,Math.PI*2);
-      ctx.stroke();
-    }
-    function spike(x,y){
-      ctx.fillStyle="rgba(10,16,28,.92)";
-      ctx.beginPath();
-      ctx.moveTo(x, y+TILE);
-      ctx.lineTo(x+TILE*0.25, y+TILE*0.35);
-      ctx.lineTo(x+TILE*0.5, y+TILE);
-      ctx.lineTo(x+TILE*0.75, y+TILE*0.35);
-      ctx.lineTo(x+TILE, y+TILE);
-      ctx.closePath();
-      ctx.fill();
-    }
-    function checkpoint(x,y){
-      ctx.fillStyle="rgba(255,255,255,.18)";
-      rr(x+4,y+4,TILE-8,TILE-8,7,true);
-      ctx.strokeStyle="rgba(255,255,255,.55)";
-      ctx.lineWidth=2;
-      rr(x+4,y+4,TILE-8,TILE-8,7,false);
-      ctx.fillStyle="rgba(255,255,255,.85)";
-      ctx.font=`${Math.floor(TILE*0.55)}px system-ui`;
-      ctx.textAlign="center";
-      ctx.fillText("C", x+TILE/2, y+TILE*0.73);
-    }
-    function gate(x,y,open){
-      ctx.fillStyle=open ? "rgba(255,255,255,.22)" : "rgba(0,0,0,.20)";
-      rr(x+2,y+2,TILE-4,TILE-4,7,true);
-      ctx.strokeStyle=open ? "rgba(255,255,255,.92)" : "rgba(255,255,255,.35)";
-      ctx.lineWidth=2;
-      rr(x+4,y+4,TILE-8,TILE-8,6,false);
-      ctx.fillStyle=open ? "rgba(255,255,255,.92)" : "rgba(255,255,255,.70)";
-      ctx.font=`${Math.floor(TILE*0.55)}px system-ui`;
-      ctx.textAlign="center";
-      ctx.fillText(open ? "✓" : "G", x+TILE/2, y+TILE*0.73);
-    }
-
-    Bounce.init=init;
-    Bounce.update=update;
-    Bounce.draw=draw;
+    return { init, update, draw };
   })();
-function main(){
+
+  // ------------------
+  // Main loop
+  // ------------------
+  let last=now();
+  function loop(){
     resize();
+    const t=now();
+    const dt=clamp((t-last)/1000, 0, 0.033);
+    last=t;
 
-    // global controls
-    if(jp.SELECT){ toggleLang(); }
-    if(jp.START){
-      if(S.mode==="play" || S.mode==="pause") togglePause();
-    }
-    if(jp.L){
-      if(S.mode!=="menu"){
-        startGame(S.game);
-      }
-    }
-    if(jp.R){
-      goMenu();
-    }
+    // global actions
+    if(jp.SELECT) toggleLang();
+    if(jp.START && (S.mode==="play" || S.mode==="pause")) togglePause();
+    if(jp.L && S.mode!=="menu") startGame(S.game);
+    if(jp.R) goMenu();
 
-    // menu controls (one step only)
+    // menu
     if(S.mode==="menu"){
-      if(jp.LEFT){ S.menuIdx=0; S.game="snake"; }
-      if(jp.RIGHT){ S.menuIdx=1; S.game="bounce"; }
-      if(jp.A){
-        startGame(S.menuIdx===0 ? "snake" : "bounce");
-      }
+      if(jp.LEFT || jp.UP){ S.menuIdx=0; S.game="snake"; }
+      if(jp.RIGHT || jp.DOWN){ S.menuIdx=1; S.game="bounce"; }
+      if(jp.A) startGame(S.menuIdx===0 ? "snake" : "bounce");
       drawMenu();
-      clearJustPressed();
-      requestAnimationFrame(main);
+      clearJP();
+      requestAnimationFrame(loop);
       return;
     }
 
-    // result controls
+    // result
     if(S.mode==="result"){
-      if(jp.A){
-        startGame(S.game);
-      }
-      if(jp.B){
-        goMenu();
-      }
+      if(jp.A) startGame(S.game);
+      if(jp.B) goMenu();
       drawResult();
-      clearJustPressed();
-      requestAnimationFrame(main);
+      clearJP();
+      requestAnimationFrame(loop);
       return;
     }
 
     // pause
     if(S.mode==="pause"){
       drawPause();
-      clearJustPressed();
-      requestAnimationFrame(main);
+      clearJP();
+      requestAnimationFrame(loop);
       return;
     }
 
     // play
-    const dt = 1/60; // stable on phones
     if(S.mode==="play"){
       if(S.game==="snake"){
         Snake.update(dt);
         Snake.draw();
-      } else {
+      }else{
         Bounce.update(dt);
         Bounce.draw();
       }
-      // top bar drawn inside games; keep it once more? no (already drawn)
-      // but we want always, so drawTopBar at end:
       drawTopBar();
     }
 
-    clearJustPressed();
-    requestAnimationFrame(main);
+    clearJP();
+    requestAnimationFrame(loop);
   }
 
-  // Boot
+  // boot
   goMenu();
-  requestAnimationFrame(main);
+  requestAnimationFrame(loop);
 
 })();
 </script>
