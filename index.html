@@ -1,0 +1,1435 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <meta name="theme-color" content="#0b1220" />
+  <title>HM GAME</title>
+</head>
+
+<body>
+  <header class="hm-topbar">
+    <div class="hm-brand">
+      <span class="hm-logo">HM</span>
+      <div class="hm-brandText">
+        <div class="hm-title">HM GAME</div>
+        <div class="hm-subtitle" id="subtitle">مركز ألعاب — اختر لعبة</div>
+      </div>
+    </div>
+
+    <div class="hm-topActions">
+      <button class="hm-btn" id="btnMenu" title="العودة للقائمة">القائمة</button>
+      <button class="hm-btn" id="btnPause" title="إيقاف/متابعة">إيقاف</button>
+      <button class="hm-btn hm-btnPrimary" id="btnRestart" title="إعادة">إعادة</button>
+    </div>
+  </header>
+
+  <main class="hm-main">
+    <!-- منطقة اللعبة (أعلى الشاشة) -->
+    <section class="hm-gamePanel">
+      <div class="hm-gameFrame">
+        <canvas id="game" width="360" height="540" aria-label="HM GAME Canvas"></canvas>
+        <div class="hm-hud" id="hud">
+          <div class="hm-hudLeft">
+            <span class="hm-pill" id="hudGame">HM GAME</span>
+            <span class="hm-pill" id="hudLevel">—</span>
+          </div>
+          <div class="hm-hudRight">
+            <span class="hm-pill" id="hudScore">Score: 0</span>
+            <span class="hm-pill" id="hudBest">Best: 0</span>
+          </div>
+        </div>
+
+        <div class="hm-overlay" id="overlay">
+          <div class="hm-card">
+            <div class="hm-cardTitle" id="overlayTitle">HM GAME</div>
+            <div class="hm-cardText" id="overlayText">
+              اختر لعبة من الأسفل.
+            </div>
+            <div class="hm-cardActions" id="overlayActions"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- أزرار التحكم (أسفل الشاشة) -->
+    <section class="hm-controlsPanel">
+      <div class="hm-gamePicker" id="gamePicker">
+        <button class="hm-pick" data-game="menu">🏠 HM GAME (القائمة)</button>
+        <button class="hm-pick" data-game="snake">🐍 Snake (نوكيا)</button>
+        <button class="hm-pick" data-game="bounce">🔴 Bounce (نوكيا)</button>
+      </div>
+
+      <div class="hm-controls">
+        <!-- أزرار Snake -->
+        <div class="hm-controlGroup" id="controlsSnake" hidden>
+          <div class="hm-dpad">
+            <button class="hm-pad" data-act="up">▲</button>
+            <div class="hm-mid">
+              <button class="hm-pad" data-act="left">◀</button>
+              <button class="hm-pad hm-padCenter" data-act="noop">HM</button>
+              <button class="hm-pad" data-act="right">▶</button>
+            </div>
+            <button class="hm-pad" data-act="down">▼</button>
+          </div>
+
+          <div class="hm-sideButtons">
+            <button class="hm-big" data-act="snakePause">إيقاف/متابعة</button>
+            <button class="hm-big hm-danger" data-act="exit">خروج</button>
+          </div>
+        </div>
+
+        <!-- أزرار Bounce -->
+        <div class="hm-controlGroup" id="controlsBounce" hidden>
+          <div class="hm-bounceRow">
+            <button class="hm-big" data-act="leftHold">◀ يسار</button>
+            <button class="hm-big hm-padCenter" data-act="jump">قفز</button>
+            <button class="hm-big" data-act="rightHold">يمين ▶</button>
+          </div>
+          <div class="hm-sideButtons">
+            <button class="hm-big" data-act="bouncePause">إيقاف/متابعة</button>
+            <button class="hm-big hm-danger" data-act="exit">خروج</button>
+          </div>
+        </div>
+
+        <!-- أزرار القائمة -->
+        <div class="hm-controlGroup" id="controlsMenu">
+          <div class="hm-menuHelp">
+            <div class="hm-helpTitle">HM GAME</div>
+            <div class="hm-helpText">
+              اختر لعبة من الأعلى (أزرار الاختيار)، ثم العب من أزرار التحكم هنا.
+              <br/>يدعم اللمس ولوحة المفاتيح أيضًا.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hm-footerNote">
+        © HM GAME — لعبة تعمل داخل ملف واحد (HTML)
+      </div>
+    </section>
+  </main>
+<style>
+    :root{
+      --bg:#0b1220;
+      --panel:#111a2a;
+      --panel2:#0f1726;
+      --text:#eaf1ff;
+      --muted:#9fb3df;
+      --line:rgba(255,255,255,.10);
+      --accent:#4ea1ff;
+      --danger:#ff4e6a;
+
+      /* ألوان شاشة نوكيا (Snake) */
+      --lcd:#9acb3c;        /* أخضر شاشة */
+      --lcd2:#8dbb36;       /* تدرج بسيط */
+      --pixel:#0a1b0a;      /* لون البكسل */
+      --frame:#2b3550;
+
+      /* Bounce */
+      --sky:#6fd4ff;
+      --brick:#b55a2d;
+      --brick2:#8f3d1f;
+      --ring:#ffd34f;
+      --ball:#e83535;
+      --spike:#1b2338;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: radial-gradient(1200px 800px at 80% 20%, #15244b, var(--bg));
+      color:var(--text);
+      overscroll-behavior: none;
+      touch-action: manipulation;
+    }
+
+    .hm-topbar{
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      padding: 12px 12px;
+      background: color-mix(in oklab, var(--panel) 90%, black);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(10px);
+    }
+
+    .hm-brand{display:flex; align-items:center; gap:10px}
+    .hm-logo{
+      width:42px; height:42px;
+      display:grid; place-items:center;
+      border-radius:12px;
+      background: rgba(78,161,255,.18);
+      border:1px solid rgba(78,161,255,.45);
+      font-weight:900;
+      letter-spacing:.5px;
+    }
+    .hm-title{font-weight:900; font-size:16px}
+    .hm-subtitle{color:var(--muted); font-size:12px; margin-top:2px}
+
+    .hm-topActions{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
+
+    .hm-btn{
+      appearance:none;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      font-weight:800;
+      cursor:pointer;
+      user-select:none;
+    }
+    .hm-btn:active{transform: translateY(1px)}
+    .hm-btnPrimary{
+      background: rgba(78,161,255,.18);
+      border-color: rgba(78,161,255,.55);
+    }
+
+    .hm-main{
+      display:grid;
+      grid-template-rows: 1fr auto;
+      height: calc(100vh - 70px);
+      gap: 10px;
+      padding: 10px 10px 14px;
+    }
+
+    .hm-gamePanel{
+      background: color-mix(in oklab, var(--panel2) 88%, black);
+      border:1px solid var(--line);
+      border-radius: 16px;
+      overflow:hidden;
+      display:flex;
+      min-height: 260px;
+    }
+
+    .hm-gameFrame{
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display:flex;
+    }
+
+    canvas#game{
+      width: 100%;
+      height: 100%;
+      display:block;
+      background: #061025;
+    }
+
+    .hm-hud{
+      position:absolute;
+      top:10px;
+      left:10px;
+      right:10px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      pointer-events:none;
+      font-weight:800;
+    }
+
+    .hm-hudLeft,.hm-hudRight{
+      display:flex; gap:8px; flex-wrap:wrap;
+    }
+
+    .hm-pill{
+      background: rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.16);
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--text);
+      backdrop-filter: blur(8px);
+    }
+
+    .hm-overlay{
+      position:absolute;
+      inset:0;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding: 16px;
+      background: rgba(0,0,0,.35);
+    }
+    .hm-overlay[hidden]{display:none}
+
+    .hm-card{
+      width:min(520px, 100%);
+      background: rgba(17,26,42,.92);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: 0 20px 70px rgba(0,0,0,.45);
+    }
+    .hm-cardTitle{font-weight:1000; font-size:18px; margin-bottom:6px}
+    .hm-cardText{color:var(--muted); font-size:13px; line-height:1.7}
+    .hm-cardActions{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
+
+    .hm-controlsPanel{
+      background: color-mix(in oklab, var(--panel) 90%, black);
+      border:1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px;
+    }
+
+    .hm-gamePicker{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom: 10px;
+    }
+
+    .hm-pick{
+      flex: 1 1 140px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      padding: 10px 12px;
+      border-radius: 14px;
+      font-weight:900;
+      cursor:pointer;
+      user-select:none;
+      text-align:center;
+    }
+    .hm-pick:active{transform: translateY(1px)}
+    .hm-pick.isActive{
+      border-color: rgba(78,161,255,.60);
+      background: rgba(78,161,255,.14);
+    }
+
+    .hm-controls{
+      display:grid;
+      gap: 10px;
+    }
+
+    .hm-controlGroup{
+      display:flex;
+      gap: 12px;
+      align-items:stretch;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+
+    .hm-dpad{
+      flex: 1 1 210px;
+      display:grid;
+      gap: 8px;
+      justify-items:center;
+      padding: 8px;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 16px;
+      background: rgba(255,255,255,.04);
+    }
+    .hm-mid{display:flex; gap:8px}
+
+    .hm-pad, .hm-big{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      border-radius: 16px;
+      font-weight:1000;
+      cursor:pointer;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .hm-pad{
+      width: 64px;
+      height: 56px;
+      font-size: 20px;
+    }
+
+    .hm-padCenter{
+      border-color: rgba(78,161,255,.55);
+      background: rgba(78,161,255,.14);
+    }
+
+    .hm-sideButtons{
+      flex: 1 1 170px;
+      display:grid;
+      gap: 10px;
+    }
+
+    .hm-big{
+      width: 100%;
+      min-height: 56px;
+      padding: 10px 12px;
+      font-size: 16px;
+    }
+
+    .hm-danger{
+      border-color: rgba(255,78,106,.55);
+      background: rgba(255,78,106,.12);
+    }
+
+    .hm-bounceRow{
+      flex: 1 1 300px;
+      display:flex;
+      gap: 10px;
+    }
+    .hm-bounceRow .hm-big{flex:1 1 0}
+
+    .hm-menuHelp{
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px dashed rgba(255,255,255,.18);
+      border-radius: 16px;
+      background: rgba(255,255,255,.03);
+    }
+    .hm-helpTitle{font-weight:1000; margin-bottom:4px}
+    .hm-helpText{color:var(--muted); font-size:13px; line-height:1.6}
+
+    .hm-footerNote{
+      margin-top: 10px;
+      color: rgba(255,255,255,.55);
+      font-size: 12px;
+      text-align:center;
+    }
+
+    /* تحسينات للجوال */
+    @media (max-width: 420px){
+      .hm-topActions{gap:6px}
+      .hm-btn{padding:9px 10px}
+      .hm-pad{width: 60px; height: 54px}
+      .hm-big{min-height: 54px}
+    }
+  </style>
+<script>
+  (() => {
+    "use strict";
+
+    // ========= عناصر الصفحة =========
+    const canvas = document.getElementById("game");
+    const ctx = canvas.getContext("2d", { alpha: false });
+
+    const subtitle = document.getElementById("subtitle");
+    const overlay = document.getElementById("overlay");
+    const overlayTitle = document.getElementById("overlayTitle");
+    const overlayText = document.getElementById("overlayText");
+    const overlayActions = document.getElementById("overlayActions");
+
+    const hudGame = document.getElementById("hudGame");
+    const hudLevel = document.getElementById("hudLevel");
+    const hudScore = document.getElementById("hudScore");
+    const hudBest = document.getElementById("hudBest");
+
+    const btnMenu = document.getElementById("btnMenu");
+    const btnPause = document.getElementById("btnPause");
+    const btnRestart = document.getElementById("btnRestart");
+
+    const pickButtons = [...document.querySelectorAll(".hm-pick")];
+    const controlsMenu = document.getElementById("controlsMenu");
+    const controlsSnake = document.getElementById("controlsSnake");
+    const controlsBounce = document.getElementById("controlsBounce");
+
+    // ========= أدوات =========
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const randInt = (a, b) => (a + Math.floor(Math.random() * (b - a + 1)));
+    const now = () => performance.now();
+
+    function setSubtitle(t){ subtitle.textContent = t; }
+
+    function showOverlay(title, text, actions = []) {
+      overlayTitle.textContent = title;
+      overlayText.innerHTML = text;
+      overlayActions.innerHTML = "";
+      for (const a of actions) {
+        const b = document.createElement("button");
+        b.className = "hm-btn " + (a.primary ? "hm-btnPrimary" : "");
+        if (a.danger) b.className += " hm-danger";
+        b.textContent = a.label;
+        b.addEventListener("click", a.onClick);
+        overlayActions.appendChild(b);
+      }
+      overlay.hidden = false;
+    }
+    function hideOverlay(){ overlay.hidden = true; }
+
+    function setActivePicker(gameKey){
+      pickButtons.forEach(b => b.classList.toggle("isActive", b.dataset.game === gameKey));
+    }
+
+    function setControls(gameKey){
+      controlsMenu.hidden = gameKey !== "menu";
+      controlsSnake.hidden = gameKey !== "snake";
+      controlsBounce.hidden = gameKey !== "bounce";
+    }
+
+    // ========= إدارة التخزين =========
+    const STORE_KEY = "HM_GAME_BEST";
+    function loadBest(){
+      try { return JSON.parse(localStorage.getItem(STORE_KEY) || "{}"); }
+      catch { return {}; }
+    }
+    function saveBest(obj){
+      localStorage.setItem(STORE_KEY, JSON.stringify(obj));
+    }
+    const bestByGame = loadBest();
+
+    // ========= إدخال (كيبورد + لمس) =========
+    const input = {
+      // snake
+      snakeDir: {x:1,y:0},
+      snakeQueued: null,
+
+      // bounce
+      left:false,
+      right:false,
+      jumpPressed:false,
+
+      // عام
+      pauseToggle:false,
+      exit:false,
+      restart:false,
+    };
+
+    function resetOneShot(){
+      input.jumpPressed = false;
+      input.pauseToggle = false;
+      input.exit = false;
+      input.restart = false;
+    }
+
+    // كيبورد
+    window.addEventListener("keydown", (e) => {
+      const k = e.key.toLowerCase();
+
+      // منع سكرول الأسهم/المسافة
+      if (["arrowup","arrowdown","arrowleft","arrowright"," "].includes(e.key)) e.preventDefault();
+
+      if (state.game === "snake") {
+        if (k === "arrowup" || k === "w") queueSnakeDir(0,-1);
+        if (k === "arrowdown" || k === "s") queueSnakeDir(0, 1);
+        if (k === "arrowleft" || k === "a") queueSnakeDir(-1,0);
+        if (k === "arrowright" || k === "d") queueSnakeDir(1,0);
+        if (k === "p") input.pauseToggle = true;
+        if (k === "r") input.restart = true;
+        if (k === "escape") input.exit = true;
+      }
+
+      if (state.game === "bounce") {
+        if (k === "arrowleft" || k === "a") input.left = true;
+        if (k === "arrowright" || k === "d") input.right = true;
+        if (k === "arrowup" || k === "w" || e.key === " ") input.jumpPressed = true;
+        if (k === "p") input.pauseToggle = true;
+        if (k === "r") input.restart = true;
+        if (k === "escape") input.exit = true;
+      }
+
+      if (state.game === "menu") {
+        if (k === "1") startGame("snake");
+        if (k === "2") startGame("bounce");
+      }
+    }, {passive:false});
+
+    window.addEventListener("keyup", (e) => {
+      const k = e.key.toLowerCase();
+      if (state.game === "bounce") {
+        if (k === "arrowleft" || k === "a") input.left = false;
+        if (k === "arrowright" || k === "d") input.right = false;
+      }
+    });
+
+    // أزرار لمس
+    function bindTouchButton(el, onDown, onUp){
+      const down = (ev) => { ev.preventDefault(); onDown?.(); };
+      const up = (ev) => { ev.preventDefault(); onUp?.(); };
+      el.addEventListener("pointerdown", down);
+      el.addEventListener("pointerup", up);
+      el.addEventListener("pointercancel", up);
+      el.addEventListener("pointerleave", up);
+    }
+
+    // D-PAD و أزرار
+    document.querySelectorAll("[data-act]").forEach(btn => {
+      const act = btn.dataset.act;
+
+      if (act === "up") bindTouchButton(btn, () => queueSnakeDir(0,-1));
+      if (act === "down") bindTouchButton(btn, () => queueSnakeDir(0, 1));
+      if (act === "left") bindTouchButton(btn, () => queueSnakeDir(-1,0));
+      if (act === "right") bindTouchButton(btn, () => queueSnakeDir(1,0));
+
+      if (act === "snakePause" || act === "bouncePause")
+        bindTouchButton(btn, () => input.pauseToggle = true);
+
+      if (act === "exit")
+        bindTouchButton(btn, () => input.exit = true);
+
+      if (act === "jump")
+        bindTouchButton(btn, () => input.jumpPressed = true);
+
+      if (act === "leftHold")
+        bindTouchButton(btn, () => input.left = true, () => input.left = false);
+
+      if (act === "rightHold")
+        bindTouchButton(btn, () => input.right = true, () => input.right = false);
+    });
+
+    // اختيار لعبة
+    pickButtons.forEach(b => {
+      b.addEventListener("click", () => {
+        const g = b.dataset.game;
+        if (g === "menu") goMenu();
+        else startGame(g);
+      });
+    });
+
+    // أزرار أعلى
+    btnMenu.addEventListener("click", () => goMenu());
+    btnPause.addEventListener("click", () => { input.pauseToggle = true; });
+    btnRestart.addEventListener("click", () => { input.restart = true; });
+
+    // ========= ضبط الكانفس للجوال =========
+    function resizeCanvas(){
+      // نحافظ على نسبة مناسبة (العرض كامل، والارتفاع حسب المساحة المتاحة)
+      const rect = canvas.getBoundingClientRect();
+      const dpr = Math.max(1, Math.floor(window.devicePixelRatio || 1));
+      const w = Math.floor(rect.width * dpr);
+      const h = Math.floor(rect.height * dpr);
+      if (canvas.width !== w || canvas.height !== h) {
+        canvas.width = w;
+        canvas.height = h;
+      }
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    // ========= حالة عامة =========
+    const state = {
+      game: "menu",   // menu | snake | bounce
+      paused: false,
+      score: 0,
+      best: 0,
+    };
+
+    function updateHud(){
+      hudGame.textContent = "HM GAME";
+      hudScore.textContent = `Score: ${state.score}`;
+      hudBest.textContent = `Best: ${state.best}`;
+    }
+
+    function setBest(gameKey, score){
+      const prev = bestByGame[gameKey] ?? 0;
+      if (score > prev) {
+        bestByGame[gameKey] = score;
+        saveBest(bestByGame);
+      }
+      state.best = bestByGame[gameKey] ?? 0;
+    }
+
+    // ========= واجهة تشغيل/قائمة =========
+    function goMenu(){
+      state.game = "menu";
+      state.paused = false;
+      state.score = 0;
+      state.best = 0;
+      setSubtitle("مركز ألعاب — اختر لعبة");
+      hudLevel.textContent = "—";
+      setControls("menu");
+      setActivePicker("menu");
+      showOverlay(
+        "HM GAME",
+        `اختر لعبة من أزرار الاختيار:<br/>
+        • 🐍 Snake (نوكيا) — تحكم بالأسهم أو D-PAD<br/>
+        • 🔴 Bounce (نوكيا) — يسار/يمين + قفز<br/><br/>
+        <b>ملاحظة:</b> الأزرار بالأسفل مخصصة للجوال.`,
+        [
+          { label: "ابدأ Snake", primary:true, onClick: () => startGame("snake") },
+          { label: "ابدأ Bounce", primary:false, onClick: () => startGame("bounce") },
+        ]
+      );
+      drawMenu();
+      updateHud();
+    }
+
+    function startGame(gameKey){
+      hideOverlay();
+      state.game = gameKey;
+      state.paused = false;
+      state.score = 0;
+      setSubtitle(`تلعب الآن: ${gameKey === "snake" ? "Snake" : "Bounce"} — HM GAME`);
+      setControls(gameKey);
+      setActivePicker(gameKey);
+
+      if (gameKey === "snake") {
+        Snake.init();
+        setBest("snake", 0);
+        hudLevel.textContent = "Snake — Nokia Style";
+      } else if (gameKey === "bounce") {
+        Bounce.init();
+        setBest("bounce", 0);
+        hudLevel.textContent = "Bounce — Nokia Style";
+      }
+      updateHud();
+    }
+
+    function togglePause(){
+      if (state.game === "menu") return;
+      state.paused = !state.paused;
+      if (state.paused) {
+        showOverlay(
+          "HM GAME — متوقف",
+          "اللعبة متوقفة مؤقتًا.<br/>اضغط متابعة لإكمال اللعب.",
+          [
+            { label: "متابعة", primary:true, onClick: () => { state.paused = false; hideOverlay(); } },
+            { label: "إعادة", primary:false, onClick: () => { input.restart = true; hideOverlay(); } },
+            { label: "الخروج", danger:true, onClick: () => goMenu() },
+          ]
+        );
+      } else {
+        hideOverlay();
+      }
+    }
+
+    function queueSnakeDir(x,y){
+      // منع الرجوع للخلف مباشرة (قواعد Snake الأساسية)
+      input.snakeQueued = {x,y};
+    }
+
+    // ========= رسم شاشة القائمة =========
+    function drawMenu(){
+      const w = canvas.width, h = canvas.height;
+      ctx.fillStyle = "#061025";
+      ctx.fillRect(0,0,w,h);
+
+      // عنوان بسيط
+      ctx.fillStyle = "rgba(255,255,255,.9)";
+      ctx.font = `${Math.floor(w*0.06)}px system-ui`;
+      ctx.textAlign = "center";
+      ctx.fillText("HM GAME", w/2, h*0.35);
+
+      ctx.fillStyle = "rgba(255,255,255,.65)";
+      ctx.font = `${Math.floor(w*0.038)}px system-ui`;
+      ctx.fillText("اختر لعبة من الأسفل", w/2, h*0.44);
+
+      ctx.fillStyle = "rgba(78,161,255,.35)";
+      ctx.font = `${Math.floor(w*0.03)}px system-ui`;
+      ctx.fillText("يدعم اللمس والكيبورد", w/2, h*0.52);
+    }
+
+    // ========= حلقة التحديث =========
+    let last = now();
+    function loop(){
+      resizeCanvas();
+      const t = now();
+      const dt = clamp((t - last) / 1000, 0, 0.04);
+      last = t;
+
+      if (input.pauseToggle) { input.pauseToggle = false; togglePause(); }
+      if (input.exit) { input.exit = false; goMenu(); }
+
+      if (state.game === "menu") {
+        drawMenu();
+      } else if (state.game === "snake") {
+        if (input.restart) { input.restart = false; Snake.init(); state.paused=false; hideOverlay(); }
+        if (!state.paused) Snake.update(dt);
+        Snake.draw();
+      } else if (state.game === "bounce") {
+        if (input.restart) { input.restart = false; Bounce.init(); state.paused=false; hideOverlay(); }
+        if (!state.paused) Bounce.update(dt);
+        Bounce.draw();
+      }
+
+      updateHud();
+      resetOneShot();
+      requestAnimationFrame(loop);
+    }
+
+    // سنعرّف Snake و Bounce في الأجزاء القادمة
+    const Snake = {};
+    const Bounce = {};
+    window.HM_GAME = { startGame, goMenu }; // مرجع اختياري
+
+    // ابدأ
+    goMenu();
+    requestAnimationFrame(loop);
+
+    // سنكمل تعريف Snake و Bounce في الجزء 4 و 5
+    // ========= نهاية الجزء 3 =========
+
+    // نترك الأقواس مفتوحة لنكمل في الجزء التالي
+// ========= HM GAME: SNAKE (Nokia Style) =========
+    (function defineSnake(){
+      // إعدادات شبكية قريبة من إحساس شاشة نوكيا
+      const GRID_W = 28;
+      const GRID_H = 18;
+
+      let cell = 12; // سيُحسب حسب الكانفس
+      let offX = 0, offY = 0;
+
+      let snake = [];
+      let dir = {x:1,y:0};
+      let queued = null;
+      let food = {x: 10, y: 10};
+      let tick = 0;
+      let speed = 7; // خطوات/ثانية تبدأ متوسطة وتزيد
+      let alive = true;
+
+      function layout(){
+        // نجعل منطقة اللعب مربعة نسبيًا داخل الكانفس
+        const w = canvas.width, h = canvas.height;
+
+        // مساحة HUD بالأعلى تقريبًا (لكن الرسم كله داخل الكانفس)
+        const pad = Math.floor(Math.min(w,h) * 0.06);
+
+        // ابعاد لوحة LCD
+        const usableW = w - pad*2;
+        const usableH = h - pad*2;
+
+        // نختار cell بحيث تناسب الشبكة
+        cell = Math.floor(Math.min(usableW/GRID_W, usableH/GRID_H));
+        cell = Math.max(8, cell);
+
+        const lcdW = cell*GRID_W;
+        const lcdH = cell*GRID_H;
+        offX = Math.floor((w - lcdW)/2);
+        offY = Math.floor((h - lcdH)/2);
+      }
+
+      function reset(){
+        layout();
+        snake = [
+          {x: 6, y: Math.floor(GRID_H/2)},
+          {x: 5, y: Math.floor(GRID_H/2)},
+          {x: 4, y: Math.floor(GRID_H/2)},
+        ];
+        dir = {x:1,y:0};
+        queued = null;
+        tick = 0;
+        speed = 7;
+        alive = true;
+
+        state.score = 0;
+        setBest("snake", 0);
+
+        placeFood();
+      }
+
+      function placeFood(){
+        let tries = 0;
+        while (tries++ < 1000) {
+          const fx = randInt(0, GRID_W-1);
+          const fy = randInt(0, GRID_H-1);
+          const onSnake = snake.some(p => p.x === fx && p.y === fy);
+          if (!onSnake) { food = {x:fx,y:fy}; return; }
+        }
+        food = {x:1,y:1};
+      }
+
+      function step(){
+        if (!alive) return;
+
+        // أخذ الاتجاه من الإدخال مع منع الرجوع للخلف
+        if (input.snakeQueued) queued = input.snakeQueued;
+        input.snakeQueued = null;
+
+        if (queued) {
+          const isBack = (queued.x === -dir.x && queued.y === -dir.y);
+          if (!isBack) dir = queued;
+          queued = null;
+        }
+
+        const head = snake[0];
+        const nx = head.x + dir.x;
+        const ny = head.y + dir.y;
+
+        // قواعد نوكيا الأساسية: اصطدام بالجدار = نهاية
+        if (nx < 0 || nx >= GRID_W || ny < 0 || ny >= GRID_H) {
+          die();
+          return;
+        }
+
+        // اصطدام بالنفس
+        if (snake.some((p, i) => i !== 0 && p.x === nx && p.y === ny)) {
+          die();
+          return;
+        }
+
+        // تحريك
+        snake.unshift({x:nx,y:ny});
+
+        // أكل
+        if (nx === food.x && ny === food.y) {
+          state.score += 10;
+          // زيادة السرعة تدريجيًا كل عدة نقاط
+          speed = 7 + Math.floor(state.score / 50);
+          setBest("snake", state.score);
+          placeFood();
+        } else {
+          snake.pop();
+        }
+      }
+
+      function die(){
+        alive = false;
+        setBest("snake", state.score);
+
+        showOverlay(
+          "HM GAME — Snake انتهت",
+          `انتهت اللعبة.<br/>النتيجة: <b>${state.score}</b><br/>أفضل نتيجة: <b>${state.best}</b>`,
+          [
+            { label: "إعادة", primary:true, onClick: () => { reset(); hideOverlay(); } },
+            { label: "الخروج للقائمة", danger:true, onClick: () => goMenu() },
+          ]
+        );
+      }
+
+      function update(dt){
+        layout();
+
+        // تحكم زر الإيقاف الموجود داخل لوحة الأزرار (اختياري)
+        // (زر أعلى الصفحة يعالج pauseToggle بالفعل)
+
+        // خطوات ثابتة زمنياً (tick-based) مثل ألعاب نوكيا
+        tick += dt * speed;
+        while (tick >= 1) {
+          tick -= 1;
+          step();
+          if (!alive) break;
+        }
+      }
+
+      function draw(){
+        layout();
+        const w = canvas.width, h = canvas.height;
+
+        // خلفية عامة
+        ctx.fillStyle = "#061025";
+        ctx.fillRect(0,0,w,h);
+
+        // إطار شاشة LCD
+        const lcdW = cell*GRID_W;
+        const lcdH = cell*GRID_H;
+
+        // إطار
+        ctx.fillStyle = getCss("--frame");
+        roundRect(offX-10, offY-10, lcdW+20, lcdH+20, 18, true);
+
+        // شاشة LCD (أخضر)
+        const grd = ctx.createLinearGradient(0, offY, 0, offY + lcdH);
+        grd.addColorStop(0, getCss("--lcd"));
+        grd.addColorStop(1, getCss("--lcd2"));
+        ctx.fillStyle = grd;
+        roundRect(offX, offY, lcdW, lcdH, 12, true);
+
+        // خطوط خفيفة (إحساس شاشة)
+        ctx.fillStyle = "rgba(0,0,0,.06)";
+        for (let y=0; y<GRID_H; y++){
+          ctx.fillRect(offX, offY + y*cell, lcdW, 1);
+        }
+
+        // الطعام (بكسل)
+        drawPixel(food.x, food.y, 1);
+
+        // الثعبان
+        for (let i=0; i<snake.length; i++){
+          const p = snake[i];
+          const fat = (i===0) ? 1 : 0; // رأس أو جسم
+          drawPixel(p.x, p.y, 2 + fat);
+        }
+
+        // نص بسيط داخل الشاشة
+        ctx.fillStyle = "rgba(0,0,0,.35)";
+        ctx.font = `${Math.floor(cell*1.1)}px system-ui`;
+        ctx.textAlign = "left";
+        ctx.fillText("HM GAME", offX + 10, offY + 24);
+
+        if (!alive) {
+          // سيتم عرض overlay بالفعل
+        }
+      }
+
+      function drawPixel(gx, gy, sizeMode){
+        const px = offX + gx*cell;
+        const py = offY + gy*cell;
+
+        ctx.fillStyle = getCss("--pixel");
+
+        if (sizeMode === 1) {
+          // طعام صغير
+          const s = Math.floor(cell*0.45);
+          ctx.fillRect(px + Math.floor((cell-s)/2), py + Math.floor((cell-s)/2), s, s);
+        } else {
+          // جسم/رأس
+          const inset = sizeMode === 3 ? Math.floor(cell*0.10) : Math.floor(cell*0.16);
+          ctx.fillRect(px + inset, py + inset, cell - inset*2, cell - inset*2);
+        }
+      }
+
+      function getCss(varName){
+        return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+      }
+
+      function roundRect(x,y,w,h,r,fill){
+        const rr = Math.min(r, w/2, h/2);
+        ctx.beginPath();
+        ctx.moveTo(x+rr,y);
+        ctx.arcTo(x+w,y,x+w,y+h,rr);
+        ctx.arcTo(x+w,y+h,x,y+h,rr);
+        ctx.arcTo(x,y+h,x,y,rr);
+        ctx.arcTo(x,y,x+w,y,rr);
+        ctx.closePath();
+        if (fill) ctx.fill();
+      }
+
+      Snake.init = reset;
+      Snake.update = update;
+      Snake.draw = draw;
+    })();
+// ========= HM GAME: BOUNCE (Nokia Style - مبسطة لكن قواعد صحيحة) =========
+    (function defineBounce(){
+      // نظام Tiles: # = طوب/أرض، ^ = شوك، o = حلقة، G = هدف/بوابة
+      const TILE = 24;
+
+      // مراحل بسيطة (تقدر تزيدها لاحقًا)
+      const LEVELS = [
+        [
+          "................................",
+          "................................",
+          "................................",
+          ".............o..................",
+          "...........#####................",
+          "................................",
+          "....o......................o....",
+          "....###..............#####......",
+          "................................",
+          "############..^..#############..",
+          "................................",
+          "..............o.................",
+          ".............#####..............",
+          "................................",
+          "###########################..G..",
+        ],
+        [
+          "................................",
+          "................................",
+          ".............o..................",
+          "...........#####................",
+          "................................",
+          "....o....................o......",
+          "....###...........^.....###.....",
+          "..................^..............",
+          "..............########...........",
+          ".................................",
+          "##########..............#########",
+          "................................",
+          "........o.......................",
+          "......#####...........o.........",
+          "#####################.#####..G..",
+        ],
+      ];
+
+      let levelIndex = 0;
+      let tiles = [];
+      let ringsLeft = 0;
+
+      // لاعب (كرة)
+      const player = {
+        x: 2, y: 2,
+        vx: 0, vy: 0,
+        r: 11,
+        onGround: false,
+      };
+
+      // كاميرا
+      let camX = 0, camY = 0;
+
+      // أبعاد منطقية للعرض
+      let viewW = 360, viewH = 540;
+
+      function parseLevel(idx){
+        levelIndex = idx;
+        const map = LEVELS[idx];
+        tiles = map.map(row => row.split(""));
+        ringsLeft = 0;
+
+        for (let y=0; y<tiles.length; y++){
+          for (let x=0; x<tiles[0].length; x++){
+            if (tiles[y][x] === "o") ringsLeft++;
+          }
+        }
+
+        // نقطة بداية ثابتة
+        player.x = TILE * 2;
+        player.y = TILE * 3;
+        player.vx = 0;
+        player.vy = 0;
+        player.onGround = false;
+
+        state.score = 0;
+        setBest("bounce", 0);
+      }
+
+      function init(){
+        parseLevel(0);
+      }
+
+      function resizeView(){
+        // نستخدم أبعاد الكانفس كـ view
+        viewW = canvas.width;
+        viewH = canvas.height;
+      }
+
+      function isSolidAt(tx, ty){
+        if (ty < 0 || ty >= tiles.length) return false;
+        if (tx < 0 || tx >= tiles[0].length) return false;
+        return tiles[ty][tx] === "#";
+      }
+
+      function tileAt(tx, ty){
+        if (ty < 0 || ty >= tiles.length) return ".";
+        if (tx < 0 || tx >= tiles[0].length) return ".";
+        return tiles[ty][tx];
+      }
+
+      function setTile(tx, ty, v){
+        if (ty < 0 || ty >= tiles.length) return;
+        if (tx < 0 || tx >= tiles[0].length) return;
+        tiles[ty][tx] = v;
+      }
+
+      function circleRectColl(cx, cy, cr, rx, ry, rw, rh){
+        const nx = clamp(cx, rx, rx+rw);
+        const ny = clamp(cy, ry, ry+rh);
+        const dx = cx - nx;
+        const dy = cy - ny;
+        return (dx*dx + dy*dy) <= cr*cr;
+      }
+
+      function update(dt){
+        resizeView();
+
+        // في Bounce: إذا تريد نسخة أقرب للأصل:
+        // - تسارع يمين/يسار
+        // - قفز فقط إذا على أرض
+        const accel = 1800;
+        const maxVx = 420;
+        const jumpV = 620;
+        const gravity = 1600;
+        const friction = 0.86;
+
+        // إدخال
+        if (input.left) player.vx -= accel*dt;
+        if (input.right) player.vx += accel*dt;
+        if (!input.left && !input.right) player.vx *= Math.pow(friction, dt*60);
+
+        player.vx = clamp(player.vx, -maxVx, maxVx);
+
+        // قفز
+        if (input.jumpPressed && player.onGround) {
+          player.vy = -jumpV;
+          player.onGround = false;
+        }
+
+        // جاذبية
+        player.vy += gravity*dt;
+        player.vy = clamp(player.vy, -2000, 2000);
+
+        // حركة أفقية + تصادم مع الطوب
+        let nextX = player.x + player.vx*dt;
+        let nextY = player.y;
+
+        const r = player.r;
+        if (collideSolid(nextX, nextY, r)) {
+          // نحاول حل تصادم أفقي بتحريك تدريجي
+          const step = Math.sign(player.vx) || 1;
+          let safeX = player.x;
+          for (let i=0; i<20; i++){
+            const testX = safeX + step;
+            if (!collideSolid(testX, nextY, r)) safeX = testX;
+            else break;
+          }
+          nextX = safeX;
+          player.vx = 0;
+        }
+        player.x = nextX;
+
+        // حركة عمودية + تصادم
+        nextY = player.y + player.vy*dt;
+        player.onGround = false;
+
+        if (collideSolid(player.x, nextY, r)) {
+          const step = Math.sign(player.vy) || 1;
+          let safeY = player.y;
+          for (let i=0; i<24; i++){
+            const testY = safeY + step;
+            if (!collideSolid(player.x, testY, r)) safeY = testY;
+            else break;
+          }
+          nextY = safeY;
+          if (player.vy > 0) player.onGround = true;
+          player.vy = 0;
+        }
+        player.y = nextY;
+
+        // جمع الحلقات + الاصطدام بالأشواك + الوصول للهدف
+        handlePickupsAndHazards();
+
+        // الكاميرا تتبع اللاعب
+        const mapW = tiles[0].length * TILE;
+        const mapH = tiles.length * TILE;
+
+        camX = clamp(player.x - viewW*0.5, 0, Math.max(0, mapW - viewW));
+        camY = clamp(player.y - viewH*0.55, 0, Math.max(0, mapH - viewH));
+      }
+
+      function collideSolid(cx, cy, cr){
+        // نفحص tiles حول الدائرة
+        const left = Math.floor((cx - cr)/TILE);
+        const right = Math.floor((cx + cr)/TILE);
+        const top = Math.floor((cy - cr)/TILE);
+        const bottom = Math.floor((cy + cr)/TILE);
+
+        for (let ty=top; ty<=bottom; ty++){
+          for (let tx=left; tx<=right; tx++){
+            if (isSolidAt(tx,ty)) {
+              const rx = tx*TILE;
+              const ry = ty*TILE;
+              if (circleRectColl(cx,cy,cr, rx,ry,TILE,TILE)) return true;
+            }
+          }
+        }
+        return false;
+      }
+
+      function handlePickupsAndHazards(){
+        const tx = Math.floor(player.x / TILE);
+        const ty = Math.floor(player.y / TILE);
+
+        // نفحص محيط صغير
+        for (let y=ty-1; y<=ty+1; y++){
+          for (let x=tx-1; x<=tx+1; x++){
+            const t = tileAt(x,y);
+            const rx = x*TILE;
+            const ry = y*TILE;
+
+            if (t === "o") {
+              // حلقة: جمعها يزيد النقاط
+              if (circleRectColl(player.x, player.y, player.r, rx+6, ry+6, TILE-12, TILE-12)) {
+                setTile(x,y,".");
+                ringsLeft--;
+                state.score += 50;
+                setBest("bounce", state.score);
+              }
+            }
+
+            if (t === "^") {
+              // شوك: لمسه = نهاية / إعادة نقطة البداية
+              if (circleRectColl(player.x, player.y, player.r, rx, ry, TILE, TILE)) {
+                loseLife();
+                return;
+              }
+            }
+
+            if (t === "G") {
+              // بوابة: يسمح بالإنهاء حتى لو لم تجمع كل الحلقات؟
+              // في نسخ كثيرة: الهدف نهاية المرحلة بغض النظر، لكن نضيف شرط الحلقات لزيادة التحدي:
+              if (circleRectColl(player.x, player.y, player.r, rx, ry, TILE, TILE)) {
+                winLevel();
+                return;
+              }
+            }
+          }
+        }
+      }
+
+      function loseLife(){
+        showOverlay(
+          "HM GAME — Bounce",
+          `اصطدمت بالشوك!<br/>النتيجة: <b>${state.score}</b><br/>أفضل نتيجة: <b>${state.best}</b>`,
+          [
+            { label: "حاول مجددًا", primary:true, onClick: () => { parseLevel(levelIndex); hideOverlay(); } },
+            { label: "الخروج للقائمة", danger:true, onClick: () => goMenu() },
+          ]
+        );
+      }
+
+      function winLevel(){
+        const next = levelIndex + 1;
+        if (next < LEVELS.length) {
+          showOverlay(
+            "HM GAME — Bounce",
+            `أحسنت! انتقلت للمرحلة التالية.<br/>النتيجة: <b>${state.score}</b>`,
+            [
+              { label: "التالي", primary:true, onClick: () => { parseLevel(next); hideOverlay(); } },
+              { label: "إعادة المرحلة", onClick: () => { parseLevel(levelIndex); hideOverlay(); } },
+              { label: "الخروج للقائمة", danger:true, onClick: () => goMenu() },
+            ]
+          );
+        } else {
+          showOverlay(
+            "HM GAME — Bounce",
+            `أنهيت كل المراحل! 🎉<br/>النتيجة: <b>${state.score}</b><br/>أفضل نتيجة: <b>${state.best}</b>`,
+            [
+              { label: "العب من جديد", primary:true, onClick: () => { parseLevel(0); hideOverlay(); } },
+              { label: "الخروج للقائمة", danger:true, onClick: () => goMenu() },
+            ]
+          );
+        }
+      }
+
+      function draw(){
+        resizeView();
+
+        // خلفية السماء
+        ctx.fillStyle = getCss("--sky");
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+
+        // سحب خفيفة
+        ctx.fillStyle = "rgba(255,255,255,.35)";
+        for (let i=0; i<6; i++){
+          const x = ((i*260 + (camX*0.15)) % (canvas.width+300)) - 150;
+          const y = 70 + i*40;
+          roundRect(x, y, 140, 36, 18, true);
+        }
+
+        // رسم الخريطة
+        const startTx = Math.floor(camX / TILE);
+        const endTx = Math.ceil((camX + canvas.width) / TILE);
+        const startTy = Math.floor(camY / TILE);
+        const endTy = Math.ceil((camY + canvas.height) / TILE);
+
+        for (let ty=startTy; ty<endTy; ty++){
+          for (let tx=startTx; tx<endTx; tx++){
+            const t = tileAt(tx,ty);
+            const x = tx*TILE - camX;
+            const y = ty*TILE - camY;
+
+            if (t === "#") drawBrick(x,y);
+            else if (t === "o") drawRing(x,y);
+            else if (t === "^") drawSpike(x,y);
+            else if (t === "G") drawGoal(x,y);
+          }
+        }
+
+        // رسم اللاعب (كرة حمراء)
+        drawBall(player.x - camX, player.y - camY, player.r);
+
+        // معلومات بسيطة
+        ctx.fillStyle = "rgba(0,0,0,.25)";
+        ctx.font = `${Math.floor(Math.min(canvas.width, canvas.height)*0.032)}px system-ui`;
+        ctx.textAlign = "right";
+        ctx.fillText(`Rings: ${ringsLeft}`, canvas.width - 14, 34);
+        ctx.fillText(`HM GAME`, canvas.width - 14, 58);
+      }
+
+      function drawBall(x,y,r){
+        // ظل
+        ctx.fillStyle = "rgba(0,0,0,.18)";
+        ctx.beginPath();
+        ctx.ellipse(x, y + r*0.85, r*1.05, r*0.35, 0, 0, Math.PI*2);
+        ctx.fill();
+
+        // الكرة
+        ctx.fillStyle = getCss("--ball");
+        ctx.beginPath();
+        ctx.arc(x,y,r,0,Math.PI*2);
+        ctx.fill();
+
+        // لمعة
+        ctx.fillStyle = "rgba(255,255,255,.30)";
+        ctx.beginPath();
+        ctx.arc(x - r*0.35, y - r*0.35, r*0.35, 0, Math.PI*2);
+        ctx.fill();
+      }
+
+      function drawBrick(x,y){
+        const c1 = getCss("--brick");
+        const c2 = getCss("--brick2");
+        ctx.fillStyle = c1;
+        ctx.fillRect(x,y,TILE,TILE);
+        // تدرج/تفاصيل
+        ctx.fillStyle = "rgba(255,255,255,.10)";
+        ctx.fillRect(x+2,y+2,TILE-4,5);
+        ctx.fillStyle = "rgba(0,0,0,.12)";
+        ctx.fillRect(x+2,y+TILE-6,TILE-4,4);
+        // خط فاصل
+        ctx.strokeStyle = c2;
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x+1,y+1,TILE-2,TILE-2);
+      }
+
+      function drawRing(x,y){
+        ctx.strokeStyle = getCss("--ring");
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.arc(x+TILE/2, y+TILE/2, TILE*0.28, 0, Math.PI*2);
+        ctx.stroke();
+
+        ctx.strokeStyle = "rgba(255,255,255,.35)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(x+TILE/2 - 1, y+TILE/2 - 2, TILE*0.22, 0, Math.PI*2);
+        ctx.stroke();
+      }
+
+      function drawSpike(x,y){
+        ctx.fillStyle = getCss("--spike");
+        ctx.beginPath();
+        ctx.moveTo(x, y+TILE);
+        ctx.lineTo(x+TILE*0.25, y+TILE*0.35);
+        ctx.lineTo(x+TILE*0.5, y+TILE);
+        ctx.lineTo(x+TILE*0.75, y+TILE*0.35);
+        ctx.lineTo(x+TILE, y+TILE);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      function drawGoal(x,y){
+        // بوابة بسيطة
+        ctx.fillStyle = "rgba(0,0,0,.22)";
+        roundRect(x+3,y+3,TILE-6,TILE-6,8,true);
+        ctx.strokeStyle = "rgba(255,255,255,.65)";
+        ctx.lineWidth = 2;
+        roundRectStroke(x+5,y+5,TILE-10,TILE-10,7);
+        ctx.fillStyle = "rgba(255,255,255,.70)";
+        ctx.font = `${Math.floor(TILE*0.62)}px system-ui`;
+        ctx.textAlign = "center";
+        ctx.fillText("G", x+TILE/2, y+TILE*0.73);
+      }
+
+      function getCss(varName){
+        return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+      }
+
+      function roundRect(x,y,w,h,r,fill){
+        const rr = Math.min(r, w/2, h/2);
+        ctx.beginPath();
+        ctx.moveTo(x+rr,y);
+        ctx.arcTo(x+w,y,x+w,y+h,rr);
+        ctx.arcTo(x+w,y+h,x,y+h,rr);
+        ctx.arcTo(x,y+h,x,y,rr);
+        ctx.arcTo(x,y,x+w,y,rr);
+        ctx.closePath();
+        if (fill) ctx.fill();
+      }
+      function roundRectStroke(x,y,w,h,r){
+        const rr = Math.min(r, w/2, h/2);
+        ctx.beginPath();
+        ctx.moveTo(x+rr,y);
+        ctx.arcTo(x+w,y,x+w,y+h,rr);
+        ctx.arcTo(x+w,y+h,x,y+h,rr);
+        ctx.arcTo(x,y+h,x,y,rr);
+        ctx.arcTo(x,y,x+w,y,rr);
+        ctx.closePath();
+        ctx.stroke();
+      }
+
+      Bounce.init = init;
+      Bounce.update = update;
+      Bounce.draw = draw;
+    })();
+// ========= نهاية تعريف الألعاب =========
+
+  })();
+  </script>
+
+</body>
+</html>
