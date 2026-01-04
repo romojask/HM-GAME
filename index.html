@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
@@ -8,105 +8,105 @@
 </head>
 
 <body>
-  <header class="hm-topbar">
-    <div class="hm-brand">
-      <span class="hm-logo">HM</span>
-      <div class="hm-brandText">
-        <div class="hm-title">HM GAME</div>
-        <div class="hm-subtitle" id="subtitle">مركز ألعاب — اختر لعبة</div>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">HM</div>
+      <div class="brandText">
+        <div class="title">HM GAME 🎮</div>
+        <div class="subtitle" id="subtitle">Choose a game</div>
       </div>
     </div>
 
-    <div class="hm-topActions">
-      <button class="hm-btn" id="btnMenu" title="العودة للقائمة">القائمة</button>
-      <button class="hm-btn" id="btnPause" title="إيقاف/متابعة">إيقاف</button>
-      <button class="hm-btn hm-btnPrimary" id="btnRestart" title="إعادة">إعادة</button>
+    <div class="topActions">
+      <button class="btn" id="btnLang" title="Language">AR</button>
+      <button class="btn" id="btnMenu" title="Menu">Menu</button>
+      <button class="btn" id="btnPause" title="Pause/Resume">Pause</button>
+      <button class="btn btnPrimary" id="btnRestart" title="Restart">Restart</button>
     </div>
   </header>
 
-  <main class="hm-main">
-    <!-- منطقة اللعبة (أعلى الشاشة) -->
-    <section class="hm-gamePanel">
-      <div class="hm-gameFrame">
-        <canvas id="game" width="360" height="540" aria-label="HM GAME Canvas"></canvas>
-        <div class="hm-hud" id="hud">
-          <div class="hm-hudLeft">
-            <span class="hm-pill" id="hudGame">HM GAME</span>
-            <span class="hm-pill" id="hudLevel">—</span>
+  <main class="main">
+    <!-- GAME AREA (TOP) -->
+    <section class="gamePanel">
+      <div class="gameFrame">
+        <canvas id="game" width="360" height="540"></canvas>
+
+        <!-- HUD -->
+        <div class="hud">
+          <div class="hudLeft">
+            <span class="pill" id="hudGame">HM GAME</span>
+            <span class="pill" id="hudMode">—</span>
           </div>
-          <div class="hm-hudRight">
-            <span class="hm-pill" id="hudScore">Score: 0</span>
-            <span class="hm-pill" id="hudBest">Best: 0</span>
+          <div class="hudRight">
+            <span class="pill" id="hudStat1">Score: 0</span>
+            <span class="pill" id="hudStat2">Best: 0</span>
+            <span class="pill" id="hudTime">00:00</span>
           </div>
         </div>
 
-        <div class="hm-overlay" id="overlay">
-          <div class="hm-card">
-            <div class="hm-cardTitle" id="overlayTitle">HM GAME</div>
-            <div class="hm-cardText" id="overlayText">
-              اختر لعبة من الأسفل.
-            </div>
-            <div class="hm-cardActions" id="overlayActions"></div>
+        <!-- Overlay (Win/Lose/Pause/Menu) -->
+        <div class="overlay" id="overlay">
+          <div class="card">
+            <div class="cardTitle" id="ovTitle">HM GAME</div>
+            <div class="cardText" id="ovText">Choose a game below.</div>
+            <div class="cardActions" id="ovActions"></div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- أزرار التحكم (أسفل الشاشة) -->
-    <section class="hm-controlsPanel">
-      <div class="hm-gamePicker" id="gamePicker">
-        <button class="hm-pick" data-game="menu">🏠 HM GAME (القائمة)</button>
-        <button class="hm-pick" data-game="snake">🐍 Snake (نوكيا)</button>
-        <button class="hm-pick" data-game="bounce">🔴 Bounce (نوكيا)</button>
+    <!-- CONTROLS AREA (BOTTOM) -->
+    <section class="controlsPanel">
+      <div class="picker" id="picker">
+        <button class="pick isActive" data-game="menu">🏠 HM GAME</button>
+        <button class="pick" data-game="snake">🐍 Snake</button>
+        <button class="pick" data-game="bounce">🔴 Bounce</button>
       </div>
 
-      <div class="hm-controls">
-        <!-- أزرار Snake -->
-        <div class="hm-controlGroup" id="controlsSnake" hidden>
-          <div class="hm-dpad">
-            <button class="hm-pad" data-act="up">▲</button>
-            <div class="hm-mid">
-              <button class="hm-pad" data-act="left">◀</button>
-              <button class="hm-pad hm-padCenter" data-act="noop">HM</button>
-              <button class="hm-pad" data-act="right">▶</button>
-            </div>
-            <button class="hm-pad" data-act="down">▼</button>
-          </div>
-
-          <div class="hm-sideButtons">
-            <button class="hm-big" data-act="snakePause">إيقاف/متابعة</button>
-            <button class="hm-big hm-danger" data-act="exit">خروج</button>
-          </div>
-        </div>
-
-        <!-- أزرار Bounce -->
-        <div class="hm-controlGroup" id="controlsBounce" hidden>
-          <div class="hm-bounceRow">
-            <button class="hm-big" data-act="leftHold">◀ يسار</button>
-            <button class="hm-big hm-padCenter" data-act="jump">قفز</button>
-            <button class="hm-big" data-act="rightHold">يمين ▶</button>
-          </div>
-          <div class="hm-sideButtons">
-            <button class="hm-big" data-act="bouncePause">إيقاف/متابعة</button>
-            <button class="hm-big hm-danger" data-act="exit">خروج</button>
-          </div>
-        </div>
-
-        <!-- أزرار القائمة -->
-        <div class="hm-controlGroup" id="controlsMenu">
-          <div class="hm-menuHelp">
-            <div class="hm-helpTitle">HM GAME</div>
-            <div class="hm-helpText">
-              اختر لعبة من الأعلى (أزرار الاختيار)، ثم العب من أزرار التحكم هنا.
-              <br/>يدعم اللمس ولوحة المفاتيح أيضًا.
-            </div>
+      <!-- MENU help -->
+      <div class="controls" id="controlsMenu">
+        <div class="helpBox">
+          <div class="helpTitle">HM GAME ✨</div>
+          <div class="helpText" id="helpText">
+            Pick a game above, then use the controls below.<br/>
+            Keyboard is supported too.
           </div>
         </div>
       </div>
 
-      <div class="hm-footerNote">
-        © HM GAME — لعبة تعمل داخل ملف واحد (HTML)
+      <!-- SNAKE controls -->
+      <div class="controls" id="controlsSnake" hidden>
+        <div class="dpad">
+          <button class="pad" data-act="up">▲</button>
+          <div class="mid">
+            <button class="pad" data-act="left">◀</button>
+            <button class="pad padCenter" data-act="noop">HM</button>
+            <button class="pad" data-act="right">▶</button>
+          </div>
+          <button class="pad" data-act="down">▼</button>
+        </div>
+
+        <div class="side">
+          <button class="big" data-act="pause">⏸️ Pause</button>
+          <button class="big danger" data-act="exit">🚪 Exit</button>
+        </div>
       </div>
+
+      <!-- BOUNCE controls (accurate: LEFT/RIGHT only) -->
+      <div class="controls" id="controlsBounce" hidden>
+        <div class="bounceRow">
+          <button class="big" data-act="bLeftHold">◀ Left</button>
+          <button class="big padCenter" data-act="pause">⏸️ Pause</button>
+          <button class="big" data-act="bRightHold">Right ▶</button>
+        </div>
+
+        <div class="side">
+          <button class="big" data-act="restart">🔁 Restart</button>
+          <button class="big danger" data-act="exit">🚪 Exit</button>
+        </div>
+      </div>
+
+      <div class="footer">© HM GAME</div>
     </section>
   </main>
 <style>
@@ -115,15 +115,15 @@
       --panel:#111a2a;
       --panel2:#0f1726;
       --text:#eaf1ff;
-      --muted:#9fb3df;
+      --muted:#a7b7de;
       --line:rgba(255,255,255,.10);
       --accent:#4ea1ff;
       --danger:#ff4e6a;
 
-      /* ألوان شاشة نوكيا (Snake) */
-      --lcd:#9acb3c;        /* أخضر شاشة */
-      --lcd2:#8dbb36;       /* تدرج بسيط */
-      --pixel:#0a1b0a;      /* لون البكسل */
+      /* Nokia Snake LCD */
+      --lcd:#9acb3c;
+      --lcd2:#86bb2f;
+      --pixel:#0a1b0a;
       --frame:#2b3550;
 
       /* Bounce */
@@ -133,203 +133,175 @@
       --ring:#ffd34f;
       --ball:#e83535;
       --spike:#1b2338;
+      --gate:#ffffff;
     }
 
-    *{box-sizing:border-box}
-    html,body{height:100%}
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
     body{
       margin:0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
       background: radial-gradient(1200px 800px at 80% 20%, #15244b, var(--bg));
       color:var(--text);
-      overscroll-behavior: none;
+      overscroll-behavior:none;
       touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    .hm-topbar{
+    .topbar{
       position: sticky;
-      top: 0;
-      z-index: 50;
+      top:0;
+      z-index:50;
       display:flex;
-      justify-content:space-between;
       align-items:center;
+      justify-content:space-between;
       gap:10px;
       padding: 12px 12px;
-      background: color-mix(in oklab, var(--panel) 90%, black);
-      border-bottom: 1px solid var(--line);
+      background: color-mix(in oklab, var(--panel) 92%, black);
+      border-bottom:1px solid var(--line);
       backdrop-filter: blur(10px);
     }
 
-    .hm-brand{display:flex; align-items:center; gap:10px}
-    .hm-logo{
+    .brand{display:flex; align-items:center; gap:10px;}
+    .logo{
       width:42px; height:42px;
-      display:grid; place-items:center;
       border-radius:12px;
+      display:grid; place-items:center;
+      font-weight:1000;
       background: rgba(78,161,255,.18);
-      border:1px solid rgba(78,161,255,.45);
-      font-weight:900;
-      letter-spacing:.5px;
+      border: 1px solid rgba(78,161,255,.55);
     }
-    .hm-title{font-weight:900; font-size:16px}
-    .hm-subtitle{color:var(--muted); font-size:12px; margin-top:2px}
+    .title{ font-weight:1000; font-size:16px; }
+    .subtitle{ color:var(--muted); font-size:12px; margin-top:2px; }
 
-    .hm-topActions{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
-
-    .hm-btn{
-      appearance:none;
+    .topActions{ display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+    .btn{
       border:1px solid var(--line);
       background: rgba(255,255,255,.06);
       color:var(--text);
       padding:10px 12px;
       border-radius:12px;
-      font-weight:800;
+      font-weight:900;
       cursor:pointer;
       user-select:none;
     }
-    .hm-btn:active{transform: translateY(1px)}
-    .hm-btnPrimary{
+    .btn:active{ transform: translateY(1px); }
+    .btnPrimary{
       background: rgba(78,161,255,.18);
       border-color: rgba(78,161,255,.55);
     }
 
-    .hm-main{
+    .main{
+      height: calc(100vh - 70px);
       display:grid;
       grid-template-rows: 1fr auto;
-      height: calc(100vh - 70px);
-      gap: 10px;
+      gap:10px;
       padding: 10px 10px 14px;
     }
 
-    .hm-gamePanel{
+    .gamePanel{
       background: color-mix(in oklab, var(--panel2) 88%, black);
       border:1px solid var(--line);
       border-radius: 16px;
       overflow:hidden;
-      display:flex;
       min-height: 260px;
     }
 
-    .hm-gameFrame{
-      position: relative;
-      width: 100%;
-      height: 100%;
-      display:flex;
-    }
+    .gameFrame{ position:relative; width:100%; height:100%; }
+    canvas#game{ width:100%; height:100%; display:block; background:#061025; }
 
-    canvas#game{
-      width: 100%;
-      height: 100%;
-      display:block;
-      background: #061025;
-    }
-
-    .hm-hud{
+    .hud{
       position:absolute;
-      top:10px;
-      left:10px;
-      right:10px;
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
+      top:10px; left:10px; right:10px;
+      display:flex; justify-content:space-between; gap:10px;
       pointer-events:none;
-      font-weight:800;
     }
+    .hudLeft,.hudRight{ display:flex; gap:8px; flex-wrap:wrap; }
 
-    .hm-hudLeft,.hm-hudRight{
-      display:flex; gap:8px; flex-wrap:wrap;
-    }
-
-    .hm-pill{
-      background: rgba(0,0,0,.25);
-      border:1px solid rgba(255,255,255,.16);
+    .pill{
       padding:6px 10px;
       border-radius:999px;
-      font-size:12px;
+      background: rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.16);
       color:var(--text);
+      font-size:12px;
+      font-weight:900;
       backdrop-filter: blur(8px);
     }
 
-    .hm-overlay{
-      position:absolute;
-      inset:0;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      padding: 16px;
-      background: rgba(0,0,0,.35);
+    .overlay{
+      position:absolute; inset:0;
+      display:flex; align-items:center; justify-content:center;
+      padding:16px;
+      background: rgba(0,0,0,.38);
     }
-    .hm-overlay[hidden]{display:none}
-
-    .hm-card{
-      width:min(520px, 100%);
-      background: rgba(17,26,42,.92);
-      border:1px solid rgba(255,255,255,.12);
+    .overlay[hidden]{ display:none; }
+    .card{
+      width:min(540px, 100%);
       border-radius: 18px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(17,26,42,.92);
       padding: 14px;
-      box-shadow: 0 20px 70px rgba(0,0,0,.45);
+      box-shadow: 0 22px 70px rgba(0,0,0,.45);
     }
-    .hm-cardTitle{font-weight:1000; font-size:18px; margin-bottom:6px}
-    .hm-cardText{color:var(--muted); font-size:13px; line-height:1.7}
-    .hm-cardActions{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
+    .cardTitle{ font-size:18px; font-weight:1000; margin-bottom:6px; }
+    .cardText{ color:var(--muted); font-size:13px; line-height:1.7; }
+    .cardActions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
 
-    .hm-controlsPanel{
-      background: color-mix(in oklab, var(--panel) 90%, black);
+    .controlsPanel{
+      background: color-mix(in oklab, var(--panel) 92%, black);
       border:1px solid var(--line);
       border-radius: 16px;
       padding: 12px;
     }
 
-    .hm-gamePicker{
+    .picker{
       display:flex;
       gap:10px;
       flex-wrap:wrap;
       margin-bottom: 10px;
     }
-
-    .hm-pick{
-      flex: 1 1 140px;
+    .pick{
+      flex:1 1 130px;
       border:1px solid var(--line);
       background: rgba(255,255,255,.06);
       color:var(--text);
-      padding: 10px 12px;
+      padding:10px 12px;
       border-radius: 14px;
-      font-weight:900;
+      font-weight:1000;
       cursor:pointer;
       user-select:none;
       text-align:center;
     }
-    .hm-pick:active{transform: translateY(1px)}
-    .hm-pick.isActive{
+    .pick:active{ transform: translateY(1px); }
+    .pick.isActive{
       border-color: rgba(78,161,255,.60);
       background: rgba(78,161,255,.14);
     }
 
-    .hm-controls{
-      display:grid;
-      gap: 10px;
+    .controls{ display:flex; gap:12px; flex-wrap:wrap; justify-content:space-between; align-items:stretch; }
+    .helpBox{
+      width:100%;
+      padding: 10px 12px;
+      border-radius: 16px;
+      border: 1px dashed rgba(255,255,255,.18);
+      background: rgba(255,255,255,.03);
     }
+    .helpTitle{ font-weight:1000; margin-bottom:4px; }
+    .helpText{ color:var(--muted); font-size:13px; line-height:1.6; }
 
-    .hm-controlGroup{
-      display:flex;
-      gap: 12px;
-      align-items:stretch;
-      justify-content:space-between;
-      flex-wrap:wrap;
-    }
-
-    .hm-dpad{
-      flex: 1 1 210px;
+    .dpad{
+      flex:1 1 220px;
       display:grid;
-      gap: 8px;
+      gap:8px;
       justify-items:center;
       padding: 8px;
-      border:1px solid rgba(255,255,255,.10);
       border-radius: 16px;
+      border:1px solid rgba(255,255,255,.10);
       background: rgba(255,255,255,.04);
     }
-    .hm-mid{display:flex; gap:8px}
-
-    .hm-pad, .hm-big{
+    .mid{ display:flex; gap:8px; }
+    .pad, .big{
       border:1px solid rgba(255,255,255,.12);
       background: rgba(255,255,255,.06);
       color:var(--text);
@@ -337,559 +309,641 @@
       font-weight:1000;
       cursor:pointer;
       user-select:none;
-      -webkit-tap-highlight-color: transparent;
     }
-
-    .hm-pad{
-      width: 64px;
-      height: 56px;
-      font-size: 20px;
-    }
-
-    .hm-padCenter{
+    .pad{ width: 64px; height: 56px; font-size: 20px; }
+    .padCenter{
       border-color: rgba(78,161,255,.55);
       background: rgba(78,161,255,.14);
     }
-
-    .hm-sideButtons{
-      flex: 1 1 170px;
+    .side{
+      flex:1 1 170px;
       display:grid;
-      gap: 10px;
+      gap:10px;
     }
-
-    .hm-big{
-      width: 100%;
-      min-height: 56px;
-      padding: 10px 12px;
-      font-size: 16px;
-    }
-
-    .hm-danger{
+    .big{ width:100%; min-height:56px; padding:10px 12px; font-size:16px; }
+    .danger{
       border-color: rgba(255,78,106,.55);
       background: rgba(255,78,106,.12);
     }
 
-    .hm-bounceRow{
-      flex: 1 1 300px;
+    .bounceRow{
+      flex:1 1 300px;
       display:flex;
-      gap: 10px;
+      gap:10px;
     }
-    .hm-bounceRow .hm-big{flex:1 1 0}
+    .bounceRow .big{ flex:1 1 0; }
 
-    .hm-menuHelp{
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px dashed rgba(255,255,255,.18);
-      border-radius: 16px;
-      background: rgba(255,255,255,.03);
-    }
-    .hm-helpTitle{font-weight:1000; margin-bottom:4px}
-    .hm-helpText{color:var(--muted); font-size:13px; line-height:1.6}
-
-    .hm-footerNote{
+    .footer{
       margin-top: 10px;
-      color: rgba(255,255,255,.55);
-      font-size: 12px;
       text-align:center;
+      font-size: 12px;
+      color: rgba(255,255,255,.55);
     }
 
-    /* تحسينات للجوال */
     @media (max-width: 420px){
-      .hm-topActions{gap:6px}
-      .hm-btn{padding:9px 10px}
-      .hm-pad{width: 60px; height: 54px}
-      .hm-big{min-height: 54px}
+      .btn{ padding:9px 10px; }
+      .pad{ width: 60px; height: 54px; }
+      .big{ min-height:54px; }
     }
   </style>
 <script>
   (() => {
     "use strict";
 
-    // ========= عناصر الصفحة =========
+    // ===== Elements =====
     const canvas = document.getElementById("game");
-    const ctx = canvas.getContext("2d", { alpha: false });
+    const ctx = canvas.getContext("2d", { alpha:false });
 
     const subtitle = document.getElementById("subtitle");
+    const hudMode = document.getElementById("hudMode");
+    const hudStat1 = document.getElementById("hudStat1");
+    const hudStat2 = document.getElementById("hudStat2");
+    const hudTime  = document.getElementById("hudTime");
+
     const overlay = document.getElementById("overlay");
-    const overlayTitle = document.getElementById("overlayTitle");
-    const overlayText = document.getElementById("overlayText");
-    const overlayActions = document.getElementById("overlayActions");
+    const ovTitle = document.getElementById("ovTitle");
+    const ovText  = document.getElementById("ovText");
+    const ovActions = document.getElementById("ovActions");
 
-    const hudGame = document.getElementById("hudGame");
-    const hudLevel = document.getElementById("hudLevel");
-    const hudScore = document.getElementById("hudScore");
-    const hudBest = document.getElementById("hudBest");
-
+    const btnLang = document.getElementById("btnLang");
     const btnMenu = document.getElementById("btnMenu");
     const btnPause = document.getElementById("btnPause");
     const btnRestart = document.getElementById("btnRestart");
 
-    const pickButtons = [...document.querySelectorAll(".hm-pick")];
+    const picks = [...document.querySelectorAll(".pick")];
     const controlsMenu = document.getElementById("controlsMenu");
     const controlsSnake = document.getElementById("controlsSnake");
     const controlsBounce = document.getElementById("controlsBounce");
+    const helpText = document.getElementById("helpText");
 
-    // ========= أدوات =========
-    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-    const randInt = (a, b) => (a + Math.floor(Math.random() * (b - a + 1)));
-    const now = () => performance.now();
+    // ===== Utils =====
+    const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
+    const now = ()=>performance.now();
+    const pad2 = (n)=>String(n).padStart(2,"0");
 
-    function setSubtitle(t){ subtitle.textContent = t; }
+    function css(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
 
-    function showOverlay(title, text, actions = []) {
-      overlayTitle.textContent = title;
-      overlayText.innerHTML = text;
-      overlayActions.innerHTML = "";
-      for (const a of actions) {
+    // ===== Language (AR/EN) =====
+    const LANG_KEY = "HM_GAME_LANG";
+    let lang = (localStorage.getItem(LANG_KEY) || "en"); // en | ar
+
+    const T = {
+      en: {
+        choose:"Choose a game",
+        menuHelp:"Pick a game above, then use the controls below.<br/>Keyboard is supported too.",
+        menu:"Menu",
+        pause:"Pause",
+        resume:"Resume",
+        restart:"Restart",
+        exit:"Exit",
+        snake:"Snake",
+        bounce:"Bounce",
+        pausedTitle:"⏸️ HM GAME — Paused",
+        pausedText:"Game is paused.<br/>Press Resume to continue.",
+        resumeBtn:"Resume",
+        winTitle:"🏆 YOU WIN!",
+        loseTitle:"😵 Game Over",
+        backMenu:"Back to Menu",
+        playSnake:"Play Snake",
+        playBounce:"Play Bounce",
+        best:"Best",
+      },
+      ar: {
+        choose:"اختر لعبة",
+        menuHelp:"اختر لعبة من الأعلى، ثم استخدم الأزرار بالأسفل.<br/>يدعم لوحة المفاتيح أيضًا.",
+        menu:"القائمة",
+        pause:"إيقاف",
+        resume:"متابعة",
+        restart:"إعادة",
+        exit:"خروج",
+        snake:"الثعبان",
+        bounce:"باونس",
+        pausedTitle:"⏸️ HM GAME — متوقف",
+        pausedText:"اللعبة متوقفة مؤقتًا.<br/>اضغط متابعة لإكمال اللعب.",
+        resumeBtn:"متابعة",
+        winTitle:"🏆 لقد ربحت!",
+        loseTitle:"😵 انتهت اللعبة",
+        backMenu:"العودة للقائمة",
+        playSnake:"ابدأ الثعبان",
+        playBounce:"ابدأ باونس",
+        best:"أفضل",
+      }
+    };
+
+    function applyLang(){
+      document.documentElement.lang = lang;
+      document.documentElement.dir = (lang === "ar") ? "rtl" : "ltr";
+
+      btnLang.textContent = (lang === "ar") ? "EN" : "AR";
+      btnMenu.textContent = T[lang].menu;
+      btnPause.textContent = state.paused ? T[lang].resume : T[lang].pause;
+      btnRestart.textContent = T[lang].restart;
+
+      helpText.innerHTML = T[lang].menuHelp;
+      subtitle.textContent = T[lang].choose;
+
+      // picker labels
+      for (const b of picks){
+        const g = b.dataset.game;
+        if (g==="menu") b.textContent = "🏠 HM GAME";
+        if (g==="snake") b.textContent = `🐍 ${T[lang].snake}`;
+        if (g==="bounce") b.textContent = `🔴 ${T[lang].bounce}`;
+      }
+    }
+
+    btnLang.addEventListener("click", () => {
+      lang = (lang === "en") ? "ar" : "en";
+      localStorage.setItem(LANG_KEY, lang);
+      applyLang();
+      // update overlay text if shown
+      if (!overlay.hidden) refreshOverlayForState();
+    });
+
+    // ===== Overlay =====
+    function showOverlay(title, html, actions){
+      ovTitle.textContent = title;
+      ovText.innerHTML = html;
+      ovActions.innerHTML = "";
+      for (const a of actions){
         const b = document.createElement("button");
-        b.className = "hm-btn " + (a.primary ? "hm-btnPrimary" : "");
-        if (a.danger) b.className += " hm-danger";
+        b.className = "btn " + (a.primary ? "btnPrimary" : "");
+        if (a.danger) b.className += " danger";
         b.textContent = a.label;
         b.addEventListener("click", a.onClick);
-        overlayActions.appendChild(b);
+        ovActions.appendChild(b);
       }
       overlay.hidden = false;
     }
     function hideOverlay(){ overlay.hidden = true; }
 
-    function setActivePicker(gameKey){
-      pickButtons.forEach(b => b.classList.toggle("isActive", b.dataset.game === gameKey));
-    }
-
-    function setControls(gameKey){
-      controlsMenu.hidden = gameKey !== "menu";
-      controlsSnake.hidden = gameKey !== "snake";
-      controlsBounce.hidden = gameKey !== "bounce";
-    }
-
-    // ========= إدارة التخزين =========
-    const STORE_KEY = "HM_GAME_BEST";
-    function loadBest(){
-      try { return JSON.parse(localStorage.getItem(STORE_KEY) || "{}"); }
-      catch { return {}; }
-    }
-    function saveBest(obj){
-      localStorage.setItem(STORE_KEY, JSON.stringify(obj));
-    }
-    const bestByGame = loadBest();
-
-    // ========= إدخال (كيبورد + لمس) =========
-    const input = {
-      // snake
-      snakeDir: {x:1,y:0},
-      snakeQueued: null,
-
-      // bounce
-      left:false,
-      right:false,
-      jumpPressed:false,
-
-      // عام
-      pauseToggle:false,
-      exit:false,
-      restart:false,
-    };
-
-    function resetOneShot(){
-      input.jumpPressed = false;
-      input.pauseToggle = false;
-      input.exit = false;
-      input.restart = false;
-    }
-
-    // كيبورد
-    window.addEventListener("keydown", (e) => {
-      const k = e.key.toLowerCase();
-
-      // منع سكرول الأسهم/المسافة
-      if (["arrowup","arrowdown","arrowleft","arrowright"," "].includes(e.key)) e.preventDefault();
-
-      if (state.game === "snake") {
-        if (k === "arrowup" || k === "w") queueSnakeDir(0,-1);
-        if (k === "arrowdown" || k === "s") queueSnakeDir(0, 1);
-        if (k === "arrowleft" || k === "a") queueSnakeDir(-1,0);
-        if (k === "arrowright" || k === "d") queueSnakeDir(1,0);
-        if (k === "p") input.pauseToggle = true;
-        if (k === "r") input.restart = true;
-        if (k === "escape") input.exit = true;
-      }
-
-      if (state.game === "bounce") {
-        if (k === "arrowleft" || k === "a") input.left = true;
-        if (k === "arrowright" || k === "d") input.right = true;
-        if (k === "arrowup" || k === "w" || e.key === " ") input.jumpPressed = true;
-        if (k === "p") input.pauseToggle = true;
-        if (k === "r") input.restart = true;
-        if (k === "escape") input.exit = true;
-      }
-
-      if (state.game === "menu") {
-        if (k === "1") startGame("snake");
-        if (k === "2") startGame("bounce");
-      }
-    }, {passive:false});
-
-    window.addEventListener("keyup", (e) => {
-      const k = e.key.toLowerCase();
-      if (state.game === "bounce") {
-        if (k === "arrowleft" || k === "a") input.left = false;
-        if (k === "arrowright" || k === "d") input.right = false;
-      }
-    });
-
-    // أزرار لمس
-    function bindTouchButton(el, onDown, onUp){
-      const down = (ev) => { ev.preventDefault(); onDown?.(); };
-      const up = (ev) => { ev.preventDefault(); onUp?.(); };
-      el.addEventListener("pointerdown", down);
-      el.addEventListener("pointerup", up);
-      el.addEventListener("pointercancel", up);
-      el.addEventListener("pointerleave", up);
-    }
-
-    // D-PAD و أزرار
-    document.querySelectorAll("[data-act]").forEach(btn => {
-      const act = btn.dataset.act;
-
-      if (act === "up") bindTouchButton(btn, () => queueSnakeDir(0,-1));
-      if (act === "down") bindTouchButton(btn, () => queueSnakeDir(0, 1));
-      if (act === "left") bindTouchButton(btn, () => queueSnakeDir(-1,0));
-      if (act === "right") bindTouchButton(btn, () => queueSnakeDir(1,0));
-
-      if (act === "snakePause" || act === "bouncePause")
-        bindTouchButton(btn, () => input.pauseToggle = true);
-
-      if (act === "exit")
-        bindTouchButton(btn, () => input.exit = true);
-
-      if (act === "jump")
-        bindTouchButton(btn, () => input.jumpPressed = true);
-
-      if (act === "leftHold")
-        bindTouchButton(btn, () => input.left = true, () => input.left = false);
-
-      if (act === "rightHold")
-        bindTouchButton(btn, () => input.right = true, () => input.right = false);
-    });
-
-    // اختيار لعبة
-    pickButtons.forEach(b => {
-      b.addEventListener("click", () => {
-        const g = b.dataset.game;
-        if (g === "menu") goMenu();
-        else startGame(g);
-      });
-    });
-
-    // أزرار أعلى
-    btnMenu.addEventListener("click", () => goMenu());
-    btnPause.addEventListener("click", () => { input.pauseToggle = true; });
-    btnRestart.addEventListener("click", () => { input.restart = true; });
-
-    // ========= ضبط الكانفس للجوال =========
+    // ===== Canvas Resize (mobile friendly) =====
     function resizeCanvas(){
-      // نحافظ على نسبة مناسبة (العرض كامل، والارتفاع حسب المساحة المتاحة)
       const rect = canvas.getBoundingClientRect();
       const dpr = Math.max(1, Math.floor(window.devicePixelRatio || 1));
       const w = Math.floor(rect.width * dpr);
       const h = Math.floor(rect.height * dpr);
-      if (canvas.width !== w || canvas.height !== h) {
-        canvas.width = w;
-        canvas.height = h;
+      if (canvas.width !== w || canvas.height !== h){
+        canvas.width = w; canvas.height = h;
       }
     }
     window.addEventListener("resize", resizeCanvas);
-    resizeCanvas();
 
-    // ========= حالة عامة =========
-    const state = {
-      game: "menu",   // menu | snake | bounce
-      paused: false,
-      score: 0,
-      best: 0,
+    // ===== Input =====
+    const input = {
+      snakeQueued:null,
+      bounceLeft:false,
+      bounceRight:false,
+      pauseToggle:false,
+      restart:false,
+      exit:false
     };
 
-    function updateHud(){
-      hudGame.textContent = "HM GAME";
-      hudScore.textContent = `Score: ${state.score}`;
-      hudBest.textContent = `Best: ${state.best}`;
+    function bindTouch(el, down, up){
+      el.addEventListener("pointerdown", (e)=>{ e.preventDefault(); down?.(); });
+      el.addEventListener("pointerup", (e)=>{ e.preventDefault(); up?.(); });
+      el.addEventListener("pointercancel", (e)=>{ e.preventDefault(); up?.(); });
+      el.addEventListener("pointerleave", (e)=>{ e.preventDefault(); up?.(); });
     }
 
-    function setBest(gameKey, score){
-      const prev = bestByGame[gameKey] ?? 0;
-      if (score > prev) {
-        bestByGame[gameKey] = score;
-        saveBest(bestByGame);
+    function queueSnakeDir(x,y){ input.snakeQueued = {x,y}; }
+
+    // Buttons (bottom)
+    document.querySelectorAll("[data-act]").forEach(btn=>{
+      const a = btn.dataset.act;
+
+      if (a==="up") bindTouch(btn, ()=>queueSnakeDir(0,-1));
+      if (a==="down") bindTouch(btn, ()=>queueSnakeDir(0, 1));
+      if (a==="left") bindTouch(btn, ()=>queueSnakeDir(-1,0));
+      if (a==="right") bindTouch(btn, ()=>queueSnakeDir(1,0));
+
+      if (a==="pause") bindTouch(btn, ()=>input.pauseToggle = true);
+      if (a==="restart") bindTouch(btn, ()=>input.restart = true);
+      if (a==="exit") bindTouch(btn, ()=>input.exit = true);
+
+      if (a==="bLeftHold") bindTouch(btn, ()=>input.bounceLeft=true, ()=>input.bounceLeft=false);
+      if (a==="bRightHold") bindTouch(btn, ()=>input.bounceRight=true, ()=>input.bounceRight=false);
+    });
+
+    // Keyboard
+    window.addEventListener("keydown", (e)=>{
+      const k = e.key.toLowerCase();
+      if (["arrowup","arrowdown","arrowleft","arrowright"," "].includes(e.key)) e.preventDefault();
+
+      if (state.game==="snake"){
+        if (k==="arrowup" || k==="w") queueSnakeDir(0,-1);
+        if (k==="arrowdown" || k==="s") queueSnakeDir(0, 1);
+        if (k==="arrowleft" || k==="a") queueSnakeDir(-1,0);
+        if (k==="arrowright" || k==="d") queueSnakeDir(1,0);
+        if (k==="p") input.pauseToggle = true;
+        if (k==="r") input.restart = true;
+        if (k==="escape") input.exit = true;
       }
-      state.best = bestByGame[gameKey] ?? 0;
+
+      if (state.game==="bounce"){
+        if (k==="arrowleft" || k==="a") input.bounceLeft = true;
+        if (k==="arrowright" || k==="d") input.bounceRight = true;
+        if (k==="p") input.pauseToggle = true;
+        if (k==="r") input.restart = true;
+        if (k==="escape") input.exit = true;
+      }
+
+      if (state.game==="menu"){
+        if (k==="1") startGame("snake");
+        if (k==="2") startGame("bounce");
+      }
+    }, {passive:false});
+
+    window.addEventListener("keyup", (e)=>{
+      const k = e.key.toLowerCase();
+      if (state.game==="bounce"){
+        if (k==="arrowleft" || k==="a") input.bounceLeft = false;
+        if (k==="arrowright" || k==="d") input.bounceRight = false;
+      }
+    });
+
+    // Picker
+    function setActivePick(game){
+      picks.forEach(b=>b.classList.toggle("isActive", b.dataset.game===game));
+    }
+    picks.forEach(b=>{
+      b.addEventListener("click", ()=>{
+        const g = b.dataset.game;
+        if (g==="menu") goMenu();
+        else startGame(g);
+      });
+    });
+
+    // Top buttons
+    btnMenu.addEventListener("click", ()=>goMenu());
+    btnPause.addEventListener("click", ()=>input.pauseToggle = true);
+    btnRestart.addEventListener("click", ()=>input.restart = true);
+
+    // ===== Storage (Best) =====
+    const BEST_KEY = "HM_GAME_BESTS";
+    const bests = (()=>{ try{return JSON.parse(localStorage.getItem(BEST_KEY)||"{}");}catch{return{};} })();
+    function getBest(k){ return bests[k] ?? 0; }
+    function setBest(k, v){
+      if ((bests[k] ?? 0) < v){ bests[k]=v; localStorage.setItem(BEST_KEY, JSON.stringify(bests)); }
+      state.best = getBest(k);
     }
 
-    // ========= واجهة تشغيل/قائمة =========
-    function goMenu(){
-      state.game = "menu";
-      state.paused = false;
-      state.score = 0;
-      state.best = 0;
-      setSubtitle("مركز ألعاب — اختر لعبة");
-      hudLevel.textContent = "—";
-      setControls("menu");
-      setActivePicker("menu");
+    // ===== State =====
+    const state = {
+      game:"menu", // menu|snake|bounce
+      paused:false,
+      score:0,
+      best:0,
+      startedAt: 0,
+      // additional stats
+      statA:0,
+      statB:0,
+      level:1
+    };
+
+    function setControls(game){
+      controlsMenu.hidden = game!=="menu";
+      controlsSnake.hidden = game!=="snake";
+      controlsBounce.hidden = game!=="bounce";
+    }
+
+    function formatTime(ms){
+      const s = Math.floor(ms/1000);
+      const m = Math.floor(s/60);
+      const r = s%60;
+      return `${pad2(m)}:${pad2(r)}`;
+    }
+
+    function updateHUD(){
+      const elapsed = state.startedAt ? (now() - state.startedAt) : 0;
+      hudTime.textContent = formatTime(elapsed);
+
+      if (state.game==="menu"){
+        hudMode.textContent = "—";
+        hudStat1.textContent = "HM GAME";
+        hudStat2.textContent = "";
+        return;
+      }
+
+      btnPause.textContent = state.paused ? T[lang].resume : T[lang].pause;
+
+      if (state.game==="snake"){
+        hudMode.textContent = `🐍 ${T[lang].snake} • Lv ${state.level}`;
+        hudStat1.textContent = `Score: ${state.score}`;
+        hudStat2.textContent = `${T[lang].best}: ${state.best}`;
+      }
+
+      if (state.game==="bounce"){
+        hudMode.textContent = `🔴 ${T[lang].bounce} • Lv ${state.level}`;
+        hudStat1.textContent = `Score: ${state.score}`;
+        hudStat2.textContent = `${T[lang].best}: ${state.best}`;
+      }
+    }
+
+    function refreshOverlayForState(){
+      if (state.game==="menu"){
+        showMenuOverlay();
+      } else if (state.paused){
+        showPauseOverlay();
+      }
+    }
+
+    function showMenuOverlay(){
       showOverlay(
-        "HM GAME",
-        `اختر لعبة من أزرار الاختيار:<br/>
-        • 🐍 Snake (نوكيا) — تحكم بالأسهم أو D-PAD<br/>
-        • 🔴 Bounce (نوكيا) — يسار/يمين + قفز<br/><br/>
-        <b>ملاحظة:</b> الأزرار بالأسفل مخصصة للجوال.`,
+        "HM GAME 🎮",
+        (lang==="en")
+          ? `Choose a game below:<br/>🐍 Snake (Nokia LCD) • 🔴 Bounce (classic style)<br/><br/>Controls are optimized for phones ✅`
+          : `اختر لعبة من الأسفل:<br/>🐍 الثعبان (شاشة نوكيا) • 🔴 باونس (قريب من الأصل)<br/><br/>الأزرار مناسبة للجوال ✅`,
         [
-          { label: "ابدأ Snake", primary:true, onClick: () => startGame("snake") },
-          { label: "ابدأ Bounce", primary:false, onClick: () => startGame("bounce") },
+          { label: `🐍 ${T[lang].playSnake}`, primary:true, onClick: ()=>startGame("snake") },
+          { label: `🔴 ${T[lang].playBounce}`, primary:false, onClick: ()=>startGame("bounce") },
         ]
       );
-      drawMenu();
-      updateHud();
     }
 
-    function startGame(gameKey){
-      hideOverlay();
-      state.game = gameKey;
-      state.paused = false;
-      state.score = 0;
-      setSubtitle(`تلعب الآن: ${gameKey === "snake" ? "Snake" : "Bounce"} — HM GAME`);
-      setControls(gameKey);
-      setActivePicker(gameKey);
-
-      if (gameKey === "snake") {
-        Snake.init();
-        setBest("snake", 0);
-        hudLevel.textContent = "Snake — Nokia Style";
-      } else if (gameKey === "bounce") {
-        Bounce.init();
-        setBest("bounce", 0);
-        hudLevel.textContent = "Bounce — Nokia Style";
-      }
-      updateHud();
+    function showPauseOverlay(){
+      showOverlay(
+        T[lang].pausedTitle,
+        T[lang].pausedText,
+        [
+          { label: T[lang].resumeBtn, primary:true, onClick: ()=>{ state.paused=false; hideOverlay(); } },
+          { label: T[lang].restart, onClick: ()=>{ input.restart=true; hideOverlay(); } },
+          { label: T[lang].backMenu, danger:true, onClick: ()=>goMenu() },
+        ]
+      );
     }
 
     function togglePause(){
-      if (state.game === "menu") return;
+      if (state.game==="menu") return;
       state.paused = !state.paused;
-      if (state.paused) {
-        showOverlay(
-          "HM GAME — متوقف",
-          "اللعبة متوقفة مؤقتًا.<br/>اضغط متابعة لإكمال اللعب.",
-          [
-            { label: "متابعة", primary:true, onClick: () => { state.paused = false; hideOverlay(); } },
-            { label: "إعادة", primary:false, onClick: () => { input.restart = true; hideOverlay(); } },
-            { label: "الخروج", danger:true, onClick: () => goMenu() },
-          ]
-        );
-      } else {
-        hideOverlay();
+      if (state.paused) showPauseOverlay();
+      else hideOverlay();
+    }
+
+    // ===== Games placeholders (defined in next parts) =====
+    const Snake = {};
+    const Bounce = {};
+
+    function goMenu(){
+      state.game="menu";
+      state.paused=false;
+      state.score=0;
+      state.best=0;
+      state.startedAt=0;
+      state.level=1;
+      setControls("menu");
+      setActivePick("menu");
+      subtitle.textContent = T[lang].choose;
+      showMenuOverlay();
+      drawMenu();
+    }
+
+    function startGame(game){
+      hideOverlay();
+      state.game=game;
+      state.paused=false;
+      state.score=0;
+      state.statA=0;
+      state.statB=0;
+      state.level=1;
+      state.startedAt = now();
+
+      setControls(game);
+      setActivePick(game);
+
+      if (game==="snake"){
+        subtitle.textContent = (lang==="en") ? "Playing Snake" : "تلعب الثعبان";
+        state.best = getBest("snake");
+        Snake.init();
+      }
+      if (game==="bounce"){
+        subtitle.textContent = (lang==="en") ? "Playing Bounce" : "تلعب باونس";
+        state.best = getBest("bounce");
+        Bounce.init();
       }
     }
 
-    function queueSnakeDir(x,y){
-      // منع الرجوع للخلف مباشرة (قواعد Snake الأساسية)
-      input.snakeQueued = {x,y};
-    }
-
-    // ========= رسم شاشة القائمة =========
+    // ===== Draw Menu background =====
     function drawMenu(){
-      const w = canvas.width, h = canvas.height;
+      resizeCanvas();
       ctx.fillStyle = "#061025";
-      ctx.fillRect(0,0,w,h);
+      ctx.fillRect(0,0,canvas.width,canvas.height);
 
-      // عنوان بسيط
-      ctx.fillStyle = "rgba(255,255,255,.9)";
-      ctx.font = `${Math.floor(w*0.06)}px system-ui`;
+      ctx.fillStyle = "rgba(255,255,255,.92)";
       ctx.textAlign = "center";
-      ctx.fillText("HM GAME", w/2, h*0.35);
+      ctx.font = `${Math.floor(canvas.width*0.07)}px system-ui`;
+      ctx.fillText("HM GAME 🎮", canvas.width/2, canvas.height*0.35);
 
-      ctx.fillStyle = "rgba(255,255,255,.65)";
-      ctx.font = `${Math.floor(w*0.038)}px system-ui`;
-      ctx.fillText("اختر لعبة من الأسفل", w/2, h*0.44);
+      ctx.fillStyle = "rgba(255,255,255,.70)";
+      ctx.font = `${Math.floor(canvas.width*0.04)}px system-ui`;
+      ctx.fillText(lang==="en" ? "Choose a game below" : "اختر لعبة من الأسفل", canvas.width/2, canvas.height*0.45);
 
-      ctx.fillStyle = "rgba(78,161,255,.35)";
-      ctx.font = `${Math.floor(w*0.03)}px system-ui`;
-      ctx.fillText("يدعم اللمس والكيبورد", w/2, h*0.52);
+      ctx.fillStyle = "rgba(78,161,255,.40)";
+      ctx.font = `${Math.floor(canvas.width*0.032)}px system-ui`;
+      ctx.fillText(lang==="en" ? "Mobile controls ready ✅" : "أزرار جوال جاهزة ✅", canvas.width/2, canvas.height*0.53);
     }
 
-    // ========= حلقة التحديث =========
+    // ===== Main Loop =====
     let last = now();
     function loop(){
       resizeCanvas();
       const t = now();
-      const dt = clamp((t - last) / 1000, 0, 0.04);
+      const dt = clamp((t-last)/1000, 0, 0.04);
       last = t;
 
-      if (input.pauseToggle) { input.pauseToggle = false; togglePause(); }
-      if (input.exit) { input.exit = false; goMenu(); }
+      if (input.pauseToggle){ input.pauseToggle=false; togglePause(); }
+      if (input.exit){ input.exit=false; goMenu(); }
 
-      if (state.game === "menu") {
+      if (state.game==="menu"){
         drawMenu();
-      } else if (state.game === "snake") {
-        if (input.restart) { input.restart = false; Snake.init(); state.paused=false; hideOverlay(); }
+      } else if (state.game==="snake"){
+        if (input.restart){ input.restart=false; Snake.init(); state.paused=false; hideOverlay(); state.startedAt=now(); }
         if (!state.paused) Snake.update(dt);
         Snake.draw();
-      } else if (state.game === "bounce") {
-        if (input.restart) { input.restart = false; Bounce.init(); state.paused=false; hideOverlay(); }
+      } else if (state.game==="bounce"){
+        if (input.restart){ input.restart=false; Bounce.init(); state.paused=false; hideOverlay(); state.startedAt=now(); }
         if (!state.paused) Bounce.update(dt);
         Bounce.draw();
       }
 
-      updateHud();
-      resetOneShot();
+      updateHUD();
       requestAnimationFrame(loop);
     }
 
-    // سنعرّف Snake و Bounce في الأجزاء القادمة
-    const Snake = {};
-    const Bounce = {};
-    window.HM_GAME = { startGame, goMenu }; // مرجع اختياري
-
-    // ابدأ
+    // Start
+    applyLang();
     goMenu();
     requestAnimationFrame(loop);
 
-    // سنكمل تعريف Snake و Bounce في الجزء 4 و 5
-    // ========= نهاية الجزء 3 =========
-
-    // نترك الأقواس مفتوحة لنكمل في الجزء التالي
-// ========= HM GAME: SNAKE (Nokia Style) =========
+    // NOTE: Snake + Bounce will be defined in Parts 4 & 5
+// =========================
+    // 🐍 SNAKE (Nokia LCD style)
+    // =========================
     (function defineSnake(){
-      // إعدادات شبكية قريبة من إحساس شاشة نوكيا
-      const GRID_W = 28;
-      const GRID_H = 18;
+      // Grid close to classic Nokia feel
+      const GW = 28;
+      const GH = 18;
 
-      let cell = 12; // سيُحسب حسب الكانفس
-      let offX = 0, offY = 0;
+      let cell=12, ox=0, oy=0, tick=0, speed=7;
+      let snake=[], dir={x:1,y:0}, queued=null, food={x:10,y:9};
+      let alive=true;
 
-      let snake = [];
-      let dir = {x:1,y:0};
-      let queued = null;
-      let food = {x: 10, y: 10};
-      let tick = 0;
-      let speed = 7; // خطوات/ثانية تبدأ متوسطة وتزيد
-      let alive = true;
+      // Stats:
+      // state.score: points (10 per food)
+      // state.statA: apples eaten
+      // state.statB: length
+      // state.level: speed level
 
       function layout(){
-        // نجعل منطقة اللعب مربعة نسبيًا داخل الكانفس
-        const w = canvas.width, h = canvas.height;
-
-        // مساحة HUD بالأعلى تقريبًا (لكن الرسم كله داخل الكانفس)
-        const pad = Math.floor(Math.min(w,h) * 0.06);
-
-        // ابعاد لوحة LCD
-        const usableW = w - pad*2;
-        const usableH = h - pad*2;
-
-        // نختار cell بحيث تناسب الشبكة
-        cell = Math.floor(Math.min(usableW/GRID_W, usableH/GRID_H));
-        cell = Math.max(8, cell);
-
-        const lcdW = cell*GRID_W;
-        const lcdH = cell*GRID_H;
-        offX = Math.floor((w - lcdW)/2);
-        offY = Math.floor((h - lcdH)/2);
+        const w=canvas.width, h=canvas.height;
+        const pad=Math.floor(Math.min(w,h)*0.06);
+        const uw=w-pad*2, uh=h-pad*2;
+        cell=Math.max(8, Math.floor(Math.min(uw/GW, uh/GH)));
+        ox=Math.floor((w - cell*GW)/2);
+        oy=Math.floor((h - cell*GH)/2);
       }
 
-      function reset(){
+      function init(){
         layout();
-        snake = [
-          {x: 6, y: Math.floor(GRID_H/2)},
-          {x: 5, y: Math.floor(GRID_H/2)},
-          {x: 4, y: Math.floor(GRID_H/2)},
+        snake=[
+          {x:6,y:Math.floor(GH/2)},
+          {x:5,y:Math.floor(GH/2)},
+          {x:4,y:Math.floor(GH/2)},
         ];
-        dir = {x:1,y:0};
-        queued = null;
-        tick = 0;
-        speed = 7;
-        alive = true;
+        dir={x:1,y:0};
+        queued=null;
+        tick=0;
+        speed=7;
+        alive=true;
 
-        state.score = 0;
+        state.score=0;
+        state.statA=0;
+        state.statB=snake.length;
+        state.level=1;
         setBest("snake", 0);
 
         placeFood();
       }
 
       function placeFood(){
-        let tries = 0;
-        while (tries++ < 1000) {
-          const fx = randInt(0, GRID_W-1);
-          const fy = randInt(0, GRID_H-1);
-          const onSnake = snake.some(p => p.x === fx && p.y === fy);
-          if (!onSnake) { food = {x:fx,y:fy}; return; }
+        for (let i=0;i<2000;i++){
+          const fx=Math.floor(Math.random()*GW);
+          const fy=Math.floor(Math.random()*GH);
+          if (!snake.some(p=>p.x===fx && p.y===fy)){
+            food={x:fx,y:fy};
+            return;
+          }
         }
-        food = {x:1,y:1};
+        food={x:1,y:1};
       }
 
       function step(){
         if (!alive) return;
 
-        // أخذ الاتجاه من الإدخال مع منع الرجوع للخلف
-        if (input.snakeQueued) queued = input.snakeQueued;
-        input.snakeQueued = null;
+        if (input.snakeQueued) queued=input.snakeQueued;
+        input.snakeQueued=null;
 
-        if (queued) {
-          const isBack = (queued.x === -dir.x && queued.y === -dir.y);
-          if (!isBack) dir = queued;
-          queued = null;
+        if (queued){
+          const back = (queued.x===-dir.x && queued.y===-dir.y);
+          if (!back) dir=queued;
+          queued=null;
         }
 
-        const head = snake[0];
-        const nx = head.x + dir.x;
-        const ny = head.y + dir.y;
+        const head=snake[0];
+        const nx=head.x+dir.x;
+        const ny=head.y+dir.y;
 
-        // قواعد نوكيا الأساسية: اصطدام بالجدار = نهاية
-        if (nx < 0 || nx >= GRID_W || ny < 0 || ny >= GRID_H) {
-          die();
-          return;
-        }
+        // Classic: hit wall = lose
+        if (nx<0 || nx>=GW || ny<0 || ny>=GH){ lose(); return; }
 
-        // اصطدام بالنفس
-        if (snake.some((p, i) => i !== 0 && p.x === nx && p.y === ny)) {
-          die();
-          return;
-        }
+        // Hit self
+        if (snake.some((p,i)=>i>0 && p.x===nx && p.y===ny)){ lose(); return; }
 
-        // تحريك
         snake.unshift({x:nx,y:ny});
 
-        // أكل
-        if (nx === food.x && ny === food.y) {
+        if (nx===food.x && ny===food.y){
           state.score += 10;
-          // زيادة السرعة تدريجيًا كل عدة نقاط
-          speed = 7 + Math.floor(state.score / 50);
+          state.statA += 1;
+          state.statB = snake.length;
+
+          // Speed up like old phones (level per 5 apples)
+          state.level = 1 + Math.floor(state.statA / 5);
+          speed = 7 + (state.level-1) * 1.2;
+
           setBest("snake", state.score);
           placeFood();
+
+          // Win condition (optional): fill big part of board
+          if (snake.length >= Math.floor(GW*GH*0.65)) win();
         } else {
           snake.pop();
+          state.statB = snake.length;
         }
       }
 
-      function die(){
-        alive = false;
+      function lose(){
+        alive=false;
         setBest("snake", state.score);
 
+        const elapsed = formatTime(now()-state.startedAt);
+        const msg = (lang==="en")
+          ? `😵 <b>${T[lang].loseTitle}</b><br/>
+             Score: <b>${state.score}</b><br/>
+             Apples: <b>${state.statA}</b> • Length: <b>${state.statB}</b><br/>
+             Level reached: <b>${state.level}</b><br/>
+             Time: <b>${elapsed}</b><br/><br/>
+             ${T[lang].best}: <b>${state.best}</b>`
+          : `😵 <b>${T[lang].loseTitle}</b><br/>
+             نتيجتك: <b>${state.score}</b><br/>
+             التفاح: <b>${state.statA}</b> • الطول: <b>${state.statB}</b><br/>
+             وصلت للمستوى: <b>${state.level}</b><br/>
+             الوقت: <b>${elapsed}</b><br/><br/>
+             ${T[lang].best}: <b>${state.best}</b>`;
+
         showOverlay(
-          "HM GAME — Snake انتهت",
-          `انتهت اللعبة.<br/>النتيجة: <b>${state.score}</b><br/>أفضل نتيجة: <b>${state.best}</b>`,
+          `🐍 ${T[lang].snake} — HM GAME`,
+          msg,
           [
-            { label: "إعادة", primary:true, onClick: () => { reset(); hideOverlay(); } },
-            { label: "الخروج للقائمة", danger:true, onClick: () => goMenu() },
+            { label: `🔁 ${T[lang].restart}`, primary:true, onClick: ()=>{ init(); hideOverlay(); state.startedAt=now(); } },
+            { label: `🏠 ${T[lang].backMenu}`, danger:true, onClick: ()=>goMenu() }
+          ]
+        );
+      }
+
+      function win(){
+        alive=false;
+        setBest("snake", state.score);
+
+        const elapsed = formatTime(now()-state.startedAt);
+        const msg = (lang==="en")
+          ? `🏆 <b>YOU WIN!</b><br/>
+             Amazing! You dominated the board 😄<br/><br/>
+             Score: <b>${state.score}</b><br/>
+             Apples: <b>${state.statA}</b> • Length: <b>${state.statB}</b><br/>
+             Level: <b>${state.level}</b> • Time: <b>${elapsed}</b><br/><br/>
+             ${T[lang].best}: <b>${state.best}</b>`
+          : `🏆 <b>لقد ربحت!</b><br/>
+             ممتاز! سيطرت على اللوحة 😄<br/><br/>
+             نتيجتك: <b>${state.score}</b><br/>
+             التفاح: <b>${state.statA}</b> • الطول: <b>${state.statB}</b><br/>
+             المستوى: <b>${state.level}</b> • الوقت: <b>${elapsed}</b><br/><br/>
+             ${T[lang].best}: <b>${state.best}</b>`;
+
+        showOverlay(
+          `🏆 ${T[lang].winTitle} — HM GAME`,
+          msg,
+          [
+            { label: `🔁 ${T[lang].restart}`, primary:true, onClick: ()=>{ init(); hideOverlay(); state.startedAt=now(); } },
+            { label: `🏠 ${T[lang].backMenu}`, danger:true, onClick: ()=>goMenu() }
           ]
         );
       }
 
       function update(dt){
         layout();
+        if (!alive) return;
 
-        // تحكم زر الإيقاف الموجود داخل لوحة الأزرار (اختياري)
-        // (زر أعلى الصفحة يعالج pauseToggle بالفعل)
-
-        // خطوات ثابتة زمنياً (tick-based) مثل ألعاب نوكيا
         tick += dt * speed;
-        while (tick >= 1) {
+        while (tick >= 1){
           tick -= 1;
           step();
           if (!alive) break;
@@ -898,77 +952,65 @@
 
       function draw(){
         layout();
-        const w = canvas.width, h = canvas.height;
+        const w=canvas.width, h=canvas.height;
 
-        // خلفية عامة
+        // Background
         ctx.fillStyle = "#061025";
         ctx.fillRect(0,0,w,h);
 
-        // إطار شاشة LCD
-        const lcdW = cell*GRID_W;
-        const lcdH = cell*GRID_H;
+        // Frame
+        const lcdW = cell*GW, lcdH = cell*GH;
+        ctx.fillStyle = css("--frame");
+        roundRect(ox-10, oy-10, lcdW+20, lcdH+20, 18, true);
 
-        // إطار
-        ctx.fillStyle = getCss("--frame");
-        roundRect(offX-10, offY-10, lcdW+20, lcdH+20, 18, true);
+        // LCD gradient
+        const g = ctx.createLinearGradient(0,oy,0,oy+lcdH);
+        g.addColorStop(0, css("--lcd"));
+        g.addColorStop(1, css("--lcd2"));
+        ctx.fillStyle = g;
+        roundRect(ox, oy, lcdW, lcdH, 12, true);
 
-        // شاشة LCD (أخضر)
-        const grd = ctx.createLinearGradient(0, offY, 0, offY + lcdH);
-        grd.addColorStop(0, getCss("--lcd"));
-        grd.addColorStop(1, getCss("--lcd2"));
-        ctx.fillStyle = grd;
-        roundRect(offX, offY, lcdW, lcdH, 12, true);
-
-        // خطوط خفيفة (إحساس شاشة)
+        // subtle scanlines
         ctx.fillStyle = "rgba(0,0,0,.06)";
-        for (let y=0; y<GRID_H; y++){
-          ctx.fillRect(offX, offY + y*cell, lcdW, 1);
+        for (let y=0;y<GH;y++){
+          ctx.fillRect(ox, oy+y*cell, lcdW, 1);
         }
 
-        // الطعام (بكسل)
-        drawPixel(food.x, food.y, 1);
+        // Food
+        drawPixel(food.x, food.y, 0.45);
 
-        // الثعبان
-        for (let i=0; i<snake.length; i++){
-          const p = snake[i];
-          const fat = (i===0) ? 1 : 0; // رأس أو جسم
-          drawPixel(p.x, p.y, 2 + fat);
+        // Snake (head thicker)
+        for (let i=0;i<snake.length;i++){
+          const p=snake[i];
+          const inset = (i===0) ? 0.10 : 0.16;
+          drawBlock(p.x,p.y,inset);
         }
 
-        // نص بسيط داخل الشاشة
-        ctx.fillStyle = "rgba(0,0,0,.35)";
-        ctx.font = `${Math.floor(cell*1.1)}px system-ui`;
+        // small title inside LCD
+        ctx.fillStyle = "rgba(0,0,0,.32)";
+        ctx.font = `${Math.floor(cell*1.05)}px system-ui`;
         ctx.textAlign = "left";
-        ctx.fillText("HM GAME", offX + 10, offY + 24);
-
-        if (!alive) {
-          // سيتم عرض overlay بالفعل
-        }
+        ctx.fillText("HM GAME", ox+10, oy+24);
       }
 
-      function drawPixel(gx, gy, sizeMode){
-        const px = offX + gx*cell;
-        const py = offY + gy*cell;
-
-        ctx.fillStyle = getCss("--pixel");
-
-        if (sizeMode === 1) {
-          // طعام صغير
-          const s = Math.floor(cell*0.45);
-          ctx.fillRect(px + Math.floor((cell-s)/2), py + Math.floor((cell-s)/2), s, s);
-        } else {
-          // جسم/رأس
-          const inset = sizeMode === 3 ? Math.floor(cell*0.10) : Math.floor(cell*0.16);
-          ctx.fillRect(px + inset, py + inset, cell - inset*2, cell - inset*2);
-        }
+      function drawPixel(x,y,scale){
+        const px=ox + x*cell;
+        const py=oy + y*cell;
+        const s=Math.floor(cell*scale);
+        ctx.fillStyle = css("--pixel");
+        ctx.fillRect(px + ((cell-s)>>1), py + ((cell-s)>>1), s, s);
       }
 
-      function getCss(varName){
-        return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+      function drawBlock(x,y,insetRatio){
+        const px=ox + x*cell;
+        const py=oy + y*cell;
+        const inset=Math.floor(cell*insetRatio);
+        ctx.fillStyle = css("--pixel");
+        ctx.fillRect(px+inset, py+inset, cell-inset*2, cell-inset*2);
       }
 
       function roundRect(x,y,w,h,r,fill){
-        const rr = Math.min(r, w/2, h/2);
+        const rr=Math.min(r,w/2,h/2);
         ctx.beginPath();
         ctx.moveTo(x+rr,y);
         ctx.arcTo(x+w,y,x+w,y+h,rr);
@@ -979,121 +1021,137 @@
         if (fill) ctx.fill();
       }
 
-      Snake.init = reset;
+      Snake.init = init;
       Snake.update = update;
       Snake.draw = draw;
     })();
-// ========= HM GAME: BOUNCE (Nokia Style - مبسطة لكن قواعد صحيحة) =========
+// ==================================
+    // 🔴 BOUNCE (classic-ish Nokia style)
+    // ==================================
     (function defineBounce(){
-      // نظام Tiles: # = طوب/أرض، ^ = شوك، o = حلقة، G = هدف/بوابة
       const TILE = 24;
 
-      // مراحل بسيطة (تقدر تزيدها لاحقًا)
+      // Tiles:
+      // # solid brick
+      // ^ spikes (death)
+      // o ring (collect)
+      // G gate (finish)
+      // . empty
       const LEVELS = [
         [
-          "................................",
-          "................................",
-          "................................",
-          ".............o..................",
-          "...........#####................",
-          "................................",
-          "....o......................o....",
-          "....###..............#####......",
-          "................................",
-          "############..^..#############..",
-          "................................",
-          "..............o.................",
-          ".............#####..............",
-          "................................",
-          "###########################..G..",
+          "........................................",
+          "........................................",
+          "..............o.........................",
+          "............#####.......................",
+          "........................................",
+          "....o............................o......",
+          "....###......................#####......",
+          "........................................",
+          "..................^.....................",
+          "############......^......#############..",
+          "........................................",
+          "..............o.........................",
+          ".............#####......................",
+          "........................................",
+          "###############################.....G...",
         ],
         [
-          "................................",
-          "................................",
-          ".............o..................",
-          "...........#####................",
-          "................................",
-          "....o....................o......",
-          "....###...........^.....###.....",
-          "..................^..............",
-          "..............########...........",
-          ".................................",
-          "##########..............#########",
-          "................................",
-          "........o.......................",
-          "......#####...........o.........",
-          "#####################.#####..G..",
+          "........................................",
+          "........................................",
+          ".............o..........................",
+          "..........#####.........................",
+          "........................................",
+          "....o..................^..........o.....",
+          "....###..............#####.......###....",
+          "........................................",
+          "...............o........................",
+          ".............#####......................",
+          "........................................",
+          "############.............#############..",
+          "........................................",
+          "..............o.........................",
+          "###############################.....G...",
+        ],
+        [
+          "........................................",
+          "........................................",
+          "....o..............o....................",
+          "....###..........#####..................",
+          "........................................",
+          ".................^......................",
+          ".................^......................",
+          "############....###....###############..",
+          "........................................",
+          "..............o.........................",
+          "............#####.......................",
+          "........................................",
+          "....o............................o......",
+          "....###......................#####......",
+          "###############################.....G...",
         ],
       ];
 
+      let map = [];
+      let wTiles=0, hTiles=0;
       let levelIndex = 0;
-      let tiles = [];
-      let ringsLeft = 0;
 
-      // لاعب (كرة)
-      const player = {
-        x: 2, y: 2,
+      // Player ball
+      const ball = {
+        x: 0, y: 0,
         vx: 0, vy: 0,
         r: 11,
-        onGround: false,
       };
 
-      // كاميرا
-      let camX = 0, camY = 0;
+      // Camera
+      let camX=0, camY=0;
 
-      // أبعاد منطقية للعرض
-      let viewW = 360, viewH = 540;
-
-      function parseLevel(idx){
-        levelIndex = idx;
-        const map = LEVELS[idx];
-        tiles = map.map(row => row.split(""));
-        ringsLeft = 0;
-
-        for (let y=0; y<tiles.length; y++){
-          for (let x=0; x<tiles[0].length; x++){
-            if (tiles[y][x] === "o") ringsLeft++;
-          }
-        }
-
-        // نقطة بداية ثابتة
-        player.x = TILE * 2;
-        player.y = TILE * 3;
-        player.vx = 0;
-        player.vy = 0;
-        player.onGround = false;
-
-        state.score = 0;
-        setBest("bounce", 0);
-      }
+      // Stats:
+      // state.score: points (50 per ring)
+      // state.statA: rings collected
+      // state.statB: deaths
+      // state.level: current level (1..n)
+      let ringsTotal = 0;
 
       function init(){
-        parseLevel(0);
+        loadLevel(0);
       }
 
-      function resizeView(){
-        // نستخدم أبعاد الكانفس كـ view
-        viewW = canvas.width;
-        viewH = canvas.height;
+      function loadLevel(i){
+        levelIndex = i;
+        state.level = i+1;
+        state.score = 0;
+        state.statA = 0;
+        state.statB = 0;
+        setBest("bounce", 0);
+
+        map = LEVELS[i].map(r=>r.split(""));
+        hTiles = map.length;
+        wTiles = map[0].length;
+
+        // count rings
+        ringsTotal = 0;
+        for (let y=0;y<hTiles;y++) for (let x=0;x<wTiles;x++) if (map[y][x]==="o") ringsTotal++;
+
+        // start pos
+        ball.x = TILE*2;
+        ball.y = TILE*3;
+        ball.vx = 0;
+        ball.vy = 0;
+
+        camX=0; camY=0;
       }
 
-      function isSolidAt(tx, ty){
-        if (ty < 0 || ty >= tiles.length) return false;
-        if (tx < 0 || tx >= tiles[0].length) return false;
-        return tiles[ty][tx] === "#";
+      function tileAt(tx,ty){
+        if (ty<0 || ty>=hTiles) return ".";
+        if (tx<0 || tx>=wTiles) return ".";
+        return map[ty][tx];
       }
-
-      function tileAt(tx, ty){
-        if (ty < 0 || ty >= tiles.length) return ".";
-        if (tx < 0 || tx >= tiles[0].length) return ".";
-        return tiles[ty][tx];
+      function setTile(tx,ty,v){
+        if (ty<0 || ty>=hTiles) return;
+        if (tx<0 || tx>=wTiles) return;
+        map[ty][tx]=v;
       }
-
-      function setTile(tx, ty, v){
-        if (ty < 0 || ty >= tiles.length) return;
-        if (tx < 0 || tx >= tiles[0].length) return;
-        tiles[ty][tx] = v;
-      }
+      function isSolid(tx,ty){ return tileAt(tx,ty)==="#"; }
 
       function circleRectColl(cx, cy, cr, rx, ry, rw, rh){
         const nx = clamp(cx, rx, rx+rw);
@@ -1103,95 +1161,16 @@
         return (dx*dx + dy*dy) <= cr*cr;
       }
 
-      function update(dt){
-        resizeView();
+      function collideSolids(cx,cy,cr){
+        const L = Math.floor((cx-cr)/TILE);
+        const R = Math.floor((cx+cr)/TILE);
+        const Tt = Math.floor((cy-cr)/TILE);
+        const B = Math.floor((cy+cr)/TILE);
 
-        // في Bounce: إذا تريد نسخة أقرب للأصل:
-        // - تسارع يمين/يسار
-        // - قفز فقط إذا على أرض
-        const accel = 1800;
-        const maxVx = 420;
-        const jumpV = 620;
-        const gravity = 1600;
-        const friction = 0.86;
-
-        // إدخال
-        if (input.left) player.vx -= accel*dt;
-        if (input.right) player.vx += accel*dt;
-        if (!input.left && !input.right) player.vx *= Math.pow(friction, dt*60);
-
-        player.vx = clamp(player.vx, -maxVx, maxVx);
-
-        // قفز
-        if (input.jumpPressed && player.onGround) {
-          player.vy = -jumpV;
-          player.onGround = false;
-        }
-
-        // جاذبية
-        player.vy += gravity*dt;
-        player.vy = clamp(player.vy, -2000, 2000);
-
-        // حركة أفقية + تصادم مع الطوب
-        let nextX = player.x + player.vx*dt;
-        let nextY = player.y;
-
-        const r = player.r;
-        if (collideSolid(nextX, nextY, r)) {
-          // نحاول حل تصادم أفقي بتحريك تدريجي
-          const step = Math.sign(player.vx) || 1;
-          let safeX = player.x;
-          for (let i=0; i<20; i++){
-            const testX = safeX + step;
-            if (!collideSolid(testX, nextY, r)) safeX = testX;
-            else break;
-          }
-          nextX = safeX;
-          player.vx = 0;
-        }
-        player.x = nextX;
-
-        // حركة عمودية + تصادم
-        nextY = player.y + player.vy*dt;
-        player.onGround = false;
-
-        if (collideSolid(player.x, nextY, r)) {
-          const step = Math.sign(player.vy) || 1;
-          let safeY = player.y;
-          for (let i=0; i<24; i++){
-            const testY = safeY + step;
-            if (!collideSolid(player.x, testY, r)) safeY = testY;
-            else break;
-          }
-          nextY = safeY;
-          if (player.vy > 0) player.onGround = true;
-          player.vy = 0;
-        }
-        player.y = nextY;
-
-        // جمع الحلقات + الاصطدام بالأشواك + الوصول للهدف
-        handlePickupsAndHazards();
-
-        // الكاميرا تتبع اللاعب
-        const mapW = tiles[0].length * TILE;
-        const mapH = tiles.length * TILE;
-
-        camX = clamp(player.x - viewW*0.5, 0, Math.max(0, mapW - viewW));
-        camY = clamp(player.y - viewH*0.55, 0, Math.max(0, mapH - viewH));
-      }
-
-      function collideSolid(cx, cy, cr){
-        // نفحص tiles حول الدائرة
-        const left = Math.floor((cx - cr)/TILE);
-        const right = Math.floor((cx + cr)/TILE);
-        const top = Math.floor((cy - cr)/TILE);
-        const bottom = Math.floor((cy + cr)/TILE);
-
-        for (let ty=top; ty<=bottom; ty++){
-          for (let tx=left; tx<=right; tx++){
-            if (isSolidAt(tx,ty)) {
-              const rx = tx*TILE;
-              const ry = ty*TILE;
+        for (let ty=Tt; ty<=B; ty++){
+          for (let tx=L; tx<=R; tx++){
+            if (isSolid(tx,ty)){
+              const rx=tx*TILE, ry=ty*TILE;
               if (circleRectColl(cx,cy,cr, rx,ry,TILE,TILE)) return true;
             }
           }
@@ -1199,40 +1178,115 @@
         return false;
       }
 
-      function handlePickupsAndHazards(){
-        const tx = Math.floor(player.x / TILE);
-        const ty = Math.floor(player.y / TILE);
+      function resolveCollision(){
+        // Push out from solids with small iterations (stable on mobile)
+        const maxIter = 18;
+        for (let i=0;i<maxIter;i++){
+          if (!collideSolids(ball.x, ball.y, ball.r)) break;
 
-        // نفحص محيط صغير
-        for (let y=ty-1; y<=ty+1; y++){
-          for (let x=tx-1; x<=tx+1; x++){
+          // try push up first then sideways
+          ball.y -= 1;
+          if (!collideSolids(ball.x, ball.y, ball.r)) { ball.vy = Math.min(ball.vy, 0); break; }
+
+          ball.y += 1; // restore
+          ball.x += (ball.vx>=0) ? -1 : 1;
+          if (!collideSolids(ball.x, ball.y, ball.r)) { ball.vx = 0; break; }
+
+          // final fallback
+          ball.y -= 1;
+        }
+      }
+
+      function update(dt){
+        // Physics closer to Bounce feel: ball always bouncy
+        const accel = 1200;
+        const maxVx = 520;
+        const gravity = 1600;
+        const airDrag = 0.995;
+        const bounce = 0.72;   // restitution
+        const groundFriction = 0.985;
+
+        // input -> acceleration
+        if (input.bounceLeft)  ball.vx -= accel*dt;
+        if (input.bounceRight) ball.vx += accel*dt;
+        ball.vx = clamp(ball.vx, -maxVx, maxVx);
+
+        // gravity
+        ball.vy += gravity*dt;
+
+        // integrate
+        ball.x += ball.vx*dt;
+        ball.y += ball.vy*dt;
+
+        // damping
+        ball.vx *= Math.pow(airDrag, dt*60);
+        ball.vy *= Math.pow(airDrag, dt*60);
+
+        // collision with solids
+        if (collideSolids(ball.x, ball.y, ball.r)){
+          // simple rebound: invert velocity based on which axis likely hit
+          // test x-only and y-only
+          const xOnly = collideSolids(ball.x - ball.vx*dt, ball.y, ball.r);
+          const yOnly = collideSolids(ball.x, ball.y - ball.vy*dt, ball.r);
+
+          if (yOnly && !xOnly){
+            ball.vy = -ball.vy * bounce;
+            ball.vx *= groundFriction;
+          } else if (xOnly && !yOnly){
+            ball.vx = -ball.vx * bounce;
+          } else {
+            ball.vy = -ball.vy * bounce;
+            ball.vx = -ball.vx * bounce * 0.6;
+          }
+          resolveCollision();
+        }
+
+        // fall out of world => lose
+        if (ball.y > hTiles*TILE + 400) {
+          die();
+          return;
+        }
+
+        // pickups/hazards
+        handleInteract();
+
+        // camera follow
+        const viewW = canvas.width, viewH = canvas.height;
+        const mapW = wTiles*TILE, mapH = hTiles*TILE;
+        camX = clamp(ball.x - viewW*0.5, 0, Math.max(0, mapW - viewW));
+        camY = clamp(ball.y - viewH*0.55, 0, Math.max(0, mapH - viewH));
+      }
+
+      function handleInteract(){
+        const tx = Math.floor(ball.x / TILE);
+        const ty = Math.floor(ball.y / TILE);
+
+        for (let y=ty-1;y<=ty+1;y++){
+          for (let x=tx-1;x<=tx+1;x++){
             const t = tileAt(x,y);
-            const rx = x*TILE;
-            const ry = y*TILE;
+            const rx=x*TILE, ry=y*TILE;
 
-            if (t === "o") {
-              // حلقة: جمعها يزيد النقاط
-              if (circleRectColl(player.x, player.y, player.r, rx+6, ry+6, TILE-12, TILE-12)) {
+            if (t==="o"){
+              // ring
+              if (circleRectColl(ball.x, ball.y, ball.r, rx+6, ry+6, TILE-12, TILE-12)){
                 setTile(x,y,".");
-                ringsLeft--;
+                state.statA += 1;
                 state.score += 50;
                 setBest("bounce", state.score);
               }
             }
 
-            if (t === "^") {
-              // شوك: لمسه = نهاية / إعادة نقطة البداية
-              if (circleRectColl(player.x, player.y, player.r, rx, ry, TILE, TILE)) {
-                loseLife();
+            if (t==="^"){
+              // spikes
+              if (circleRectColl(ball.x, ball.y, ball.r, rx,ry,TILE,TILE)){
+                die();
                 return;
               }
             }
 
-            if (t === "G") {
-              // بوابة: يسمح بالإنهاء حتى لو لم تجمع كل الحلقات؟
-              // في نسخ كثيرة: الهدف نهاية المرحلة بغض النظر، لكن نضيف شرط الحلقات لزيادة التحدي:
-              if (circleRectColl(player.x, player.y, player.r, rx, ry, TILE, TILE)) {
-                winLevel();
+            if (t==="G"){
+              if (circleRectColl(ball.x, ball.y, ball.r, rx,ry,TILE,TILE)){
+                nextLevelOrWin();
                 return;
               }
             }
@@ -1240,61 +1294,125 @@
         }
       }
 
-      function loseLife(){
+      function die(){
+        state.statB += 1;
+        // restart same level, keep score? original usually keeps score; we'll keep score.
+        const elapsed = formatTime(now()-state.startedAt);
+
         showOverlay(
-          "HM GAME — Bounce",
-          `اصطدمت بالشوك!<br/>النتيجة: <b>${state.score}</b><br/>أفضل نتيجة: <b>${state.best}</b>`,
+          `🔴 ${T[lang].bounce} — HM GAME`,
+          (lang==="en")
+            ? `😵 <b>${T[lang].loseTitle}</b><br/>
+               Level: <b>${state.level}</b><br/>
+               Score: <b>${state.score}</b><br/>
+               Rings: <b>${state.statA}/${ringsTotal}</b><br/>
+               Deaths: <b>${state.statB}</b><br/>
+               Time: <b>${elapsed}</b><br/><br/>
+               ${T[lang].best}: <b>${state.best}</b>`
+            : `😵 <b>${T[lang].loseTitle}</b><br/>
+               المرحلة: <b>${state.level}</b><br/>
+               النتيجة: <b>${state.score}</b><br/>
+               الحلقات: <b>${state.statA}/${ringsTotal}</b><br/>
+               مرات الخسارة: <b>${state.statB}</b><br/>
+               الوقت: <b>${elapsed}</b><br/><br/>
+               ${T[lang].best}: <b>${state.best}</b>`,
           [
-            { label: "حاول مجددًا", primary:true, onClick: () => { parseLevel(levelIndex); hideOverlay(); } },
-            { label: "الخروج للقائمة", danger:true, onClick: () => goMenu() },
+            { label: `🔁 ${T[lang].restart}`, primary:true, onClick: ()=>{ // restart level
+              const keepScore = state.score;
+              const keepRings = state.statA;
+              const keepDeaths = state.statB;
+              loadLevel(levelIndex);
+              state.score = keepScore;
+              state.statA = keepRings;
+              state.statB = keepDeaths;
+              hideOverlay();
+            }},
+            { label: `🏠 ${T[lang].backMenu}`, danger:true, onClick: ()=>goMenu() }
           ]
         );
+
+        // reset ball position (soft)
+        ball.x = TILE*2;
+        ball.y = TILE*3;
+        ball.vx = 0;
+        ball.vy = 0;
       }
 
-      function winLevel(){
-        const next = levelIndex + 1;
-        if (next < LEVELS.length) {
+      function nextLevelOrWin(){
+        const elapsed = formatTime(now()-state.startedAt);
+
+        if (levelIndex + 1 < LEVELS.length){
           showOverlay(
-            "HM GAME — Bounce",
-            `أحسنت! انتقلت للمرحلة التالية.<br/>النتيجة: <b>${state.score}</b>`,
+            "✅ HM GAME",
+            (lang==="en")
+              ? `🎉 Level cleared!<br/>
+                 Level: <b>${state.level}</b> → <b>${state.level+1}</b><br/>
+                 Score: <b>${state.score}</b><br/>
+                 Rings: <b>${state.statA}/${ringsTotal}</b><br/>
+                 Time: <b>${elapsed}</b>`
+              : `🎉 تم إنهاء المرحلة!<br/>
+                 المرحلة: <b>${state.level}</b> → <b>${state.level+1}</b><br/>
+                 النتيجة: <b>${state.score}</b><br/>
+                 الحلقات: <b>${state.statA}/${ringsTotal}</b><br/>
+                 الوقت: <b>${elapsed}</b>`,
             [
-              { label: "التالي", primary:true, onClick: () => { parseLevel(next); hideOverlay(); } },
-              { label: "إعادة المرحلة", onClick: () => { parseLevel(levelIndex); hideOverlay(); } },
-              { label: "الخروج للقائمة", danger:true, onClick: () => goMenu() },
+              { label: "➡️ Next", primary:true, onClick: ()=>{
+                const keepScore = state.score;
+                const keepDeaths = state.statB;
+                loadLevel(levelIndex+1);
+                state.score = keepScore;
+                state.statB = keepDeaths;
+                hideOverlay();
+              }},
+              { label: `🔁 ${T[lang].restart}`, onClick: ()=>{ loadLevel(levelIndex); hideOverlay(); } },
+              { label: `🏠 ${T[lang].backMenu}`, danger:true, onClick: ()=>goMenu() }
             ]
           );
         } else {
+          // WIN!
+          setBest("bounce", state.score);
           showOverlay(
-            "HM GAME — Bounce",
-            `أنهيت كل المراحل! 🎉<br/>النتيجة: <b>${state.score}</b><br/>أفضل نتيجة: <b>${state.best}</b>`,
+            `🏆 ${T[lang].winTitle} — HM GAME`,
+            (lang==="en")
+              ? `🏆 <b>YOU WIN!</b><br/>
+                 You finished all levels! 😄<br/><br/>
+                 Final Score: <b>${state.score}</b><br/>
+                 Total Rings: <b>${state.statA}</b><br/>
+                 Deaths: <b>${state.statB}</b><br/>
+                 Time: <b>${elapsed}</b><br/><br/>
+                 ${T[lang].best}: <b>${state.best}</b>`
+              : `🏆 <b>لقد ربحت!</b><br/>
+                 أنهيت جميع المراحل! 😄<br/><br/>
+                 النتيجة النهائية: <b>${state.score}</b><br/>
+                 مجموع الحلقات: <b>${state.statA}</b><br/>
+                 مرات الخسارة: <b>${state.statB}</b><br/>
+                 الوقت: <b>${elapsed}</b><br/><br/>
+                 ${T[lang].best}: <b>${state.best}</b>`,
             [
-              { label: "العب من جديد", primary:true, onClick: () => { parseLevel(0); hideOverlay(); } },
-              { label: "الخروج للقائمة", danger:true, onClick: () => goMenu() },
+              { label: `🔁 ${T[lang].restart}`, primary:true, onClick: ()=>{ loadLevel(0); hideOverlay(); state.startedAt=now(); } },
+              { label: `🏠 ${T[lang].backMenu}`, danger:true, onClick: ()=>goMenu() }
             ]
           );
         }
       }
 
       function draw(){
-        resizeView();
-
-        // خلفية السماء
-        ctx.fillStyle = getCss("--sky");
+        // sky
+        ctx.fillStyle = css("--sky");
         ctx.fillRect(0,0,canvas.width,canvas.height);
 
-        // سحب خفيفة
+        // clouds (parallax)
         ctx.fillStyle = "rgba(255,255,255,.35)";
-        for (let i=0; i<6; i++){
-          const x = ((i*260 + (camX*0.15)) % (canvas.width+300)) - 150;
-          const y = 70 + i*40;
-          roundRect(x, y, 140, 36, 18, true);
+        for (let i=0;i<6;i++){
+          const x = ((i*280 + camX*0.15) % (canvas.width+320)) - 160;
+          const y = 70 + i*42;
+          roundRect(x,y,150,36,18,true);
         }
 
-        // رسم الخريطة
-        const startTx = Math.floor(camX / TILE);
-        const endTx = Math.ceil((camX + canvas.width) / TILE);
-        const startTy = Math.floor(camY / TILE);
-        const endTy = Math.ceil((camY + canvas.height) / TILE);
+        const startTx = Math.floor(camX/TILE);
+        const endTx = Math.ceil((camX+canvas.width)/TILE);
+        const startTy = Math.floor(camY/TILE);
+        const endTy = Math.ceil((camY+canvas.height)/TILE);
 
         for (let ty=startTy; ty<endTy; ty++){
           for (let tx=startTx; tx<endTx; tx++){
@@ -1302,38 +1420,38 @@
             const x = tx*TILE - camX;
             const y = ty*TILE - camY;
 
-            if (t === "#") drawBrick(x,y);
-            else if (t === "o") drawRing(x,y);
-            else if (t === "^") drawSpike(x,y);
-            else if (t === "G") drawGoal(x,y);
+            if (t==="#") drawBrick(x,y);
+            else if (t==="o") drawRing(x,y);
+            else if (t==="^") drawSpike(x,y);
+            else if (t==="G") drawGate(x,y);
           }
         }
 
-        // رسم اللاعب (كرة حمراء)
-        drawBall(player.x - camX, player.y - camY, player.r);
+        // ball
+        drawBall(ball.x - camX, ball.y - camY, ball.r);
 
-        // معلومات بسيطة
+        // HUD details line (extra)
+        const rings = `${state.statA}/${ringsTotal}`;
+        // Put Bounce-specific info into hudStat1/hudStat2 via updateHUD? keep simple:
+        // We'll update hudStat1/hudStat2 by score/best already.
+        // Add tiny top-left text on canvas for rings:
         ctx.fillStyle = "rgba(0,0,0,.25)";
-        ctx.font = `${Math.floor(Math.min(canvas.width, canvas.height)*0.032)}px system-ui`;
-        ctx.textAlign = "right";
-        ctx.fillText(`Rings: ${ringsLeft}`, canvas.width - 14, 34);
-        ctx.fillText(`HM GAME`, canvas.width - 14, 58);
+        ctx.font = `${Math.floor(Math.min(canvas.width,canvas.height)*0.032)}px system-ui`;
+        ctx.textAlign = "left";
+        ctx.fillText(`Rings: ${rings}`, 14, 34);
       }
 
       function drawBall(x,y,r){
-        // ظل
         ctx.fillStyle = "rgba(0,0,0,.18)";
         ctx.beginPath();
         ctx.ellipse(x, y + r*0.85, r*1.05, r*0.35, 0, 0, Math.PI*2);
         ctx.fill();
 
-        // الكرة
-        ctx.fillStyle = getCss("--ball");
+        ctx.fillStyle = css("--ball");
         ctx.beginPath();
         ctx.arc(x,y,r,0,Math.PI*2);
         ctx.fill();
 
-        // لمعة
         ctx.fillStyle = "rgba(255,255,255,.30)";
         ctx.beginPath();
         ctx.arc(x - r*0.35, y - r*0.35, r*0.35, 0, Math.PI*2);
@@ -1341,37 +1459,34 @@
       }
 
       function drawBrick(x,y){
-        const c1 = getCss("--brick");
-        const c2 = getCss("--brick2");
-        ctx.fillStyle = c1;
+        ctx.fillStyle = css("--brick");
         ctx.fillRect(x,y,TILE,TILE);
-        // تدرج/تفاصيل
         ctx.fillStyle = "rgba(255,255,255,.10)";
         ctx.fillRect(x+2,y+2,TILE-4,5);
         ctx.fillStyle = "rgba(0,0,0,.12)";
         ctx.fillRect(x+2,y+TILE-6,TILE-4,4);
-        // خط فاصل
-        ctx.strokeStyle = c2;
+
+        ctx.strokeStyle = css("--brick2");
         ctx.lineWidth = 2;
         ctx.strokeRect(x+1,y+1,TILE-2,TILE-2);
       }
 
       function drawRing(x,y){
-        ctx.strokeStyle = getCss("--ring");
+        ctx.strokeStyle = css("--ring");
         ctx.lineWidth = 4;
         ctx.beginPath();
-        ctx.arc(x+TILE/2, y+TILE/2, TILE*0.28, 0, Math.PI*2);
+        ctx.arc(x+TILE/2,y+TILE/2,TILE*0.28,0,Math.PI*2);
         ctx.stroke();
 
         ctx.strokeStyle = "rgba(255,255,255,.35)";
         ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.arc(x+TILE/2 - 1, y+TILE/2 - 2, TILE*0.22, 0, Math.PI*2);
+        ctx.arc(x+TILE/2-1,y+TILE/2-2,TILE*0.22,0,Math.PI*2);
         ctx.stroke();
       }
 
       function drawSpike(x,y){
-        ctx.fillStyle = getCss("--spike");
+        ctx.fillStyle = css("--spike");
         ctx.beginPath();
         ctx.moveTo(x, y+TILE);
         ctx.lineTo(x+TILE*0.25, y+TILE*0.35);
@@ -1382,25 +1497,23 @@
         ctx.fill();
       }
 
-      function drawGoal(x,y){
-        // بوابة بسيطة
-        ctx.fillStyle = "rgba(0,0,0,.22)";
-        roundRect(x+3,y+3,TILE-6,TILE-6,8,true);
-        ctx.strokeStyle = "rgba(255,255,255,.65)";
+      function drawGate(x,y){
+        // white gate like finish
+        ctx.fillStyle = "rgba(0,0,0,.18)";
+        roundRect(x+2,y+2,TILE-4,TILE-4,7,true);
+
+        ctx.strokeStyle = css("--gate");
         ctx.lineWidth = 2;
-        roundRectStroke(x+5,y+5,TILE-10,TILE-10,7);
-        ctx.fillStyle = "rgba(255,255,255,.70)";
+        roundRectStroke(x+4,y+4,TILE-8,TILE-8,6);
+
+        ctx.fillStyle = "rgba(255,255,255,.85)";
         ctx.font = `${Math.floor(TILE*0.62)}px system-ui`;
         ctx.textAlign = "center";
         ctx.fillText("G", x+TILE/2, y+TILE*0.73);
       }
 
-      function getCss(varName){
-        return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
-      }
-
       function roundRect(x,y,w,h,r,fill){
-        const rr = Math.min(r, w/2, h/2);
+        const rr = Math.min(r,w/2,h/2);
         ctx.beginPath();
         ctx.moveTo(x+rr,y);
         ctx.arcTo(x+w,y,x+w,y+h,rr);
@@ -1411,7 +1524,7 @@
         if (fill) ctx.fill();
       }
       function roundRectStroke(x,y,w,h,r){
-        const rr = Math.min(r, w/2, h/2);
+        const rr = Math.min(r,w/2,h/2);
         ctx.beginPath();
         ctx.moveTo(x+rr,y);
         ctx.arcTo(x+w,y,x+w,y+h,rr);
@@ -1426,8 +1539,7 @@
       Bounce.update = update;
       Bounce.draw = draw;
     })();
-// ========= نهاية تعريف الألعاب =========
-
+// ===== End of HM GAME =====
   })();
   </script>
 
